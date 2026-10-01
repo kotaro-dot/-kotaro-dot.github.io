@@ -997,6 +997,7 @@
       <div class="card" id="dayDetailMapCard" style="display:none;">
         <h2><span class="dot"></span>歩いたコース</h2>
         <div class="mapview-clip" style="height:240px;"><div id="dayDetailMap"></div></div>
+        <button class="secondary" id="saveFavFromHistoryBtn" type="button" style="margin-top:12px; width:100%;">このルートをお気に入りに登録</button>
       </div>
     </div>
   </div>
@@ -2540,10 +2541,51 @@ function openDayDetail(dateStr, rec){
 
   showDayRoutes(rec.routes);
 
+  // お気に入り登録ボタン: ルートがある時だけ表示
+  const favBtn = document.getElementById('saveFavFromHistoryBtn');
+  if (favBtn){
+    currentDayDetailRec = rec;
+    favBtn.style.display = (rec.routes && rec.routes.length > 0) ? 'block' : 'none';
+  }
+
   document.getElementById('screenHistory').classList.remove('active');
   document.getElementById('screenDayDetail').classList.add('active');
   window.scrollTo(0, 0);
 }
+
+let currentDayDetailRec = null;
+
+document.getElementById('saveFavFromHistoryBtn').addEventListener('click', () => {
+  if (!currentDayDetailRec || !currentDayDetailRec.routes || !currentDayDetailRec.routes.length){
+    alert('登録できるルートがありません');
+    return;
+  }
+  const name = prompt('このルートの名前を入力してください(例: 大学周辺コース)');
+  if (!name) return;
+
+  const coords = currentDayDetailRec.routes[0];
+  let distMeters = 0;
+  for (let i = 0; i < coords.length - 1; i++){
+    distMeters += computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
+  }
+
+  const favorite = {
+    id: Date.now().toString(36),
+    name: name,
+    mode: 'loop',
+    startPoint: coords.length > 0 ? {lat: coords[0][0], lng: coords[0][1]} : null,
+    goalPoint: null,
+    routeCoords: coords,
+    distanceMeters: distMeters,
+    totalTimeMs: (currentDayDetailRec.durationMin || 0) * 60000,
+    createdAt: currentDayDetailRec.date || localDateStr()
+  };
+
+  const list = loadFavorites();
+  list.push(favorite);
+  saveFavoritesList(list);
+  alert('「' + name + '」として登録しました。お気に入りから呼び出せます。');
+});
 
 document.getElementById('closeDayDetailBtn').addEventListener('click', () => {
   document.getElementById('screenDayDetail').classList.remove('active');
@@ -2658,9 +2700,10 @@ function loadFavorite(fav){
   lastRouteDistanceMeters = fav.distanceMeters;
   routePaceMsPerMeter = fav.totalTimeMs / fav.distanceMeters;
 
-  // ルート全体のデータをセット
-  routeCoords = fav.routeCoords;
-  routeSegments = buildSegments(fav.routeCoords, 150);
+  // ルート全体のデータをセット(drawRouteを使わず直接セット)
+  const coords = fav.routeCoords;
+  routeCoords = coords;
+  routeSegments = buildSegments(coords, 150);
   activeSegIdx = 0;
   goalAlreadyHandled = false;
   const banner = document.getElementById('goalBanner');
@@ -2673,8 +2716,8 @@ function loadFavorite(fav){
   arrowGroup = L.layerGroup().addTo(map);
 
   // 読み込み直後はルート全体を実線で表示(追跡開始後にセグメント方式に切り替わる)
-  routeLine = L.polyline(fav.routeCoords, {color:'#1f4631', weight:5}).addTo(map);
-  map.fitBounds(L.latLngBounds(fav.routeCoords), {padding:[24,24]});
+  routeLine = L.polyline(coords, {color:'#1f4631', weight:5}).addTo(map);
+  map.fitBounds(L.latLngBounds(coords), {padding:[24,24]});
 
   document.getElementById('resDistance').textContent = (fav.distanceMeters/1000).toFixed(2);
   document.getElementById('resCalorie').textContent = Math.round(calcCalorie(weightKg, fav.totalTimeMs/60000));
