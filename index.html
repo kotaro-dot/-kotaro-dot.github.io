@@ -1880,13 +1880,16 @@ function getLeastWalkedAngle(center){
 
   try {
     const history = JSON.parse(localStorage.getItem('walkRouteHistory_v1') || '[]');
+    const pointsPerRecord = Math.max(10, Math.floor(3000 / Math.max(1, history.length)));
     history.forEach(record => {
       if (!record.routeCoords) return;
-      record.routeCoords.forEach(coord => {
+      const step = Math.max(1, Math.floor(record.routeCoords.length / pointsPerRecord));
+      for (let i = 0; i < record.routeCoords.length; i += step){
+        const coord = record.routeCoords[i];
         const bearing = computeBearing(center.lat, center.lng, coord[0], coord[1]);
         const sector = Math.floor(((bearing + 360) % 360) / (360 / SECTORS));
         counts[sector]++;
-      });
+      }
     });
   } catch(e){ /* 記録がない・読めない場合はランダムに */ }
 
@@ -1907,11 +1910,14 @@ function calcRouteOverlapWithHistory(coords){
     const history = JSON.parse(localStorage.getItem('walkRouteHistory_v1') || '[]');
     if (!history.length) return 0;
 
-    // 直近10件の歩行記録から座標をサンプリング(全部使うと重すぎる)
+    // 全記録を使う。記録が多いほどサンプリングを粗くして計算量を一定に保つ
+    // 目標: 全体で最大3000点(記録100件なら1件あたり30点、10件なら300点)
     const pastCoords = [];
-    history.slice(-10).forEach(r => {
+    const targetTotal = 3000;
+    const pointsPerRecord = Math.max(10, Math.floor(targetTotal / history.length));
+    history.forEach(r => {
       if (!r.routeCoords) return;
-      const step = Math.max(1, Math.floor(r.routeCoords.length / 60));
+      const step = Math.max(1, Math.floor(r.routeCoords.length / pointsPerRecord));
       for (let i = 0; i < r.routeCoords.length; i += step){
         pastCoords.push(r.routeCoords[i]);
       }
