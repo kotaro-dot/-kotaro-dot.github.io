@@ -1563,6 +1563,11 @@ function startLiveTracking(){
   document.getElementById('liveBadge').style.display = 'inline-block';
   document.getElementById('liveStatus').textContent = '位置情報を取得中...(初回はブラウザの許可が必要です)';
 
+  // 追跡開始時にセグメント表示に切り替える(お気に入り読み込み後など全体表示だった場合)
+  if (routeCoords.length >= 2 && routeSegments.length > 0){
+    redrawActiveSegment();
+  }
+
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
       const now = Date.now();
@@ -2702,7 +2707,23 @@ function loadFavorite(fav){
   lastRouteDistanceMeters = fav.distanceMeters;
   routePaceMsPerMeter = fav.totalTimeMs / fav.distanceMeters;
 
-  drawRoute(fav.routeCoords);
+  // ルート全体のデータをセット
+  routeCoords = fav.routeCoords;
+  routeSegments = buildSegments(fav.routeCoords, 150);
+  activeSegIdx = 0;
+  goalAlreadyHandled = false;
+  const banner = document.getElementById('goalBanner');
+  if (banner) banner.style.display = 'none';
+
+  // 古いレイヤーを削除
+  if (routeLine) map.removeLayer(routeLine);
+  if (futureLine){ map.removeLayer(futureLine); futureLine = null; }
+  if (arrowGroup) map.removeLayer(arrowGroup);
+  arrowGroup = L.layerGroup().addTo(map);
+
+  // 読み込み直後はルート全体を実線で表示(追跡開始後にセグメント方式に切り替わる)
+  routeLine = L.polyline(fav.routeCoords, {color:'#1f4631', weight:5}).addTo(map);
+  map.fitBounds(L.latLngBounds(fav.routeCoords), {padding:[24,24]});
 
   document.getElementById('resDistance').textContent = (fav.distanceMeters/1000).toFixed(2);
   document.getElementById('resCalorie').textContent = Math.round(calcCalorie(weightKg, fav.totalTimeMs/60000));
@@ -2714,7 +2735,7 @@ function loadFavorite(fav){
   const finishDate = new Date(Date.now() + fav.totalTimeMs);
   document.getElementById('finishTime').textContent = String(finishDate.getHours()).padStart(2,'0') + ':' + String(finishDate.getMinutes()).padStart(2,'0');
 
-  setStatus('お気に入りのルートを読み込みました。', 'ok');
+  setStatus('ルートを読み込みました。「追跡を開始」を押すと案内が始まります。', 'ok');
 }
 
 document.getElementById('openFavoritesBtn').addEventListener('click', () => {
