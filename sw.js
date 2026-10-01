@@ -2,7 +2,7 @@
 // 役割: アプリの「見た目」をオフラインでも開けるようにキャッシュする
 // (地図タイルやAPI通信そのものはオンラインが必要です)
 
-const CACHE_NAME = 'walk-route-maker-v7';
+const CACHE_NAME = 'walk-route-maker-v8';
 const PRECACHE_URLS = [
   './index.html',
   './manifest.json',
