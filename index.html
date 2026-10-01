@@ -997,8 +997,9 @@
       <div class="card" id="dayDetailMapCard" style="display:none;">
         <h2><span class="dot"></span>歩いたコース</h2>
         <div class="mapview-clip" style="height:240px;"><div id="dayDetailMap"></div></div>
-        <button class="secondary" id="saveFavFromHistoryBtn" type="button" style="margin-top:12px; width:100%;">このルートをお気に入りに登録</button>
       </div>
+
+      <button class="secondary" id="saveFavFromHistoryBtn" type="button" style="width:100%; margin-top:4px;">このルートをお気に入りに登録</button>
     </div>
   </div>
 
@@ -2541,11 +2542,14 @@ function openDayDetail(dateStr, rec){
 
   showDayRoutes(rec.routes);
 
-  // お気に入り登録ボタン: ルートがある時だけ表示
+  // お気に入り登録ボタン: 常に表示。ルートデータがない場合は非活性にする
+  currentDayDetailRec = rec;
   const favBtn = document.getElementById('saveFavFromHistoryBtn');
   if (favBtn){
-    currentDayDetailRec = rec;
-    favBtn.style.display = (rec.routes && rec.routes.length > 0) ? 'block' : 'none';
+    const hasRoute = rec.routes && rec.routes.length > 0;
+    favBtn.disabled = !hasRoute;
+    favBtn.textContent = hasRoute ? 'このルートをお気に入りに登録' : 'ルートデータなし(最新版で歩いた記録のみ登録可)';
+    favBtn.style.opacity = hasRoute ? '1' : '0.4';
   }
 
   document.getElementById('screenHistory').classList.remove('active');
