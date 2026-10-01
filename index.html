@@ -349,6 +349,31 @@
   .geoblock{margin-bottom:16px;}
   .geoblock:last-child{margin-bottom:0;}
   .geoblock-label{font-size:11.5px; color:var(--muted); margin-bottom:3px; font-weight:700;}
+  .heat-toggle{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    width:100%; box-sizing:border-box;
+    padding:15px 16px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:var(--card);
+    cursor:pointer;
+    text-align:left;
+    font-family:"Noto Sans JP",sans-serif;
+    font-weight:500;
+    font-size:14px;
+    color:var(--ink);
+    line-height:1.4;
+  }
+  .heat-check{
+    flex:none; width:26px; height:26px;
+    display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--line);
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+    font-size:15px; font-weight:700;
+    color:transparent;
+    background:none;
+  }
+  .heat-check.on{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
   .toggle-chip-row{display:flex; gap:8px; margin-top:10px;}
   .toggle-chip{
     flex:1;
@@ -745,7 +770,7 @@
           <div class="stepno-bars"><span class="on"></span><span class="on"></span><span></span></div>
         </div>
         <h1 class="display">歩く前の確認</h1>
-        <div class="stepsub">歩行時間と体重を設定します</div>
+        <div class="stepsub">歩行時間・体重・気温に応じた調整を設定します</div>
       </div>
       <button class="backlink" id="toCourseBackBtn" type="button">‹ 地点設定に戻る</button>
 
@@ -762,6 +787,16 @@
           </div>
         </div>
         <div class="hint">時間は「だいたいこのくらい歩きたい」という目安として使います。カロリー計算用の体重は省略時60kgで計算します。</div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>気温に応じた調整<span style="font-size:11px; color:var(--muted); font-weight:400;">(往復モードのみ・任意)</span></h2>
+        <button class="heat-toggle" id="preferShadeChk" type="button" aria-pressed="true" style="margin-bottom:14px;">
+          <span>気温が高い日は<br>公園・緑地を優先する</span>
+          <span class="heat-check notch on">✓</span>
+        </button>
+        <label for="hotThreshold">「暑い」と判断する気温(℃)</label>
+        <input type="number" id="hotThreshold" value="28" min="15" max="40">
       </div>
 
       <button class="primary" id="toResultBtn">ルートを作成する</button>
@@ -1528,11 +1563,6 @@ function startLiveTracking(){
   document.getElementById('liveBadge').style.display = 'inline-block';
   document.getElementById('liveStatus').textContent = '位置情報を取得中...(初回はブラウザの許可が必要です)';
 
-  // 追跡開始時にセグメント表示に切り替える(お気に入り読み込み後など全体表示だった場合)
-  if (routeCoords.length >= 2 && routeSegments.length > 0){
-    redrawActiveSegment();
-  }
-
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
       const now = Date.now();
@@ -1705,7 +1735,12 @@ document.getElementById('shadowToggleBtn').addEventListener('click', () => {
   }
 });
 
-
+document.getElementById('preferShadeChk').addEventListener('click', () => {
+  const btn = document.getElementById('preferShadeChk');
+  const pressed = btn.getAttribute('aria-pressed') === 'true';
+  btn.setAttribute('aria-pressed', pressed ? 'false' : 'true');
+  btn.querySelector('.heat-check').classList.toggle('on', !pressed);
+});
 
 function useCurrentLocation(markerTitle, onSuccess){
   if (!navigator.geolocation){
@@ -2113,6 +2148,25 @@ async function generateRoute(){
     }
 
     if (mode === 'loop'){
+      if (document.getElementById('preferShadeChk').getAttribute('aria-pressed') === 'true'){
+        try {
+          setStatus('気温を確認しています...', 'info');
+          const weatherResult = await fetchBestTemperature(startPoint.lat, startPoint.lng);
+          const temp = weatherResult.temp;
+          const threshold = parseFloat(document.getElementById('hotThreshold').value) || 28;
+          const isHot = temp >= threshold;
+          document.getElementById('weatherInfo').textContent =
+            '気温: ' + temp + '℃ [' + weatherResult.source + ']' + (isHot ? ' → 暑いので公園・緑地を優先します' : ' → 通常ルートで生成します');
+          if (isHot){
+            setStatus('近くの公園・緑地を探しています...', 'info');
+            const initialRadius = Math.round((targetMinutes/60) * walkingSpeedKmh * 1000 / (2*Math.PI) * 1.3 * 1.6);
+            parks = await fetchNearbyParks(startPoint.lat, startPoint.lng, initialRadius);
+          }
+        } catch (e){
+          document.getElementById('weatherInfo').textContent = '気温情報の取得に失敗したため、通常ルートで生成します。';
+        }
+      }
+
       let distanceMeters = Math.round((targetMinutes/60) * walkingSpeedKmh * 1000);
       let correctionFactor = 1.3;
       let bestOverlap = 1;
@@ -2648,23 +2702,7 @@ function loadFavorite(fav){
   lastRouteDistanceMeters = fav.distanceMeters;
   routePaceMsPerMeter = fav.totalTimeMs / fav.distanceMeters;
 
-  // ルート全体のデータをセット
-  routeCoords = fav.routeCoords;
-  routeSegments = buildSegments(fav.routeCoords, 150);
-  activeSegIdx = 0;
-  goalAlreadyHandled = false;
-  const banner = document.getElementById('goalBanner');
-  if (banner) banner.style.display = 'none';
-
-  // 古いレイヤーを削除
-  if (routeLine) map.removeLayer(routeLine);
-  if (futureLine){ map.removeLayer(futureLine); futureLine = null; }
-  if (arrowGroup) map.removeLayer(arrowGroup);
-  arrowGroup = L.layerGroup().addTo(map);
-
-  // 読み込み直後はルート全体を実線で表示(追跡開始後にセグメント方式に切り替わる)
-  routeLine = L.polyline(fav.routeCoords, {color:'#1f4631', weight:5}).addTo(map);
-  map.fitBounds(L.latLngBounds(fav.routeCoords), {padding:[24,24]});
+  drawRoute(fav.routeCoords);
 
   document.getElementById('resDistance').textContent = (fav.distanceMeters/1000).toFixed(2);
   document.getElementById('resCalorie').textContent = Math.round(calcCalorie(weightKg, fav.totalTimeMs/60000));
@@ -2676,7 +2714,7 @@ function loadFavorite(fav){
   const finishDate = new Date(Date.now() + fav.totalTimeMs);
   document.getElementById('finishTime').textContent = String(finishDate.getHours()).padStart(2,'0') + ':' + String(finishDate.getMinutes()).padStart(2,'0');
 
-  setStatus('ルートを読み込みました。「追跡を開始」を押すと案内が始まります。', 'ok');
+  setStatus('お気に入りのルートを読み込みました。', 'ok');
 }
 
 document.getElementById('openFavoritesBtn').addEventListener('click', () => {
