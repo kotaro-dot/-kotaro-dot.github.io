@@ -19,39 +19,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
 <style>
   :root{
-    --bg:#eef2f7;
+    --bg:#edf0f5;
     --card:#ffffff;
-    --surface-2:#f3f7fd;
-    --ink:#112038;
-    --muted:#5d6b84;
-    --line:#dde6f1;
-    --accent:#1f6fe5;
-    --accent-deep:#15326b;
+    --surface-2:#f0f3f8;
+    --ink:#1b2340;
+    --muted:#7788aa;
+    --line:#dde2ec;
+    --accent:#1a55e0;
+    --accent-deep:#1040b0;
     --accent-ink:#ffffff;
     --accent-2:#0b9fd4;
-    --glow:rgba(31,111,229,0.16);
-    --moss:#1f6fe5;
-    --moss-deep:#15326b;
+    --glow:rgba(26,85,224,0.14);
+    --moss:#1a55e0;
+    --moss-deep:#1040b0;
     --warn-bg:#fdece4;
     --warn-ink:#8a3b1f;
-    --shadow: 0 2px 3px rgba(17,32,56,0.04), 0 8px 18px -8px rgba(17,32,56,0.12);
+    --shadow:0 1px 3px rgba(26,85,224,0.06), 0 4px 12px -4px rgba(26,85,224,0.10);
     --paper:var(--bg);
-  }
-  [data-theme="dark"]{
-    --bg:#0a1023;
-    --card:#121a30;
-    --surface-2:#182441;
-    --ink:#eaf1ff;
-    --muted:#92a3c6;
-    --line:#25324f;
-    --accent:#4f9dff;
-    --accent-deep:#bcdcff;
-    --accent-ink:#06122a;
-    --accent-2:#46d8ff;
-    --glow:rgba(79,157,255,0.28);
-    --moss:#4f9dff;
-    --moss-deep:#9fc8ff;
-    --shadow: 0 2px 4px rgba(0,0,0,0.3), 0 8px 20px -8px rgba(0,0,0,0.45);
   }
   *{box-sizing:border-box;}
   body{
@@ -106,24 +90,32 @@
     position:relative;
   }
   .stepheader .stepno-row{
-    display:flex; align-items:center; gap:12px;
-    margin-bottom:14px;
+    display:flex; align-items:flex-end; gap:6px;
+    margin-bottom:12px;
   }
   .stepheader .stepno{
-    font-family:"Space Mono", monospace;
-    font-weight:700;
-    font-size:11px;
+    font-family:"Saira Condensed", sans-serif;
+    font-style:italic;
+    font-weight:800;
+    font-size:56px;
     color:var(--accent);
-    letter-spacing:0.16em;
-    text-transform:uppercase;
-    white-space:nowrap;
+    line-height:1;
+    letter-spacing:-0.01em;
   }
-  .stepheader .stepno-bars{flex:1; display:flex; gap:5px;}
-  .stepheader .stepno-bars span{height:4px; flex:1; border-radius:2px; background:var(--line);}
+  .stepheader .stepno-total{
+    font-family:"Space Mono", monospace;
+    font-size:13px;
+    color:var(--muted);
+    font-weight:700;
+    margin-bottom:8px;
+    letter-spacing:0.04em;
+  }
+  .stepheader .stepno-bars{flex:1; display:flex; gap:5px; align-self:flex-end; margin-bottom:10px;}
+  .stepheader .stepno-bars span{height:3px; flex:1; border-radius:2px; background:var(--line);}
   .stepheader .stepno-bars span.on{background:var(--accent);}
   .stepheader h1{
-    font-size:24px;
-    margin:0;
+    font-size:26px;
+    margin:0 0 4px;
     letter-spacing:-0.01em;
     color:var(--ink);
     font-weight:700;
@@ -131,18 +123,50 @@
   .stepheader .stepsub{
     font-size:13px;
     color:var(--muted);
-    margin-top:8px;
+    margin-top:4px;
     line-height:1.6;
     font-weight:400;
   }
 
   .content{padding:0 16px;}
 
+  /* ===== ボトムナビゲーション ===== */
+  .bottom-nav{
+    position:fixed; bottom:0; left:0; right:0; z-index:1000;
+    display:flex;
+    background:var(--card);
+    border-top:1px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    box-shadow:0 -2px 12px rgba(26,85,224,0.08);
+  }
+  .bottom-nav-tab{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+    padding:10px 0 8px;
+    border:none; background:none; cursor:pointer;
+    color:var(--muted); font-size:11px; font-family:"Noto Sans JP",sans-serif;
+    font-weight:500; transition:color .15s;
+  }
+  .bottom-nav-tab.active{ color:var(--accent); }
+  .bottom-nav-tab svg{ transition:color .15s; }
+  .wrap{ padding-bottom:calc(60px + env(safe-area-inset-bottom,0px)); }
+
   .backlink{
-    display:inline-flex; align-items:center; gap:4px;
-    border:none; background:none; color:var(--muted);
-    font-family:"Space Mono",monospace;
-    font-size:11px; font-weight:700; letter-spacing:0.04em; cursor:pointer; padding:0 0 14px;
+    display:inline-flex; align-items:center; gap:10px;
+    border:none; background:var(--card); color:var(--ink);
+    font-family:"Noto Sans JP",sans-serif;
+    font-size:14px; font-weight:500; cursor:pointer;
+    padding:6px 16px 6px 6px;
+    border-radius:999px;
+    box-shadow:var(--shadow);
+    margin-bottom:18px;
+  }
+  .backlink::before{
+    content:'‹';
+    display:flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:50%;
+    background:var(--accent); color:#fff;
+    font-size:18px; font-weight:700; line-height:1;
+    flex-shrink:0;
   }
 
   /* ---- カード ---- */
@@ -162,7 +186,11 @@
     font-weight:700;
     display:flex; align-items:center; gap:8px;
   }
-  .card h2 .dot{width:3px; height:15px; border-radius:1px; background:var(--accent); border:none; flex-shrink:0;}
+  .card h2 .dot{
+    width:14px; height:18px; flex-shrink:0; border:none;
+    background:var(--accent);
+    clip-path:polygon(18% 0%,100% 0%,82% 100%,0% 100%);
+  }
   label{
     display:block;
     font-size:12px;
@@ -265,15 +293,15 @@
     color:var(--accent-ink);
     border:none;
     border-radius:0;
-    clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+    clip-path:polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
     font-size:16px;
     font-weight:700;
     margin-top:8px;
     cursor:pointer;
-    letter-spacing:0.03em;
+    letter-spacing:0.04em;
     font-family:"Noto Sans JP", sans-serif;
-    box-shadow:0 12px 26px -6px var(--glow);
-    transition:transform .12s, box-shadow .12s, background .12s;
+    box-shadow:0 8px 20px -4px var(--glow);
+    transition:transform .12s, box-shadow .12s;
   }
   button.primary:active{transform:translateY(1px);}
   button.primary:disabled{background:var(--line); box-shadow:none; cursor:default;}
@@ -672,7 +700,8 @@
     <div class="content">
       <div class="stepheader">
         <div class="stepno-row">
-          <span class="stepno">STEP 01 / 03</span>
+          <span class="stepno">01</span>
+          <span class="stepno-total">/ 03</span>
           <div class="stepno-bars"><span class="on"></span><span></span><span></span></div>
         </div>
         <h1 class="display">コースと地点</h1>
@@ -739,13 +768,14 @@
     <div class="content">
       <div class="stepheader">
         <div class="stepno-row">
-          <span class="stepno">STEP 02 / 03</span>
+          <span class="stepno">02</span>
+          <span class="stepno-total">/ 03</span>
           <div class="stepno-bars"><span class="on"></span><span class="on"></span><span></span></div>
         </div>
         <h1 class="display">歩く前の確認</h1>
         <div class="stepsub">歩行時間と体重を設定します</div>
       </div>
-      <button class="backlink" id="toCourseBackBtn" type="button">‹ 地点設定に戻る</button>
+      <button class="backlink" id="toCourseBackBtn" type="button">地点設定に戻る</button>
 
       <div class="card">
         <h2><span class="dot"></span>歩行予定時間・体重</h2>
@@ -776,13 +806,14 @@
     <div class="content">
       <div class="stepheader">
         <div class="stepno-row">
-          <span class="stepno">STEP 03 / 03</span>
+          <span class="stepno">03</span>
+          <span class="stepno-total">/ 03</span>
           <div class="stepno-bars"><span class="on"></span><span class="on"></span><span class="on"></span></div>
         </div>
         <h1 class="display">生成されたルート</h1>
         <div class="stepsub">そのまま地図を見ながら歩き始められます</div>
       </div>
-      <button class="backlink" id="toSettingsBackBtn" type="button">‹ 設定に戻る</button>
+      <button class="backlink" id="toSettingsBackBtn" type="button">設定に戻る</button>
 
       <div id="goalBanner" class="notch" style="display:none; margin-bottom:14px; padding:18px; background:var(--accent); color:var(--accent-ink); text-align:left;">
         <div style="font-family:'Saira Condensed',sans-serif; font-style:italic; font-weight:800; font-size:22px; letter-spacing:0.02em;">GOAL — ゴールしました</div>
@@ -790,19 +821,25 @@
       </div>
 
       <div class="card">
+        <!-- 地図 -->
         <div class="mapview-clip">
           <div id="map"></div>
           <span class="live-badge" id="liveBadge" style="display:none;">LIVE</span>
         </div>
-
-        <div class="toggle-chip-row">
+        <!-- 日陰マップ -->
+        <div class="toggle-chip-row" style="margin-top:10px;">
           <button class="toggle-chip" id="shadowToggleBtn" type="button" aria-pressed="false">
             <span class="chip-check" id="shadowChipCheck"></span>日陰マップ
           </button>
           <div class="hint" id="shadowStatus" style="flex:1; margin:0; padding-left:8px;"></div>
         </div>
+        <!-- お気に入り登録・散歩終了 -->
+        <div class="resultactions" style="margin-top:8px;">
+          <button class="secondary" id="saveFavoriteBtn" type="button">お気に入りに登録</button>
+          <button class="secondary" id="finishHereBtn" type="button">ここで散歩を終了する</button>
+        </div>
+        <!-- 追跡ボタン -->
         <button class="primary" id="liveTrackBtn" type="button" style="margin-top:10px;">追跡を開始</button>
-        <button class="secondary" id="finishHereBtn" type="button" style="margin-top:8px;">ここで散歩を終了する</button>
         <div class="hint" id="liveStatus"></div>
       </div>
 
@@ -831,8 +868,8 @@
           <div class="hint" id="timeCompare"></div>
           <div class="hint" id="weatherInfo"></div>
           <div class="resultactions">
-            <button class="secondary" id="regenerateBtn" type="button">再生成</button>
-            <button class="secondary" id="saveFavoriteBtn" type="button">お気に入りに登録</button>
+            <button class="secondary" id="regenerateBtn" type="button">↺ 再生成</button>
+            <button class="secondary" id="viewHistoryBtn" type="button">記録を見る ›</button>
           </div>
         </div>
       </div>
@@ -847,7 +884,7 @@
         <h1 class="display" style="margin-top:8px;">これまでの記録</h1>
         <div class="stepsub">ゴールするたびに、自動でその日の記録が積み重なります</div>
       </div>
-      <button class="backlink" id="closeHistoryBtn" type="button">‹ 戻る</button>
+      <button class="backlink" id="closeHistoryBtn" type="button">戻る</button>
 
       <div class="section-label"><span class="bar"></span><span class="txt">集計</span></div>
       <div class="hist-stat-grid">
@@ -954,7 +991,7 @@
         <h1 class="display" style="margin-top:8px;">お気に入りのルート</h1>
         <div class="stepsub">登録したルートをそのまま呼び出せます(再生成はされません)</div>
       </div>
-      <button class="backlink" id="closeFavoritesBtn" type="button">‹ 戻る</button>
+      <button class="backlink" id="closeFavoritesBtn" type="button">戻る</button>
 
       <div class="card">
         <h2><span class="dot"></span>登録済みルート</h2>
@@ -974,7 +1011,7 @@
         </div>
         <div class="stepsub" id="dayDetailSub"></div>
       </div>
-      <button class="backlink" id="closeDayDetailBtn" type="button">‹ カレンダーに戻る</button>
+      <button class="backlink" id="closeDayDetailBtn" type="button">カレンダーに戻る</button>
 
       <div class="card">
         <h2><span class="dot"></span>この日の記録</h2>
@@ -995,6 +1032,30 @@
   </div>
 
 </div>
+
+<!-- ボトムナビゲーション -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bottom-nav-tab active" id="navTabRoute" type="button">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <circle cx="4" cy="16" r="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="18" cy="6" r="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <polyline points="4,13.5 9,9 13,12 18,8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <span>ルート作成</span>
+  </button>
+  <button class="bottom-nav-tab" id="navTabHistory" type="button">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <rect x="3" y="4" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.8"/>
+      <line x1="7" y1="2" x2="7" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="15" y1="2" x2="15" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="3" y1="9" x2="19" y2="9" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="7" cy="14" r="1.2" fill="currentColor"/>
+      <circle cx="11" cy="14" r="1.2" fill="currentColor"/>
+      <circle cx="15" cy="14" r="1.2" fill="currentColor"/>
+    </svg>
+    <span>記録</span>
+  </button>
+</nav>
 
 <script>
 let mode = 'loop';
@@ -1122,6 +1183,8 @@ document.getElementById('toResultBtn').addEventListener('click', async () => {
   showScreen('result');
   await generateRoute();
 });
+
+document.getElementById('viewHistoryBtn').addEventListener('click', openHistory);
 
 let lastGenerateTime = 0;
 document.getElementById('regenerateBtn').addEventListener('click', () => {
@@ -2401,15 +2464,42 @@ function openHistory(){
   renderHistory();
   renderCalendar();
   window.scrollTo(0, 0);
+  // ボトムナビ更新
+  document.getElementById('navTabHistory').classList.add('active');
+  document.getElementById('navTabRoute').classList.remove('active');
 }
 
 function closeHistory(){
   document.getElementById('screenHistory').classList.remove('active');
   document.getElementById(screenIdOf(screenBeforeHistory)).classList.add('active');
   window.scrollTo(0, 0);
+  document.getElementById('navTabRoute').classList.add('active');
+  document.getElementById('navTabHistory').classList.remove('active');
 }
 
 document.getElementById('openHistoryBtn').addEventListener('click', openHistory);
+
+// ボトムナビゲーション
+document.getElementById('navTabRoute').addEventListener('click', () => {
+  document.getElementById('navTabRoute').classList.add('active');
+  document.getElementById('navTabHistory').classList.remove('active');
+  // 記録系の画面を閉じてルート作成に戻る
+  const historyScreens = ['screenHistory','screenDayDetail','screenFavorites'];
+  const isHistoryVisible = historyScreens.some(id => document.getElementById(id).classList.contains('active'));
+  if (isHistoryVisible){
+    historyScreens.forEach(id => document.getElementById(id).classList.remove('active'));
+    // 直前にいたルート作成画面を復元
+    const lastRoute = screenBeforeHistory || 'course';
+    document.getElementById(screenIdOf(lastRoute)).classList.add('active');
+    window.scrollTo(0,0);
+  }
+});
+
+document.getElementById('navTabHistory').addEventListener('click', () => {
+  document.getElementById('navTabHistory').classList.add('active');
+  document.getElementById('navTabRoute').classList.remove('active');
+  openHistory();
+});
 document.getElementById('closeHistoryBtn').addEventListener('click', closeHistory);
 
 /* ---- カレンダー表示 ---- */
