@@ -18,624 +18,343 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
 <style>
-  :root{
-    --bg:#edf0f5;
-    --card:#ffffff;
-    --surface-2:#f0f3f8;
-    --ink:#1b2340;
-    --muted:#7788aa;
-    --line:#dde2ec;
-    --accent:#1a55e0;
-    --accent-deep:#1040b0;
-    --accent-ink:#ffffff;
-    --accent-2:#0b9fd4;
-    --glow:rgba(26,85,224,0.14);
-    --moss:#1a55e0;
-    --moss-deep:#1040b0;
-    --warn-bg:#fdece4;
-    --warn-ink:#8a3b1f;
-    --shadow:0 1px 3px rgba(26,85,224,0.06), 0 4px 12px -4px rgba(26,85,224,0.10);
-    --paper:var(--bg);
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:"Noto Sans JP","Hiragino Sans",sans-serif;
-    background:var(--bg);
-    color:var(--ink);
-    transition:background .3s ease, color .3s ease;
-    -webkit-font-smoothing:antialiased;
-  }
-  .display{ font-family:"Noto Sans JP", sans-serif; font-weight:700; letter-spacing:-0.01em; }
-  .mono-label{
-    font-family:"Space Mono", monospace;
-    font-size:11px;
-    letter-spacing:0.16em;
-    text-transform:uppercase;
-    color:var(--accent);
-    font-weight:700;
-  }
-  .stat-num{
-    font-family:"Saira Condensed", sans-serif;
-    font-style:italic;
-    font-weight:800;
-    color:var(--ink);
-  }
-  .section-label{
-    display:flex; align-items:center; gap:8px;
-    margin-bottom:12px;
-  }
-  .section-label .bar{width:3px; height:15px; background:var(--accent); border-radius:1px; flex-shrink:0;}
-  .section-label .txt{font-family:"Noto Sans JP",sans-serif; font-weight:700; font-size:15px; color:var(--ink);}
-  .notch{
-    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
-  }
-  .wrap{max-width:480px;margin:0 auto;padding:0 0 40px;}
 
-  /* ---- 進捗バー(4分割・帯の上の細いライン) ---- */
-  .progress{display:flex; gap:4px; padding:14px 16px 0;}
-  .progress .seg{flex:1; height:4px; background:var(--line); border-radius:99px; overflow:hidden;}
-  .progress .seg .fill{height:100%; width:0; background:var(--accent);}
-  .progress .seg.done .fill{width:100%;}
-  .progress .seg.active .fill{width:100%; background:var(--moss);}
+:root{
+  --bg:#eef2f7; --surface:#ffffff; --surface-2:#f3f7fd;
+  --ink:#112038; --ink-soft:#5d6b84; --line:#dde6f1;
+  --accent:#0b5cff; --accent-ink:#ffffff; --accent-2:#0b9fd4;
+  --glow:rgba(11,92,255,.18);
+  --r:6px; --r-s:4px;
+  --cut:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);
+  --f-jp:'Noto Sans JP',system-ui,sans-serif;
+  --f-num:'Saira Condensed',sans-serif;
+  --f-mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-jp);scrollbar-width:none}
+::-webkit-scrollbar{display:none}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--accent)} a:hover{color:var(--accent-2)}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
 
-  /* ---- ステップ見出し(輪郭をはっきりさせたステッカー風の紙カード) ---- */
-  .stepheader{
-    background:none;
-    color:var(--ink);
-    padding:0;
-    margin:14px 0 22px;
-    border:none;
-    box-shadow:none;
-    position:relative;
-  }
-  .stepheader .stepno-row{
-    display:flex; align-items:flex-end; gap:6px;
-    margin-bottom:12px;
-  }
-  .stepheader .stepno{
-    font-family:"Saira Condensed", sans-serif;
-    font-style:italic;
-    font-weight:800;
-    font-size:56px;
-    color:var(--accent);
-    line-height:1;
-    letter-spacing:-0.01em;
-  }
-  .stepheader .stepno-total{
-    font-family:"Space Mono", monospace;
-    font-size:13px;
-    color:var(--muted);
-    font-weight:700;
-    margin-bottom:8px;
-    letter-spacing:0.04em;
-  }
-  .stepheader .stepno-bars{flex:1; display:flex; gap:5px; align-self:flex-end; margin-bottom:10px;}
-  .stepheader .stepno-bars span{height:3px; flex:1; border-radius:2px; background:var(--line);}
-  .stepheader .stepno-bars span.on{background:var(--accent);}
-  .stepheader h1{
-    font-size:26px;
-    margin:0 0 4px;
-    letter-spacing:-0.01em;
-    color:var(--ink);
-    font-weight:700;
-  }
-  .stepheader .stepsub{
-    font-size:13px;
-    color:var(--muted);
-    margin-top:4px;
-    line-height:1.6;
-    font-weight:400;
-  }
+/* ---------- レイアウト ---------- */
+.app{max-width:430px;min-height:100dvh;margin:0 auto;display:flex;flex-direction:column}
+.appbar{display:flex;align-items:center;gap:9px;padding:14px 22px 6px}
+.appbar .logo{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 32% 28%,var(--accent-2),var(--accent));box-shadow:0 0 14px var(--glow)}
+.appbar .name{font-weight:700;font-size:15px}
+.appbar .name b{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:16px;color:var(--accent)}
+main{flex:1;overflow-y:auto;padding:14px 22px 40px}
+.screen{display:none;animation:fade .4s ease}
+.screen.is-active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-  .content{padding:0 16px;}
+/* ---------- 文字 ---------- */
+.label{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.title{margin:0;font-weight:700;font-size:29px;line-height:1.15;letter-spacing:-.01em}
+.lead{margin:8px 0 0;font-size:13px;line-height:1.6;color:var(--ink-soft)}
+.note{margin:10px 0 0;font-size:12px;line-height:1.6;color:var(--ink-soft)}
+.num{font-family:var(--f-num);font-style:italic;font-weight:800;line-height:.9}
 
-  /* ===== ボトムナビゲーション ===== */
-  .bottom-nav{
-    position:fixed; bottom:0; left:0; right:0; z-index:1000;
-    display:flex;
-    background:var(--card);
-    border-top:1px solid var(--line);
-    padding-bottom:env(safe-area-inset-bottom,0px);
-    box-shadow:0 -2px 12px rgba(26,85,224,0.08);
-  }
-  .bottom-nav-tab{
-    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
-    padding:10px 0 8px;
-    border:none; background:none; cursor:pointer;
-    color:var(--muted); font-size:11px; font-family:"Noto Sans JP",sans-serif;
-    font-weight:500; transition:color .15s;
-  }
-  .bottom-nav-tab.active{ color:var(--accent); }
-  .bottom-nav-tab svg{ transition:color .15s; }
-  .wrap{ padding-bottom:calc(60px + env(safe-area-inset-bottom,0px)); }
+/* ---------- 進捗 ---------- */
+.progress{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.progress .step{display:flex;align-items:baseline;gap:6px;font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--ink-soft)}
+.progress .step .num{font-size:46px;line-height:.8;color:var(--accent)}
+.progress .bars{flex:1;display:flex;gap:5px}
+.progress .bars span{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.progress .bars span.on{background:var(--accent)}
 
-  .backlink{
-    display:inline-flex; align-items:center; gap:10px;
-    border:none; background:var(--card); color:var(--ink);
-    font-family:"Noto Sans JP",sans-serif;
-    font-size:14px; font-weight:500; cursor:pointer;
-    padding:6px 16px 6px 6px;
-    border-radius:999px;
-    box-shadow:var(--shadow);
-    margin-bottom:18px;
-  }
-  .backlink-icon{
-    width:32px; height:32px; border-radius:50%;
-    background:var(--accent); color:#fff;
-    display:inline-flex; align-items:center; justify-content:center;
-    font-size:16px; font-weight:700; flex-shrink:0;
-    line-height:1;
-  }
+/* ---------- セクション見出し ---------- */
+.section{margin-top:26px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.section-head h3{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;font-weight:700}
+.section-head h3::before{content:"";width:13px;height:16px;background:var(--accent);transform:skewX(-20deg)}
 
-  /* ---- ステッパー ---- */
-  .stepper-row{
-    display:flex; align-items:center; gap:12px;
-    margin-bottom:10px;
-  }
-  .stepper-btn{
-    width:48px; height:48px; border-radius:12px;
-    border:1.5px solid var(--line); background:var(--card);
-    font-size:22px; color:var(--ink); cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    flex-shrink:0;
-  }
-  .stepper-value{
-    flex:1; display:flex; align-items:baseline; justify-content:center; gap:4px;
-  }
-  .stepper-input{
-    font-family:"Saira Condensed",sans-serif; font-style:italic; font-weight:800;
-    font-size:42px; color:var(--ink);
-    border:none; background:none; text-align:center; width:90px;
-    -moz-appearance:textfield;
-  }
-  .stepper-input::-webkit-outer-spin-button,
-  .stepper-input::-webkit-inner-spin-button{ -webkit-appearance:none; }
-  .stepper-unit{
-    font-family:"Space Mono",monospace; font-size:14px; color:var(--muted);
-  }
-  .slider-bar{
-    height:3px; background:var(--line); border-radius:2px; margin-bottom:14px;
-  }
-  .slider-fill{
-    height:100%; background:var(--accent); border-radius:2px;
-    transition:width .2s ease;
-  }
-  /* ---- プレビューカード ---- */
-  .preview-card{
-    display:flex; gap:0;
-    background:var(--accent); border-radius:12px;
-    overflow:hidden; margin-bottom:12px;
-  }
-  .preview-item{
-    flex:1; padding:14px 8px; text-align:center;
-  }
-  .preview-item + .preview-item{
-    border-left:1px solid rgba(255,255,255,.2);
-  }
-  .preview-label{
-    font-family:"Space Mono",monospace; font-size:10px; letter-spacing:.06em;
-    color:rgba(255,255,255,.7); margin-bottom:6px;
-  }
-  .preview-value{
-    display:flex; align-items:baseline; justify-content:center; gap:2px;
-  }
-  .preview-value span:first-child{
-    font-family:"Saira Condensed",sans-serif; font-style:italic; font-weight:800;
-    font-size:24px; color:#fff; line-height:1;
-  }
-  .preview-unit{
-    font-family:"Space Mono",monospace; font-size:10px; color:rgba(255,255,255,.7);
-  }
+/* ---------- ボタン ---------- */
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:30px;padding:17px;border:none;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;letter-spacing:.04em;clip-path:var(--cut);box-shadow:0 12px 26px var(--glow)}
+.btn-primary .arrow{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:20px}
+.btn{flex:1;min-height:50px;padding:12px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:15px}
+.btn--accent{border-color:var(--accent);background:transparent;color:var(--accent)}
+.btn-row{display:flex;gap:8px;margin-top:10px}
+.btn-pill{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-weight:700;font-size:13px}
+.btn-back{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 18px 0 7px;margin-bottom:16px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-weight:700;font-size:15px}
+.btn-back::before{content:"‹";width:34px;height:34px;padding-bottom:2px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
 
-  /* ---- カード ---- */
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:16px;
-    padding:16px;
-    margin-bottom:14px;
-    box-shadow:none;
-  }
-  .card h2{
-    font-family:"Noto Sans JP", sans-serif;
-    font-size:15px;
-    margin:0 0 12px;
-    color:var(--ink);
-    font-weight:700;
-    display:flex; align-items:center; gap:8px;
-  }
-  .card h2 .dot{
-    width:14px; height:18px; flex-shrink:0; border:none;
-    background:var(--accent);
-    clip-path:polygon(18% 0%,100% 0%,82% 100%,0% 100%);
-  }
-  label{
-    display:block;
-    font-size:12px;
-    color:#6b6151;
-    margin:10px 0 5px;
-    font-weight:500;
-  }
-  label:first-of-type{margin-top:0;}
-  input[type=text], input[type=number], input[type=password]{
-    width:100%;
-    padding:13px 14px;
-    border:1px solid var(--line);
-    border-radius:11px;
-    font-size:15px;
-    background:var(--surface-2);
-    font-family:inherit;
-    color:var(--ink);
-  }
-  input[type=number]{font-family:"Saira Condensed",sans-serif; font-weight:700; font-size:19px;}
-  input:focus{outline:none; border-color:var(--accent);}
-  .row{display:flex; gap:10px;}
-  .row > div{flex:1;}
-  .toggle-group{display:flex; gap:6px; margin-top:4px; background:var(--surface-2); padding:6px; border-radius:15px;}
-  .toggle-btn{
-    flex:1;
-    padding:12px 6px;
-    text-align:center;
-    border:none;
-    border-radius:10px;
-    font-size:13px;
-    font-weight:700;
-    background:transparent;
-    color:var(--muted);
-    cursor:pointer;
-    user-select:none;
-    transition:background .15s, color .15s;
-  }
-  .toggle-btn.active{
-    background:var(--accent);
-    color:var(--accent-ink);
-    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-    box-shadow:0 6px 16px -4px var(--glow);
-  }
-  .hint{font-size:11.5px; color:var(--muted); margin-top:5px; line-height:1.55;}
-  .mapview-clip{
-    position:relative;
-    width:100%;
-    height:280px;
-    overflow:hidden;
-    border-radius:14px;
-    border:1.5px solid var(--line);
-    box-shadow:var(--shadow);
-    background:var(--surface-2);
-  }
-  .live-badge{
-    position:absolute; left:12px; top:12px; z-index:500;
-    font-family:"Space Mono",monospace;
-    font-size:9px; font-weight:700; letter-spacing:0.06em;
-    color:var(--accent-ink);
-    background:var(--accent);
-    padding:4px 8px;
-    border-radius:6px;
-  }
-  #mapConfirm{
-    width:100%;
-    height:260px;
-    border-radius:14px;
-    border:1.5px solid var(--moss);
-    box-shadow:var(--shadow);
-    margin-top:2px;
-  }
-  #dayDetailMap{
-    width:100%;
-    height:100%;
-  }
-  #map{
-    position:absolute;
-    top:50%; left:50%;
-    width:200%; height:200%;
-    transform:translate(-50%,-50%);
-    transform-origin:center center;
-    transition:transform 0.7s ease-out;
-  }
-  .pointchip{
-    display:inline-block;
-    font-size:11px;
-    font-weight:700;
-    padding:5px 10px;
-    border-radius:99px;
-    background:var(--moss);
-    color:#fff;
-    margin-top:8px;
-    margin-right:6px;
-  }
-  button{font-family:inherit;}
-  button.primary{
-    width:100%;
-    padding:17px;
-    background:var(--accent);
-    color:var(--accent-ink);
-    border:none;
-    border-radius:0;
-    clip-path:polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
-    font-size:16px;
-    font-weight:700;
-    margin-top:8px;
-    cursor:pointer;
-    letter-spacing:0.04em;
-    font-family:"Noto Sans JP", sans-serif;
-    box-shadow:0 8px 20px -4px var(--glow);
-    transition:transform .12s, box-shadow .12s;
-  }
-  button.primary:active{transform:translateY(1px);}
-  button.primary:disabled{background:var(--line); box-shadow:none; cursor:default;}
-  button.secondary{
-    width:100%;
-    padding:11px;
-    background:#fffefc;
-    color:var(--moss-deep);
-    border:1.5px solid var(--moss);
-    border-radius:12px;
-    font-size:12.5px;
-    font-weight:700;
-    margin-top:8px;
-    cursor:pointer;
-  }
-  button.ghost{
-    background:none; border:none; color:var(--muted);
-    font-size:12.5px; cursor:pointer; padding:6px 0; text-decoration:underline;
-  }
-  .results{display:flex; margin-top:4px; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--card);}
-  .result-box{
-    flex:1;
-    background:none;
-    color:var(--ink);
-    border:none;
-    border-right:1px solid var(--line);
-    border-radius:0;
-    padding:16px 8px;
-    text-align:center;
-  }
-  .result-box:last-child{border-right:none;}
-  .result-box .num{font-family:"Saira Condensed",sans-serif; font-style:italic; font-size:30px; line-height:0.95; font-weight:800; color:var(--ink);}
-  .result-box .unit{font-family:"Space Mono",monospace; font-size:10px; letter-spacing:0.08em; color:var(--muted); margin-top:6px; font-weight:700;}
-  .status{
-    font-size:12.5px;
-    line-height:1.6;
-    padding:11px 12px;
-    border-radius:10px;
-    margin-top:12px;
-    white-space:pre-wrap;
-    word-break:break-word;
-  }
-  .status.error{background:var(--warn-bg); color:var(--warn-ink); border:1px solid #f0c4ab;}
-  .status.ok{background:#e9f1ea; color:var(--moss-deep); border:1px solid #cfe0d2;}
-  .status.info{background:#eaf1fc; color:#4a5568; border:1px solid var(--line);}
-  .searchrow{display:flex; gap:8px; margin-top:6px;}
-  .searchrow input{flex:1;}
-  .searchrow button{
-    padding:0 16px;
-    border:1.5px solid var(--moss);
-    background:var(--moss);
-    color:#fff;
-    border-radius:12px;
-    font-size:13px;
-    font-weight:700;
-    cursor:pointer;
-  }
-  .searchrow button:disabled{background:#d8cdab; border-color:#d8cdab;}
-  .resultlist{margin-top:7px;}
-  .resultitem{
-    padding:10px 11px;
-    border:1.5px solid var(--line);
-    border-radius:12px;
-    margin-bottom:6px;
-    font-size:12px;
-    line-height:1.4;
-    background:#fffefc;
-    cursor:pointer;
-    transition:background .12s, border-color .12s;
-  }
-  .resultitem:hover{background:#eaf1fc; border-color:var(--moss);}
-  .resultitem .name{font-weight:700; color:var(--moss-deep); display:block; margin-bottom:2px;}
-  .geoblock{margin-bottom:16px;}
-  .geoblock:last-child{margin-bottom:0;}
-  .geoblock-label{font-size:11.5px; color:var(--muted); margin-bottom:3px; font-weight:700;}
-  .toggle-chip-row{display:flex; gap:8px; margin-top:10px;}
-  .toggle-chip{
-    flex:1;
-    display:flex; align-items:center; justify-content:center; gap:7px;
-    padding:11px;
-    border:1px solid var(--line);
-    border-radius:11px;
-    background:var(--card);
-    cursor:pointer;
-    font-family:"Noto Sans JP",sans-serif;
-    font-weight:600;
-    font-size:12px;
-    color:var(--ink);
-  }
-  .chip-check{
-    width:14px; height:14px;
-    border:1.5px solid var(--line);
-    border-radius:3px;
-    flex-shrink:0;
-  }
-  .chip-check.on{background:var(--accent); border-color:var(--accent);}
-  .livebar{display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap;}
-  .livebar button{
-    flex:1;
-    padding:11px;
-    border:1.5px solid var(--moss);
-    background:#fffefc;
-    color:var(--moss-deep);
-    border-radius:12px;
-    font-size:12.5px;
-    font-weight:700;
-    cursor:pointer;
-  }
-  .livebar button.tracking{background:var(--moss); color:#fff; border-color:var(--moss);}
-  .followlabel{font-size:11.5px; color:#6b6151; display:flex; align-items:center; gap:5px; white-space:nowrap; font-weight:500;}
-  .route-arrow-icon{display:flex; align-items:center; justify-content:center;}
-  .route-arrow{
-    color:#fff;
-    background:var(--accent);
-    width:18px; height:18px;
-    border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size:11px;
-    box-shadow:0 0 0 2px rgba(255,255,255,0.85);
-  }
-  .resultactions{display:flex; gap:8px; margin-top:10px;}
-  .resultactions button{flex:1; margin-top:0;}
-  .testnote{
-    font-size:11px;
-    color:var(--muted);
-    border-top:1px dashed var(--line);
-    margin-top:14px;
-    padding-top:10px;
-    line-height:1.6;
-  }
-  .result-header-row{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:13px 16px;
-    border-bottom:1px solid var(--line);
-  }
-  .mono-eta{font-family:"Space Mono",monospace; font-size:11px; color:var(--accent); font-weight:700;}
-  .hist-stat-grid{
-    display:grid; grid-template-columns:1fr 1fr; gap:10px;
-    margin-bottom:18px;
-  }
-  .hist-stat-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:15px;
-  }
-  .hist-stat-card.invert{background:var(--ink); border-color:var(--ink);}
-  .hist-stat-card.invert .mono-label{color:var(--accent-2);}
-  .hist-stat-card.invert .hist-stat-main .num{color:var(--bg);}
-  .hist-stat-card.invert .hist-stat-main .u{color:var(--accent-2);}
-  .hist-stat-card.invert .hist-stat-sub{color:var(--muted);}
-  .hist-stat-main{display:flex; align-items:baseline; gap:3px; margin-top:6px;}
-  .hist-stat-main .num{font-family:"Saira Condensed",sans-serif; font-style:italic; font-weight:800; font-size:30px; line-height:0.9; color:var(--ink);}
-  .hist-stat-main .u{font-family:"Space Mono",monospace; font-size:11px; color:var(--muted);}
-  .hist-stat-sub{font-family:"Noto Sans JP",sans-serif; font-size:11px; color:var(--muted); margin-top:4px;}
-  .hist-row{
-    display:flex; align-items:center; justify-content:space-between;
-    width:100%; box-sizing:border-box;
-    padding:14px 16px;
-    border:1px solid var(--line);
-    border-radius:14px;
-    background:var(--card);
-    cursor:pointer;
-    text-align:left;
-    margin-bottom:8px;
-    font-family:inherit;
-  }
-  .hist-row-date{font-family:"Noto Sans JP",sans-serif; font-weight:700; font-size:14px; color:var(--ink);}
-  .hist-row-date .wday{font-size:11px; color:var(--muted); margin-left:5px; font-weight:400;}
-  .hist-row-sub{font-family:"Space Mono",monospace; font-size:11px; color:var(--muted); margin-top:3px;}
-  .hist-row-km{display:flex; align-items:baseline; gap:3px;}
-  .hist-row-km .num{font-family:"Saira Condensed",sans-serif; font-style:italic; font-weight:800; font-size:24px; line-height:1; color:var(--ink);}
-  .hist-row-km .u{font-family:"Space Mono",monospace; font-size:10px; color:var(--muted);}
-  .hist-row-km .chev{color:var(--accent); font-size:16px; margin-left:6px;}
-  .hist-group-header{
-    font-size:12px;
-    font-weight:700;
-    color:var(--moss-deep);
-    margin:14px 0 6px;
-    padding-bottom:4px;
-    border-bottom:1.5px solid var(--line);
-  }
-  .hist-group-header:first-child{margin-top:0;}
-  .cal-weekday-row{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    text-align:center;
-    font-family:"Space Mono",monospace;
-    font-size:10px;
-    color:var(--muted);
-    font-weight:700;
-    margin-bottom:8px;
-  }
-  .cal-grid{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    row-gap:8px;
-  }
-  .cal-cell{
-    display:flex;
-    justify-content:center;
-    cursor:default;
-  }
-  .cal-cell.empty{visibility:hidden;}
-  .cal-cell.has-record{cursor:pointer;}
-  .cal-ring{
-    width:36px; height:36px;
-    border-radius:9px;
-    display:flex; align-items:center; justify-content:center;
-    position:relative;
-    background:none;
-  }
-  .cal-ring-inner{
-    width:auto; height:auto;
-    border-radius:0;
-    background:none;
-    display:flex; align-items:center; justify-content:center;
-    font-family:"Saira Condensed",sans-serif;
-    font-weight:700;
-    font-size:14px;
-    color:var(--ink);
-    position:relative;
-  }
-  .cal-day-dot{
-    position:absolute; bottom:4px; width:5px; height:5px; border-radius:50%; background:var(--accent);
-  }
-  .cal-cell.today .cal-ring{box-shadow: inset 0 0 0 1.5px var(--accent); border-radius:9px;}
-  .entry-btn-row{display:flex; gap:10px; margin:16px 16px 0;}
-  .history-entry-btn{
-    flex:1;
-    width:auto;
-    margin:0;
-    padding:13px 16px;
-    background:var(--card);
-    border:1.5px solid var(--accent);
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    font-size:13.5px;
-    font-weight:700;
-    color:var(--accent-deep);
-    cursor:pointer;
-    box-shadow:var(--shadow);
-  }
-  .history-entry-btn .arrow{font-size:16px; font-weight:700;}
-  .appbar{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 16px 0;
-  }
-  .appbar-brand{display:flex; align-items:center; gap:9px;}
-  .appbar-dot{
-    width:22px; height:22px; border-radius:50%;
-    background:radial-gradient(circle at 32% 28%, var(--accent-2), var(--accent));
-    box-shadow:0 0 12px var(--glow);
-    flex-shrink:0;
-  }
-  .appbar-title{font-family:"Noto Sans JP",sans-serif; font-weight:700; font-size:15px; color:var(--ink);}
-  .accent-italic{font-family:"Saira Condensed",sans-serif; font-style:italic; font-weight:800; color:var(--accent);}
-  .theme-toggle{
-    display:flex; align-items:center; gap:6px;
-    padding:7px 12px;
-    border:1px solid var(--line);
-    border-radius:999px;
-    background:var(--card);
-    color:var(--ink);
-    cursor:pointer;
-    font-family:"Space Mono",monospace;
-    font-size:10.5px;
-    font-weight:700;
-    letter-spacing:0.07em;
-  }
-  .screen{display:none;}
-  .screen.active{display:block; animation: fadeUp .3s ease;}
-  @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+/* ---------- 2択 ---------- */
+.segment{display:flex;gap:6px;padding:6px;border-radius:var(--r);background:var(--surface-2)}
+.segment button{flex:1;padding:13px 8px;border:none;background:transparent;font-weight:700;font-size:13px;color:var(--ink-soft)}
+.segment button.is-on{background:var(--accent);color:var(--accent-ink);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);box-shadow:0 6px 16px var(--glow)}
+
+/* ---------- カード・入力 ---------- */
+.card{padding:16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.card + .card{margin-top:10px}
+.card .tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.input{width:100%;margin-top:10px;padding:13px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);color:var(--ink);font:15px var(--f-jp);outline:none}
+.input:focus{border-color:var(--accent)}
+
+/* ---------- 地図（仮置き） ---------- */
+.map{position:relative;height:190px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background-color:var(--surface-2);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
+.map--lg{height:270px}
+.map--md{height:200px}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+.badge-live{position:absolute;left:12px;top:12px;padding:4px 8px;border-radius:var(--r-s);background:var(--accent);color:var(--accent-ink);font:700 9px var(--f-mono);letter-spacing:.06em}
+.route-draw{stroke-dasharray:640;stroke-dashoffset:640;animation:draw 2s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.55}70%{transform:scale(2.6);opacity:0}100%{opacity:0}}
+
+/* ---------- コース確認 ---------- */
+.course{display:flex;align-items:center;gap:12px;margin-top:22px;padding:12px 12px 12px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.course .ico{flex:none;width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center}
+.course .txt{flex:1;min-width:0}
+.course .txt small{display:block;font:11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.course .txt strong{display:block;margin-top:2px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.course .btn-pill{height:42px;background:transparent;color:var(--accent);font-size:14px}
+
+/* ---------- 数値ステッパー ---------- */
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper--boxed{padding:10px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.stepper button{flex:none;width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;line-height:1}
+.stepper .value{flex:1;min-width:0;display:flex;align-items:baseline;justify-content:center;gap:4px}
+.stepper .value span{font-weight:700;font-size:18px;color:var(--ink-soft)}
+.stepper input{display:block;width:140px;height:84px;min-width:0;margin:0;padding:0;border:none;border-bottom:2px dashed var(--line);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:80px;line-height:84px;color:var(--accent)}
+.stepper--boxed input{width:96px;height:48px;font-size:40px;line-height:48px;color:var(--ink)}
+.stepper--boxed .value span{font-size:14px}
+
+/* ---------- 予想の帯 ---------- */
+.estimate{display:flex;margin-top:14px;padding:16px 4px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);box-shadow:0 12px 26px var(--glow)}
+.estimate div{flex:1;text-align:center}
+.estimate small{display:block;font-size:11px;font-weight:700}
+.estimate .num{display:block;margin-top:5px;font-size:30px;line-height:1}
+.estimate .num i{font-style:normal;font-size:13px;margin-left:2px}
+
+/* ---------- 結果 ---------- */
+.stats{display:flex;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.stats > div{flex:1;padding:18px 14px;text-align:center}
+.stats > div + div{border-left:1px solid var(--line)}
+.stats .num{font-size:44px;color:var(--accent)}
+.stats small{display:block;margin-top:6px;font:10px var(--f-mono);letter-spacing:.1em;color:var(--ink-soft)}
+.result-head{display:flex;justify-content:space-between;padding:13px 16px;border:1px solid var(--line);border-bottom:none;border-radius:var(--r) var(--r) 0 0;background:var(--surface);font:10px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.result-head + .stats{border-radius:0 0 var(--r) var(--r)}
+.result-head b{color:var(--accent);font-weight:400}
+.goal{margin-top:18px;padding:16px;background:var(--accent);color:var(--accent-ink);clip-path:polygon(13px 0,100% 0,100% calc(100% - 13px),calc(100% - 13px) 100%,0 100%,0 13px)}
+.goal strong{display:block;font:italic 800 22px var(--f-num)}
+.goal span{font-size:12px}
+
+/* ---------- 記録 ---------- */
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.summary .card{margin:0;padding:15px}
+.summary .num{font-size:32px}
+.summary .unit{font:11px var(--f-mono);color:var(--ink-soft);margin-left:3px}
+.summary .sub{margin-top:4px;font-size:11px;color:var(--ink-soft)}
+.summary .card--invert{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.summary .card--invert .tag,.summary .card--invert .unit{color:var(--accent)}
+.summary .card--invert .sub{color:#c9d4e8}
+.month{display:flex;align-items:center;gap:8px}
+.month button{width:44px;height:44px;border:1.5px solid var(--line);border-radius:50%;background:var(--surface);font-size:22px;line-height:1}
+.month .num{font-size:18px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.calendar .wd{text-align:center;font:10px var(--f-mono);color:var(--ink-soft);margin-bottom:2px}
+.calendar .sun{color:#d93a55} .calendar .sat{color:#1f6fe5}
+.calendar .d{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:var(--r);font:700 14px var(--f-num)}
+.calendar .d.walked::after{content:"";position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.calendar .d.today{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.records{display:flex;flex-direction:column;gap:8px}
+.record{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);text-align:left}
+.record .meta{flex:1;min-width:0}
+.record .date{font-weight:700;font-size:14px}
+.record .date small{margin-left:5px;font-size:11px;color:var(--ink-soft)}
+.record .sub{margin-top:3px;font:11px var(--f-mono);color:var(--ink-soft);white-space:nowrap}
+.record .km{display:flex;align-items:baseline;gap:3px}
+.record .km .num{font-size:26px;line-height:1}
+.record .km small{font:10px var(--f-mono);color:var(--ink-soft)}
+.record .km::after{content:"›";margin-left:8px;color:var(--accent);font-size:16px}
+
+/* ---------- タブバー ---------- */
+.tabbar{position:sticky;bottom:0;display:flex;gap:8px;padding:8px 14px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--surface)}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;padding:7px 0;border:none;border-radius:14px;background:transparent;color:var(--ink-soft);font-weight:700;font-size:12px}
+.tabbar button svg{stroke:currentColor}
+.tabbar button.is-on{background:var(--surface-2);color:var(--accent)}
+
+
+/* ===== アプリ固有スタイル ===== */
+/* 互換変数 */
+:root{
+  --card:var(--surface); --muted:var(--ink-soft);
+  --accent-deep:#0040cc; --accent-2:#0b9fd4;
+  --shadow:0 2px 8px rgba(11,92,255,.08);
+  --f-jp:'Noto Sans JP',system-ui,sans-serif;
+  --f-num:'Saira Condensed',sans-serif;
+  --f-mono:'Space Mono',monospace;
+}
+/* appbar */
+.appbar-brand{display:flex;align-items:center;gap:9px}
+.appbar-dot{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 32% 28%,var(--accent-2),var(--accent));box-shadow:0 0 14px var(--glow);flex-shrink:0}
+.appbar-title{font-weight:700;font-size:15px}
+.accent-italic{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:16px;color:var(--accent)}
+/* wrap/content */
+.wrap{max-width:430px;min-height:100dvh;margin:0 auto;display:flex;flex-direction:column;padding-bottom:calc(70px + env(safe-area-inset-bottom,0px))}
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px 6px}
+main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
+.screen{display:none}
+.screen.active{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.content{padding:0}
+/* ステッパー互換 */
+.num-stepper,.time-stepper{display:flex;align-items:center;gap:10px;padding:10px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:10px}
+.num-stepper button,.time-stepper button{flex:none;width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;line-height:1}
+/* step2の大きい入力 */
+#timeMin{display:block;width:140px;height:84px;min-width:0;margin:0;padding:0;border:none;border-bottom:2px dashed var(--line);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:80px;line-height:84px;color:var(--accent)}
+#weightKg{display:block;width:96px;height:48px;min-width:0;border:none;border-bottom:2px dashed var(--line);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:40px;line-height:48px;color:var(--ink)}
+/* 地図クリップ */
+.mapview-clip{position:relative;width:100%;height:270px;overflow:hidden;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
+#mapConfirm{width:100%;height:190px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);margin-top:2px;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
+#map{position:absolute;top:50%;left:50%;width:200%;height:200%;transform:translate(-50%,-50%);transform-origin:center center;transition:transform .7s ease-out}
+#dayDetailMap{width:100%;height:100%}
+.live-badge{position:absolute;left:12px;top:12px;z-index:500;font-family:var(--f-mono);font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--accent-ink);background:var(--accent);padding:4px 8px;border-radius:var(--r-s)}
+/* 結果数字 */
+.result-num{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:44px;line-height:.9;color:var(--accent)}
+.result-unit{font:10px var(--f-mono);letter-spacing:.1em;color:var(--ink-soft);display:block;margin-top:6px}
+/* ステータス */
+.status{padding:12px 14px;border-radius:var(--r);font-size:13px;margin:10px 0}
+.status.info{background:var(--surface-2);color:var(--ink-soft)}
+.status.error{background:#fde8e8;color:#c0392b}
+.status.ok{background:#e8f5e9;color:#2e7d32}
+.status:empty{display:none}
+/* 検索結果 */
+.resultitem{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px}
+.resultitem:last-child{border-bottom:none}
+.resultitem:hover{background:var(--surface-2)}
+.resultitem .name{font-weight:700;display:block;margin-bottom:2px}
+#searchResultsLoop,#searchResultsStart,#searchResultsGoal{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:8px}
+/* ポイントチップ */
+.pointchip{display:inline-block;font-size:11px;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);margin:3px}
+/* チップチェック */
+.toggle-chip{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;font-family:var(--f-jp);font-weight:600;font-size:12px;color:var(--ink)}
+.toggle-chip-row{display:flex;gap:8px;margin-top:10px}
+.chip-check{width:14px;height:14px;border:1.5px solid var(--line);border-radius:3px;flex-shrink:0}
+.chip-check.on{background:var(--accent);border-color:var(--accent)}
+/* ルート矢印 */
+.route-arrow{font-size:14px;color:var(--accent);font-weight:700;transform-origin:center}
+.route-arrow-icon{background:none!important;border:none!important}
+/* カレンダー */
+.cal-weekday-row,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-weekday-row{font:10px var(--f-mono);color:var(--ink-soft);margin-bottom:2px;text-align:center}
+.cal-cell{cursor:pointer}
+.cal-ring{width:36px;height:36px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;position:relative;margin:auto}
+.cal-ring-inner{font-family:var(--f-num);font-weight:700;font-size:14px;color:var(--ink);position:relative}
+.cal-day-dot{position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.cal-cell.today .cal-ring{box-shadow:inset 0 0 0 1.5px var(--accent);border-radius:var(--r)}
+/* 歩行記録行 */
+.hist-row{display:flex;align-items:center;justify-content:space-between;width:100%;box-sizing:border-box;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;text-align:left;margin-bottom:8px;font-family:inherit}
+.hist-row-date{font-family:var(--f-jp);font-weight:700;font-size:14px;color:var(--ink)}
+.hist-row-date .wday{font-size:11px;color:var(--ink-soft);margin-left:5px;font-weight:400}
+.hist-row-sub{font-family:var(--f-mono);font-size:11px;color:var(--ink-soft);margin-top:3px}
+.hist-row-km{display:flex;align-items:baseline;gap:3px}
+.hist-row-km .num{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:24px;line-height:1;color:var(--ink)}
+.hist-row-km .u{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft)}
+.hist-row-km .chev{color:var(--accent);font-size:16px;margin-left:6px}
+/* 集計グリッド */
+.hist-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.hist-stat-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px}
+.hist-stat-card.invert{background:var(--ink);border-color:var(--ink)}
+.hist-stat-card.invert .mono-label{color:var(--accent-2)}
+.hist-stat-card.invert .hist-stat-main .num{color:var(--bg)}
+.hist-stat-card.invert .hist-stat-main .u{color:var(--accent-2)}
+.hist-stat-card.invert .hist-stat-sub{color:#c9d4e8}
+.hist-stat-main{display:flex;align-items:baseline;gap:3px;margin-top:6px}
+.hist-stat-main .num{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:30px;line-height:.9;color:var(--ink)}
+.hist-stat-main .u{font-family:var(--f-mono);font-size:11px;color:var(--ink-soft)}
+.hist-stat-sub{font-family:var(--f-jp);font-size:11px;color:var(--ink-soft);margin-top:4px}
+.mono-label{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+/* ボトムナビ */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:1000;display:flex;gap:8px;padding:8px 14px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface);box-shadow:0 -2px 12px rgba(11,92,255,.06)}
+.bottom-nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;padding:7px 0;border:none;border-radius:14px;background:transparent;color:var(--ink-soft);font-weight:700;font-size:12px;font-family:var(--f-jp);cursor:pointer}
+.bottom-nav-tab svg{stroke:currentColor}
+.bottom-nav-tab.active{background:var(--surface-2);color:var(--accent)}
+/* ゴールオーバーレイ */
+#goalOverlay{flex-direction:column;align-items:center;justify-content:center;font-family:var(--f-jp)}
+/* スプラッシュ */
+#splashOverlay{transition:opacity .6s ease}
+/* エントリーボタン(非表示) */
+.entry-btn-row{display:none}
+/* hint */
+.hint{font-size:12px;color:var(--ink-soft);line-height:1.6;margin-top:8px}
+/* stat-num */
+.stat-num{font-family:var(--f-num);font-style:italic;font-weight:800;color:var(--accent)}
+/* 互換 */
+.display{font-family:var(--f-jp);font-weight:700;letter-spacing:-.01em}
+.stepsub,.lead{margin:8px 0 0;font-size:13px;line-height:1.6;color:var(--ink-soft)}
+.note{margin:10px 0 0;font-size:12px;line-height:1.6;color:var(--ink-soft)}
+/* 検索ボタン行 */
+.btn-row-search{display:flex;gap:8px;margin-top:10px}
+.btn-row-search button{flex:1;min-height:50px;padding:12px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer}
+.btn-row-search button.accent{border-color:var(--accent);color:var(--accent);background:transparent}
+/* backlink - デザイン準拠 */
+.backlink{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 18px 0 7px;margin-bottom:16px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-weight:700;font-size:15px;color:var(--ink);cursor:pointer}
+.backlink::before{content:"‹";width:34px;height:34px;padding-bottom:2px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
+/* secondary */
+button.secondary{flex:1;min-height:50px;padding:12px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--f-jp)}
+.resultactions{display:flex;gap:8px;margin-top:10px}
+.resultactions button{flex:1}
+/* course summary card */
+.course-summary{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 12px 12px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.course-summary .ico{flex:none;width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center}
+.course-summary .txt{flex:1;min-width:0}
+.course-summary .txt small{display:block;font:11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.course-summary .txt strong{display:block;margin-top:2px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* prediction bar */
+.prediction-bar{display:flex;margin-top:14px;padding:16px 4px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);box-shadow:0 12px 26px var(--glow)}
+.prediction-bar > div{flex:1;text-align:center}
+.prediction-bar small{display:block;font-size:11px;font-weight:700}
+.prediction-bar .num{display:block;margin-top:5px;font-size:30px;line-height:1;font-family:var(--f-num);font-style:italic;font-weight:800}
+.prediction-bar .num i{font-style:normal;font-size:13px;margin-left:2px}
+/* result stats */
+.result-stats{display:flex;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.result-stats > div{flex:1;padding:18px 14px;text-align:center}
+.result-stats > div + div{border-left:1px solid var(--line)}
+.result-stats .num{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:44px;line-height:.9;color:var(--accent)}
+.result-stats small{display:block;margin-top:6px;font:10px var(--f-mono);letter-spacing:.1em;color:var(--ink-soft)}
+.result-head-bar{display:flex;justify-content:space-between;padding:13px 16px;border:1px solid var(--line);border-bottom:none;border-radius:var(--r) var(--r) 0 0;background:var(--surface);font:10px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.result-head-bar + .result-stats{border-radius:0 0 var(--r) var(--r)}
+.result-head-bar b{color:var(--accent);font-weight:400}
+/* goal banner */
+#goalBanner{margin-top:14px;padding:16px;background:var(--accent);color:var(--accent-ink);clip-path:polygon(13px 0,100% 0,100% calc(100% - 13px),calc(100% - 13px) 100%,0 100%,0 13px)}
+/* section互換 */
+.section{margin-top:22px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.section-head h3,.card h2{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;font-weight:700;font-family:var(--f-jp)}
+.section-head h3::before,.card h2::before{content:"";width:13px;height:16px;background:var(--accent);transform:skewX(-20deg);flex-shrink:0;display:inline-block}
+.card h2 .dot{display:none}
+/* inputs */
+input[type=text],input[type=search]{width:100%;margin-top:10px;padding:13px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);color:var(--ink);font:15px var(--f-jp);outline:none}
+input[type=text]:focus,input[type=search]:focus{border-color:var(--accent)}
+label{display:block;font-size:12px;color:var(--ink-soft);margin:10px 0 5px}
+input[type=number]{width:100%;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);color:var(--ink);font:15px var(--f-jp);outline:none;text-align:center}
+/* segment */
+.mode-selector{display:flex;gap:6px;padding:6px;border-radius:var(--r);background:var(--surface-2)}
+.mode-selector button{flex:1;padding:13px 8px;border:none;background:transparent;font-weight:700;font-size:13px;color:var(--ink-soft);border-radius:2px;cursor:pointer}
+.mode-selector button.active{background:var(--accent);color:var(--accent-ink);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);box-shadow:0 6px 16px var(--glow)}
+/* 進捗 */
+.stepheader{margin-bottom:18px}
+.stepheader .stepno-row{display:flex;align-items:flex-end;gap:6px;margin-bottom:10px}
+.stepheader .stepno{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:46px;line-height:.8;color:var(--accent)}
+.stepheader .stepno-total{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom:8px}
+.stepheader .stepno-bars{flex:1;display:flex;gap:5px;align-self:flex-end;margin-bottom:10px}
+.stepheader .stepno-bars span{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.stepheader .stepno-bars span.on{background:var(--accent)}
+.stepheader h1{font-size:29px;margin:0 0 4px;letter-spacing:-.01em;color:var(--ink);font-weight:700}
+/* primary button */
+button.primary{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:24px;padding:17px;border:none;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;letter-spacing:.04em;clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);box-shadow:0 12px 26px var(--glow);cursor:pointer;font-family:var(--f-jp)}
+button.primary:active{transform:scale(.98)}
+button.primary.tracking{background:#1a7a3f}
+/* ghost */
+button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-weight:700;font-size:13px;color:var(--ink);padding:8px 14px;cursor:pointer;font-family:var(--f-jp)}
+/* お気に入りリスト */
+.fav-list .hist-row{border-radius:var(--r)}
+/* 日付詳細 */
+.day-detail-title{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:42px;color:var(--ink);line-height:1}
+
 </style>
 </head>
 <body>
@@ -769,9 +488,9 @@
 
       <div class="card">
         <h2><span class="dot"></span>コースの種類</h2>
-        <div class="toggle-group">
-          <div class="toggle-btn active" id="modeLoop">往復(発着同じ)</div>
-          <div class="toggle-btn" id="modeTwoPoint">2点指定</div>
+        <div class="mode-selector">
+          <div class="mode-selector button active" id="modeLoop" style="cursor:pointer">往復（発着同じ）</div>
+          <div class="mode-selector button" id="modeTwoPoint" style="cursor:pointer">2点指定</div>
         </div>
         <div class="hint" id="modeHint">スタート地点(=ゴール地点)を検索するか、現在地を使ってください。</div>
       </div>
@@ -780,30 +499,30 @@
         <h2><span class="dot"></span>地点を決める</h2>
 
         <div id="geoLoopBlock" class="geoblock">
-          <div class="geoblock-label">スタート/ゴール(同じ場所)</div>
-          <div class="searchrow">
-            <input type="text" id="geoLoopInput" placeholder="例: 〇〇大学、〇〇駅">
+          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">スタート/ゴール(同じ場所)</div>
+          <div class="btn-row" style="margin-top:10px">
+            <input type="text" id="geoLoopInput" class="input" style="margin-top:10px" placeholder="例: 〇〇大学、〇〇駅">
             <button id="geoLoopBtn" type="button">検索</button>
           </div>
           <button class="secondary" id="useCurrentLocLoop" type="button">現在地を使用</button>
-          <div class="resultlist" id="geoLoopResults"></div>
+          <div id="searchResultsLoop"></div>
         </div>
 
         <div id="geoTwoBlock" class="geoblock" style="display:none;">
-          <div class="geoblock-label">スタート地点</div>
-          <div class="searchrow">
-            <input type="text" id="geoStartInput" placeholder="例: 〇〇大学">
+          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">スタート地点</div>
+          <div class="btn-row" style="margin-top:10px">
+            <input type="text" id="geoStartInput" class="input" style="margin-top:10px" placeholder="例: 〇〇大学">
             <button id="geoStartBtn" type="button">検索</button>
           </div>
           <button class="secondary" id="useCurrentLocStart" type="button">現在地を使用</button>
-          <div class="resultlist" id="geoStartResults"></div>
+          <div id="searchResultsStart"></div>
 
-          <div class="geoblock-label" style="margin-top:12px;">ゴール地点</div>
-          <div class="searchrow">
-            <input type="text" id="geoGoalInput" placeholder="例: 〇〇公園">
+          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)" style="margin-top:12px;">ゴール地点</div>
+          <div class="btn-row" style="margin-top:10px">
+            <input type="text" id="geoGoalInput" class="input" style="margin-top:10px" placeholder="例: 〇〇公園">
             <button id="geoGoalBtn" type="button">検索</button>
           </div>
-          <div class="resultlist" id="geoGoalResults"></div>
+          <div id="searchResultsGoal"></div>
         </div>
       </div>
 
@@ -837,62 +556,49 @@
       <button class="backlink" id="toCourseBackBtn" type="button"><span class="backlink-icon">‹</span>地点設定に戻る</button>
 
       <!-- 現在の地点サマリー -->
-      <div class="card" id="locationSummaryCard" style="display:none;">
+      <div class="course-summary" id="locationSummaryCard" style="display:none;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="flex-shrink:0;">
-            <circle cx="6" cy="20" r="3" stroke="var(--accent)" stroke-width="2"/>
-            <circle cx="22" cy="8" r="3" stroke="var(--ink)" stroke-width="2"/>
-            <polyline points="6,17 10,12 16,16 22,11" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          </svg>
-          <div style="flex:1; min-width:0;">
-            <div style="font-size:10px; color:var(--muted); font-family:'Space Mono',monospace; letter-spacing:.06em; margin-bottom:2px;" id="locationSummaryLabel">往復コース</div>
-            <div style="font-size:14px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="locationSummaryText">-</div>
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,19 8,12 6,7 13,5 16,10 20,4"/></svg></div>
+          <div class="txt">
+            <div class="tag" id="locationSummaryLabel">往復コース</div>
+            <div id="locationSummaryText" style="display:block;margin-top:2px;font-size:15px;font-weight:700">-</div>
           </div>
           <button type="button" class="secondary" id="changeLocationBtn" style="white-space:nowrap; padding:7px 14px; font-size:12px;">変更</button>
         </div>
       </div>
 
       <!-- どのくらい歩く？ -->
-      <div class="card">
-        <h2><span class="dot"></span>どのくらい歩く？</h2>
-        <div class="stepper-row">
-          <button class="stepper-btn" id="timeMinusBtn" type="button">−</button>
-          <div class="stepper-value">
-            <input type="number" id="timeMin" value="20" min="5" max="180" class="stepper-input">
-            <span class="stepper-unit">分</span>
+      <div class="section">
+        <div class="section-head"><h3>どのくらい歩く？</h3></div>
+        <div class="stepper">
+          <button class="stepper-btn" style="width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;cursor:pointer" id="timeMinusBtn" type="button">−</button>
+          <div class="value">
+            <input type="number" id="timeMin" value="20" min="5" max="180" >
+            <span class="unit">分</span>
           </div>
-          <button class="stepper-btn" id="timePlusBtn" type="button">＋</button>
+          <button class="stepper-btn" style="width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;cursor:pointer" id="timePlusBtn" type="button">＋</button>
         </div>
-        <div class="slider-bar"><div class="slider-fill" id="timeSliderFill" style="width:10%;"></div></div>
+        
 
         <!-- 予想値プレビューカード -->
-        <div class="preview-card">
-          <div class="preview-item">
-            <div class="preview-label">予想距離</div>
-            <div class="preview-value"><span id="previewDistance">--</span><span class="preview-unit">km</span></div>
-          </div>
-          <div class="preview-item">
-            <div class="preview-label">予想歩数</div>
-            <div class="preview-value"><span id="previewSteps">--</span><span class="preview-unit">歩</span></div>
-          </div>
-          <div class="preview-item">
-            <div class="preview-label">消費カロリー</div>
-            <div class="preview-value"><span id="previewCalorie">--</span><span class="preview-unit">kcal</span></div>
-          </div>
+        <div class="estimate">
+          <div><small>予想距離</small><span class="num"><span id="previewDistance">--</span><i>km</i></span></div>
+          <div><small>予想歩数</small><span class="num"><span id="previewSteps">--</span><i>歩</i></span></div>
+          <div><small>消費カロリー</small><span class="num"><span id="previewCalorie">--</span><i>kcal</i></span></div>
         </div>
         <div class="hint">「−」「＋」で5分ずつ調整できます。数字の欄をタップすれば直接入力もできます。距離などは時速4.8kmで計算した目安です。</div>
       </div>
 
       <!-- 体重(任意) -->
-      <div class="card">
-        <h2><span class="dot"></span>体重<span style="font-size:11px; color:var(--muted); font-weight:400; margin-left:4px;">(任意)</span></h2>
-        <div class="stepper-row">
-          <button class="stepper-btn" id="weightMinusBtn" type="button">−</button>
-          <div class="stepper-value">
-            <input type="number" id="weightKg" value="60" min="30" max="150" class="stepper-input">
-            <span class="stepper-unit">kg</span>
+      <div class="section">
+        <div class="section-head"><h3>体重（任意）</h3></div>
+        <div class="stepper stepper--boxed">
+          <button class="stepper-btn" style="width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;cursor:pointer" id="weightMinusBtn" type="button">−</button>
+          <div class="value">
+            <input type="number" id="weightKg" value="60" min="30" max="150" >
+            <span class="unit">kg</span>
           </div>
-          <button class="stepper-btn" id="weightPlusBtn" type="button">＋</button>
+          <button class="stepper-btn" style="width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;cursor:pointer" id="weightPlusBtn" type="button">＋</button>
         </div>
         <div class="hint">数字の欄をタップして入力できます。カロリー計算にだけ使い、未入力の場合は60kgで計算します。</div>
       </div>
@@ -950,32 +656,21 @@
 
       <div id="statusBox" class="status info">ここに結果やエラーメッセージが表示されます。</div>
 
-      <div class="card" id="resultCard" style="display:none; padding:0; overflow:hidden;">
-        <div class="result-header-row">
-          <span class="mono-label">RESULT</span>
-          <span class="mono-eta">ETA <span id="finishTime">-</span></span>
+      <div id="resultCard" style="display:none; margin-top:22px;">
+        <div class="result-head-bar">
+          <span>RESULT</span>
+          <b>ETA <span id="finishTime">-</span></b>
         </div>
-        <div style="padding:16px;">
-          <div class="results">
-            <div class="result-box">
-              <div class="num" id="resDistance">-</div>
-              <div class="unit">KM</div>
-            </div>
-            <div class="result-box">
-              <div class="num" id="resCalorie">-</div>
-              <div class="unit">KCAL</div>
-            </div>
-            <div class="result-box">
-              <div class="num" id="resSteps">-</div>
-              <div class="unit">歩</div>
-            </div>
-          </div>
-          <div class="hint" id="timeCompare"></div>
-          <div class="hint" id="weatherInfo"></div>
-          <div class="resultactions">
-            <button class="secondary" id="regenerateBtn" type="button">↺ 再生成</button>
-            <button class="secondary" id="viewHistoryBtn" type="button">記録を見る ›</button>
-          </div>
+        <div class="result-stats">
+          <div><span class="num" id="resDistance">-</span><small>KM</small></div>
+          <div><span class="num" id="resCalorie">-</span><small>KCAL</small></div>
+          <div><span class="num" id="resSteps">-</span><small>歩</small></div>
+        </div>
+        <div class="hint" id="timeCompare" style="margin-top:8px"></div>
+        <div class="hint" id="weatherInfo"></div>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn" id="regenerateBtn" type="button">↺ 再生成</button>
+          <button class="btn" id="viewHistoryBtn" type="button">記録を見る ›</button>
         </div>
       </div>
     </div>
@@ -984,52 +679,63 @@
   <!-- ============ SCREEN: 歩行記録 ============ -->
   <div class="screen" id="screenHistory">
     <div class="content">
-      <div class="stepheader">
-        <span class="mono-label">HISTORY</span>
-        <h1 class="display" style="margin-top:8px;">これまでの記録</h1>
-        <div class="stepsub">ゴールするたびに、自動でその日の記録が積み重なります</div>
-      </div>
-      <button class="backlink" id="closeHistoryBtn" type="button"><span class="backlink-icon">‹</span>戻る</button>
+      <span class="label">History</span>
+      <h2 class="title" style="margin-top:8px;">これまでの記録</h2>
+      <p class="lead">ゴールするたびに、自動でその日の記録が積み重なります。</p>
 
-      <div class="section-label"><span class="bar"></span><span class="txt">集計</span></div>
-      <div class="hist-stat-grid">
-        <div class="hist-stat-card">
+      <div class="section"><div class="section-head"><h3>集計</h3></div>
+      <div class="summary">
+        <div class="card">
           <div class="mono-label" style="font-size:10px;">THIS WEEK</div>
-          <div class="hist-stat-main"><span class="num" id="histWeekDistance">-</span><span class="u">km</span></div>
+          <div style="margin-top:4px"><span class="num" id="histWeekDistance">-</span><span class="u">km</span></div>
           <div class="hist-stat-sub"><span id="histWeekCalorie">-</span> kcal · <span id="histWeekSteps">-</span> 歩</div>
         </div>
-        <div class="hist-stat-card">
+        <div class="card">
           <div class="mono-label" style="font-size:10px;">THIS MONTH</div>
-          <div class="hist-stat-main"><span class="num" id="histMonthDistance">-</span><span class="u">km</span></div>
+          <div style="margin-top:4px"><span class="num" id="histMonthDistance">-</span><span class="u">km</span></div>
           <div class="hist-stat-sub"><span id="histMonthCalorie">-</span> kcal · <span id="histMonthSteps">-</span> 歩</div>
         </div>
-        <div class="hist-stat-card">
+        <div class="card">
           <div class="mono-label" style="font-size:10px;">THIS YEAR</div>
-          <div class="hist-stat-main"><span class="num" id="histYearDistance">-</span><span class="u">km</span></div>
+          <div style="margin-top:4px"><span class="num" id="histYearDistance">-</span><span class="u">km</span></div>
           <div class="hist-stat-sub"><span id="histYearCalorie">-</span> kcal · <span id="histYearSteps">-</span> 歩</div>
         </div>
-        <div class="hist-stat-card invert">
+        <div class="card card--invert">
           <div class="mono-label" style="font-size:10px; color:var(--accent-2);">ALL TIME</div>
-          <div class="hist-stat-main"><span class="num" id="histAllDistance">-</span><span class="u" style="color:var(--accent-2);">km</span></div>
+          <div style="margin-top:4px"><span class="num" id="histAllDistance">-</span><span class="u" style="color:var(--accent-2);">km</span></div>
           <div class="hist-stat-sub"><span id="histAllCalorie">-</span> kcal · <span id="histAllSteps">-</span> 歩</div>
         </div>
-      </div>
+      </div></div>
 
-      <div class="card">
-        <h2><span class="dot"></span>カレンダー</h2>
+      <div class="section">
+        <div class="section-head">
+          <h3>カレンダー</h3>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button class="btn-pill" id="calPrevBtn" type="button" style="width:44px;height:44px;justify-content:center;border-radius:50%;font-size:18px">‹</button>
+            <span class="num" style="font-size:18px" id="calMonthLabel"></span>
+            <button class="btn-pill" id="calNextBtn" type="button" style="width:44px;height:44px;justify-content:center;border-radius:50%;font-size:18px">›</button>
+          </div>
+        </div>
+        <div class="card">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
           <button class="ghost" id="calPrevBtn" type="button">‹ 前の月</button>
           <div id="calMonthLabel" style="font-weight:700; font-size:14px; color:var(--ink);"></div>
           <button class="ghost" id="calNextBtn" type="button">次の月 ›</button>
         </div>
         <div class="cal-weekday-row">
-          <div style="color:#e0556b;">日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div style="color:#3b8fe0;">土</div>
+          <div class="sun">日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div class="sat">土</div>
         </div>
         <div class="cal-grid" id="calGrid"></div>
+        </div>
       </div>
 
-      <div class="card">
-        <h2><span class="dot"></span>記録一覧</h2>
+      <div class="section">
+        <div class="section-head"><h3>お気に入り</h3></div>
+        <button class="btn btn--accent" id="openFavoritesBtn" type="button" style="width:100%">お気に入りのルートを見る ›</button>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h3>記録一覧</h3></div>
         <div id="histList"></div>
       </div>
     </div>
