@@ -350,6 +350,12 @@ button.primary:active{transform:scale(.98)}
 button.primary.tracking{background:#1a7a3f}
 /* ghost */
 button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-weight:700;font-size:13px;color:var(--ink);padding:8px 14px;cursor:pointer;font-family:var(--f-jp)}
+/* 日陰優先トグル */
+.shade-toggle{display:flex;align-items:center;gap:14px;width:100%;padding:16px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;text-align:left;font-family:var(--f-jp);transition:border-color .2s,background .2s}
+.shade-toggle[aria-pressed="true"]{border-color:var(--accent);background:rgba(11,92,255,.05)}
+.shade-check-wrap{width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;transition:background .2s}
+.shade-toggle[aria-pressed="true"] .shade-check-wrap{background:var(--accent)}
+.shade-toggle[aria-pressed="true"] .shade-check-icon{filter:brightness(0) invert(1)}
 /* お気に入りリスト */
 .fav-list .hist-row{border-radius:var(--r)}
 /* 日付詳細 */
@@ -605,6 +611,20 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
 
       <button class="primary" id="toResultBtn">ルートを作成する ›</button>
       <div id="statusBoxSettings" class="status info" style="display:none;"></div>
+
+      <!-- 日陰優先モード -->
+      <div class="section">
+        <div class="section-head"><h3>日陰を優先する（任意）</h3></div>
+        <button class="shade-toggle" id="shadePreferenceBtn" type="button" aria-pressed="false">
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:14px;">日陰ルート優先</div>
+            <div style="font-size:12px; color:var(--ink-soft); margin-top:3px;">現在時刻の建物の影を計算し、日陰の多い道を優先します</div>
+          </div>
+          <div class="shade-check-wrap">
+            <span class="shade-check-icon">☀️</span>
+          </div>
+        </button>
+      </div>
 
       <div class="testnote">
         個人開発のプロトタイプです。GraphHopperの無料プランで動かしているため、地点数や機能に制限があります。
@@ -1561,6 +1581,71 @@ function setupToggleChip(id){
 }
 
 
+/* ===================== 日陰優先モード ===================== */
+
+let shadePreference = false;
+
+document.getElementById('shadePreferenceBtn').addEventListener('click', () => {
+  const btn = document.getElementById('shadePreferenceBtn');
+  shadePreference = !shadePreference;
+  btn.setAttribute('aria-pressed', shadePreference ? 'true' : 'false');
+});
+
+// 日陰ポリゴンを計算して返す
+async function calcShadowPolygonsForRouting(lat, lng){
+  if (typeof SunCalc === 'undefined') return [];
+  const sunPos = SunCalc.getPosition(new Date(), lat, lng);
+  if (sunPos.altitude <= 0.05) return []; // 夜間・日没
+
+  const buildings = await fetchBuildingsForShadow(lat, lng);
+  const polygons = [];
+  for (const bld of buildings){
+    if (!bld.geometry || bld.geometry.length < 3) continue;
+    const tags = bld.tags || {};
+    let height = 9;
+    if (tags['height']) height = Math.min(parseFloat(tags['height']) || 9, 150);
+    else if (tags['building:levels']) height = Math.min(parseFloat(tags['building:levels']) * 3, 150);
+
+    const shadowLen = Math.min(height / Math.tan(sunPos.altitude), 200);
+    const dLat = Math.cos(sunPos.azimuth) * shadowLen / 111111;
+    const dLng = Math.sin(sunPos.azimuth) * shadowLen / (111111 * Math.cos(lat * Math.PI / 180));
+
+    const footprint = bld.geometry.map(pt => [pt.lat, pt.lon]);
+    const shadow    = footprint.map(pt => [pt[0] + dLat, pt[1] + dLng]);
+    polygons.push(footprint);
+    polygons.push(shadow);
+  }
+  return polygons;
+}
+
+// 点がポリゴン内にあるか判定(ray casting)
+function pointInPolygon(lat, lng, polygon){
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++){
+    const [yi, xi] = polygon[i];
+    const [yj, xj] = polygon[j];
+    if (((xi > lng) !== (xj > lng)) &&
+        (lat < (yj - yi) * (lng - xi) / (xj - xi) + yi)){
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+// 点が日陰エリアに含まれるか
+function isInShadowArea(lat, lng, polygons){
+  return polygons.some(poly => pointInPolygon(lat, lng, poly));
+}
+
+// 複数の候補点の中で最も日陰率が高い点を選ぶ
+function findMostShadedPoint(candidates, polygons){
+  if (!polygons.length) return candidates[0];
+  const shadedCandidates = candidates.filter(c => isInShadowArea(c.lat, c.lng, polygons));
+  return shadedCandidates.length > 0
+    ? shadedCandidates[Math.floor(Math.random() * shadedCandidates.length)]
+    : candidates[0];
+}
+
 /* ===================== 日陰マップ ===================== */
 
 let shadowLayer = null;
@@ -1927,42 +2012,44 @@ function calcRouteOverlapWithHistory(coords){
   } catch(e){ return 0; }
 }
 
-function buildLoopWaypoints(center, targetDistanceMeters, correctionFactor, parks){
+function buildLoopWaypoints(center, targetDistanceMeters, correctionFactor, parks, shadowPolygons){
   const cf = correctionFactor || 1.3;
   const totalDist = targetDistanceMeters * cf;
   const baseAngle = getLeastWalkedAngle(center);
-
-  // 折り返しを防ぐ配置の考え方:
-  // スタート(S)から見て、A→B→C→Sが「一方通行の輪」になるように配置する
-  // SはABCが作る三角形の"外側"に位置させる
-  //
-  //         A(前方最遠)
-  //        / \
-  //       B   C
-  //        \ /
-  //     S(スタート)  ← Sを底辺の下に配置
-  //
-  // こうすることで行きと帰りが別の道を通る確率が上がる
-
-  const lateralJitter = 60 + Math.random() * 30; // 60〜90度の横ずれ
+  const lateralJitter = 60 + Math.random() * 30;
   const sign = Math.random() < 0.5 ? 1 : -1;
 
   // A: 最も遠い前方の点
   const distA = totalDist * 0.42;
-  const aRaw = offsetLatLng(center.lat, center.lng, distA, baseAngle);
-  const aPoint = snapToNearestPark(aRaw, parks, distA * 0.3);
+  const aCandidates = [-20,-10,0,10,20].map(offset => {
+    const raw = offsetLatLng(center.lat, center.lng, distA, baseAngle + offset);
+    return snapToNearestPark(raw, parks, distA * 0.3);
+  });
+  const aPoint = (shadowPolygons && shadowPolygons.length)
+    ? findMostShadedPoint(aCandidates, shadowPolygons)
+    : aCandidates[2];
 
-  // B: Aから横にずれた中間点(行きの寄り道)
+  // B: Aから横にずれた中間点
   const angleB = baseAngle + lateralJitter * sign;
   const distB = totalDist * 0.30;
-  const bRaw = offsetLatLng(aPoint.lat, aPoint.lng, distB, angleB + 180);
-  const bPoint = snapToNearestPark(bRaw, parks, distB * 0.3);
+  const bCandidates = [-15,0,15].map(offset => {
+    const raw = offsetLatLng(aPoint.lat, aPoint.lng, distB, angleB + 180 + offset);
+    return snapToNearestPark(raw, parks, distB * 0.3);
+  });
+  const bPoint = (shadowPolygons && shadowPolygons.length)
+    ? findMostShadedPoint(bCandidates, shadowPolygons)
+    : bCandidates[1];
 
-  // C: Sに戻る途中の中継点(帰り道はBとは反対側を経由)
+  // C: 帰り道の中継点
   const angleC = baseAngle - lateralJitter * sign;
   const distC = totalDist * 0.25;
-  const cRaw = offsetLatLng(center.lat, center.lng, distC, angleC);
-  const cPoint = snapToNearestPark(cRaw, parks, distC * 0.25);
+  const cCandidates = [-15,0,15].map(offset => {
+    const raw = offsetLatLng(center.lat, center.lng, distC, angleC + offset);
+    return snapToNearestPark(raw, parks, distC * 0.25);
+  });
+  const cPoint = (shadowPolygons && shadowPolygons.length)
+    ? findMostShadedPoint(cCandidates, shadowPolygons)
+    : cCandidates[1];
 
   return [aPoint, bPoint, cPoint];
 }
@@ -2134,8 +2221,25 @@ async function generateRoute(){
       let correctionFactor = 1.3;
       let bestPath = null, bestScore = -1;
       const MAX_TRIES = 5;
+
+      // 日陰優先モードが有効な場合、建物データを取得して日陰ポリゴンを計算
+      let shadowPolygons = [];
+      if (shadePreference){
+        try {
+          setStatus('日陰エリアを計算しています...', 'info');
+          shadowPolygons = await calcShadowPolygonsForRouting(startPoint.lat, startPoint.lng);
+          if (shadowPolygons.length === 0){
+            setStatus('現在時刻は日陰が少ないため、通常ルートで生成します。', 'info');
+          } else {
+            setStatus('日陰エリアを計算しました。ルートを生成しています...', 'info');
+          }
+        } catch(e){
+          setStatus('日陰データの取得に失敗しました。通常ルートで生成します。', 'info');
+        }
+      }
+
       for (let i = 0; i < MAX_TRIES; i++){
-        const waypoints = buildLoopWaypoints(startPoint, distanceMeters, correctionFactor, parks);
+        const waypoints = buildLoopWaypoints(startPoint, distanceMeters, correctionFactor, parks, shadowPolygons);
         const path = await requestRoute([startPoint, ...waypoints, startPoint]);
         const coords = path.points.coordinates.map(c => [c[1], c[0]]);
 
