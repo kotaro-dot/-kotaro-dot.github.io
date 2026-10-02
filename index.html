@@ -117,7 +117,7 @@ main{flex:1;overflow-y:auto;padding:14px 22px 40px}
 .stepper button{flex:none;width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;line-height:1}
 .stepper .value{flex:1;min-width:0;display:flex;align-items:baseline;justify-content:center;gap:4px}
 .stepper .value span{font-weight:700;font-size:18px;color:var(--ink-soft)}
-.stepper input{display:block;width:140px;height:84px;min-width:0;margin:0;padding:0;border:none;border-bottom:2px dashed var(--line);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:80px;line-height:84px;color:var(--accent)}
+/* stepper input handled by #timeMin and #weightKg */
 .stepper--boxed input{width:96px;height:48px;font-size:40px;line-height:48px;color:var(--ink)}
 .stepper--boxed .value span{font-size:14px}
 
@@ -204,8 +204,8 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .num-stepper,.time-stepper{display:flex;align-items:center;gap:10px;padding:10px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:10px}
 .num-stepper button,.time-stepper button{flex:none;width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;line-height:1}
 /* step2の大きい入力 */
-#timeMin{display:block;width:140px;height:84px;min-width:0;margin:0;padding:0;border:none;border-bottom:2px dashed var(--line);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:80px;line-height:84px;color:var(--accent)}
-#weightKg{display:block;width:96px;height:48px;min-width:0;border:none;border-bottom:2px dashed var(--line);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:40px;line-height:48px;color:var(--ink)}
+#timeMin{display:block;width:80px;padding:8px 4px;border:none;border-bottom:2px dashed var(--accent);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:42px;color:var(--accent);-moz-appearance:textfield;-webkit-appearance:none}
+#weightKg{display:block;width:70px;padding:8px 4px;border:none;border-bottom:2px dashed var(--line);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:36px;color:var(--ink);-moz-appearance:textfield;-webkit-appearance:none}
 /* 地図クリップ */
 .mapview-clip{position:relative;width:100%;height:270px;overflow:hidden;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
 #mapConfirm{width:100%;height:190px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);margin-top:2px;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
@@ -235,7 +235,7 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .chip-check{width:14px;height:14px;border:1.5px solid var(--line);border-radius:3px;flex-shrink:0}
 .chip-check.on{background:var(--accent);border-color:var(--accent)}
 /* ルート矢印 */
-.route-arrow{font-size:14px;color:var(--accent);font-weight:700;transform-origin:center}
+.route-arrow{font-size:18px;color:var(--accent);font-weight:900;transform-origin:center;text-shadow:0 0 4px rgba(255,255,255,.9),0 0 8px rgba(255,255,255,.6);filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
 .route-arrow-icon{background:none!important;border:none!important}
 /* カレンダー */
 .cal-weekday-row,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
@@ -286,6 +286,10 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .display{font-family:var(--f-jp);font-weight:700;letter-spacing:-.01em}
 .stepsub,.lead{margin:8px 0 0;font-size:13px;line-height:1.6;color:var(--ink-soft)}
 .note{margin:10px 0 0;font-size:12px;line-height:1.6;color:var(--ink-soft)}
+
+/* 検索ボタン */
+.btn--accent{border:1.5px solid var(--accent)!important;color:var(--accent)!important;background:transparent!important;border-radius:var(--r)!important;padding:12px 14px!important;font-weight:700!important;font-size:14px!important;cursor:pointer!important;font-family:var(--f-jp)!important;white-space:nowrap!important}
+.btn--accent:active{background:rgba(11,92,255,.08)!important}
 /* 検索ボタン行 */
 .btn-row-search{display:flex;gap:8px;margin-top:10px}
 .btn-row-search button{flex:1;min-height:50px;padding:12px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer}
@@ -1201,13 +1205,25 @@ async function geocodeNominatim(query){
   } catch(e){ return []; }
 }
 
-async function geocodeSearch(query){
-  // 3つのAPIを並行して呼び出す
-  const [gsiResults, overpassResults, nominatimResults] = await Promise.all([
-    geocodeGSI(query),
-    geocodeOverpass(query),
-    geocodeNominatim(query)
+// タイムアウト付きfetch wrapper
+function withTimeout(promise, ms){
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))
   ]);
+}
+
+async function geocodeSearch(query){
+  // 3つのAPIを並行して呼び出す。どれかが失敗/タイムアウトしても他の結果を使う
+  const [gsiRes, overpassRes, nominatimRes] = await Promise.allSettled([
+    withTimeout(geocodeGSI(query), 4000),
+    withTimeout(geocodeOverpass(query), 6000),
+    withTimeout(geocodeNominatim(query), 5000)
+  ]);
+
+  const gsiResults      = gsiRes.status      === 'fulfilled' ? gsiRes.value      : [];
+  const overpassResults = overpassRes.status  === 'fulfilled' ? overpassRes.value  : [];
+  const nominatimResults= nominatimRes.status === 'fulfilled' ? nominatimRes.value : [];
 
   // Overpassを優先、次にGSI、最後にNominatim
   const combined = [...overpassResults, ...gsiResults, ...nominatimResults];
