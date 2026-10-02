@@ -468,17 +468,6 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
 
   </div>
 
-  <div class="entry-btn-row">
-    <button class="history-entry-btn" id="openHistoryBtn" type="button">
-      <span>RECORDS</span>
-      <span class="arrow">›</span>
-    </button>
-    <button class="history-entry-btn" id="openFavoritesBtn" type="button">
-      <span>お気に入り</span>
-      <span class="arrow">›</span>
-    </button>
-  </div>
-
   <!-- ============ SCREEN 1: コースと地点 ============ -->
   <div class="screen active" id="screenCourse">
     <div class="content">
@@ -748,7 +737,7 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
 
       <div class="section">
         <div class="section-head"><h3>お気に入り</h3></div>
-        <button class="btn btn--accent" id="openFavoritesBtn" type="button" style="width:100%">お気に入りのルートを見る ›</button>
+        <button class="btn btn--accent" id="openFavoritesBtn2" type="button" style="width:100%">お気に入りのルートを見る ›</button>
       </div>
 
       <div class="section">
@@ -2921,16 +2910,35 @@ function loadFavorite(fav){
   setStatus('ルートを読み込みました。「追跡を開始」を押すと案内が始まります。', 'ok');
 }
 
-document.getElementById('openFavoritesBtn').addEventListener('click', () => {
-  screenOrder.forEach(s => document.getElementById(screenIdOf(s)).classList.remove('active'));
+function openFavorites(){
+  // 全画面を非表示にする
+  const allScreens = document.querySelectorAll('.screen');
+  allScreens.forEach(s => s.classList.remove('active'));
+  // お気に入り画面を表示
   document.getElementById('screenFavorites').classList.add('active');
   renderFavorites();
   window.scrollTo(0, 0);
+  // ボトムナビを記録タブにする
+  const h = document.getElementById('navTabHistory');
+  const r = document.getElementById('navTabRoute');
+  if(h) h.classList.add('active');
+  if(r) r.classList.remove('active');
+}
+// お気に入りボタン(記録画面内)
+document.querySelectorAll('[id^="openFavoritesBtn"]').forEach(btn => {
+  btn.addEventListener('click', openFavorites);
 });
 
 document.getElementById('closeFavoritesBtn').addEventListener('click', () => {
   document.getElementById('screenFavorites').classList.remove('active');
-  document.getElementById(screenIdOf(screenBeforeHistory)).classList.add('active');
+  // 記録画面から開いた場合は記録画面に戻る、それ以外はコース画面に戻る
+  const returnTo = screenBeforeHistory || 'course';
+  const returnEl = document.getElementById('screenHistory');
+  if (returnEl && returnEl.classList.contains('active')){
+    // 何もしない
+  } else {
+    document.getElementById(screenIdOf(returnTo)).classList.add('active');
+  }
   window.scrollTo(0, 0);
 });
 </script>
