@@ -653,9 +653,7 @@
       <span class="appbar-dot"></span>
       <span class="appbar-title">散歩ルート<span class="accent-italic">MK</span></span>
     </div>
-    <button class="theme-toggle" id="themeToggleBtn" type="button">
-      <span id="themeToggleLabel">DARK</span>
-    </button>
+
   </div>
 
   <div class="entry-btn-row">
@@ -796,14 +794,7 @@
           <div id="map"></div>
           <span class="live-badge" id="liveBadge" style="display:none;">LIVE</span>
         </div>
-        <div class="toggle-chip-row">
-          <button class="toggle-chip" id="followMapChk" type="button" aria-pressed="true">
-            <span class="chip-check on"></span>地図を自動追従
-          </button>
-          <button class="toggle-chip" id="rotateMapChk" type="button" aria-pressed="true">
-            <span class="chip-check on"></span>進行方向を上に
-          </button>
-        </div>
+
         <div class="toggle-chip-row">
           <button class="toggle-chip" id="shadowToggleBtn" type="button" aria-pressed="false">
             <span class="chip-check" id="shadowChipCheck"></span>日陰マップ
@@ -1102,27 +1093,8 @@ function showScreen(name){
 const FIXED_API_KEY = 'eb8fc5cd-4666-402f-a9d0-6942178495ac'; // 個人専用ページのため埋め込み
 
 /* ---- ライト/ダークモード切替 ---- */
-function applyTheme(theme){
-  if (theme === 'dark'){
-    document.documentElement.setAttribute('data-theme', 'dark');
-    document.getElementById('themeToggleLabel').textContent = 'LIGHT';
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-    document.getElementById('themeToggleLabel').textContent = 'DARK';
-  }
-  try { localStorage.setItem('walkRouteTheme', theme); } catch(e){}
-}
-
-(function initTheme(){
-  let saved = 'light';
-  try { saved = localStorage.getItem('walkRouteTheme') || 'light'; } catch(e){}
-  applyTheme(saved);
-})();
-
-document.getElementById('themeToggleBtn').addEventListener('click', () => {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  applyTheme(isDark ? 'light' : 'dark');
-});
+// ライトモード固定
+document.documentElement.removeAttribute('data-theme');
 
 document.getElementById('toCourseBackBtn').addEventListener('click', () => showScreen('course'));
 document.getElementById('toSettingsBackBtn').addEventListener('click', () => showScreen('settings'));
@@ -1449,7 +1421,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
     lastLiveLatLng = latlng;
   }
 
-  const rotating = document.getElementById('rotateMapChk').getAttribute('aria-pressed') === 'true' && currentHeading !== null;
+  const rotating = currentHeading !== null; // 進行方向を上に固定
 
   const now = Date.now();
   let headingUpdateDue = false;
@@ -1487,7 +1459,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
     }
   }
 
-  if (document.getElementById('followMapChk').getAttribute('aria-pressed') === 'true'){ map.setView(lastDisplayedLatLng, map.getZoom(), {animate:false}); }
+  map.setView(lastDisplayedLatLng, map.getZoom(), {animate:false}); // 自動追従固定
 
   trimRouteToCurrentPosition(lat, lng);
   updateFinishTimeEstimate();
@@ -1593,8 +1565,7 @@ function setupToggleChip(id){
     btn.querySelector('.chip-check').classList.toggle('on', !pressed);
   });
 }
-setupToggleChip('followMapChk');
-setupToggleChip('rotateMapChk');
+
 
 /* ===================== 日陰マップ ===================== */
 
