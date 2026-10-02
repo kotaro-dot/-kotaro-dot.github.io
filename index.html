@@ -489,8 +489,8 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
       <div class="card">
         <h2><span class="dot"></span>コースの種類</h2>
         <div class="mode-selector">
-          <div class="mode-selector button active" id="modeLoop" style="cursor:pointer">往復（発着同じ）</div>
-          <div class="mode-selector button" id="modeTwoPoint" style="cursor:pointer">2点指定</div>
+          <button type="button" id="modeLoop" class="active">往復（発着同じ）</button>
+          <button type="button" id="modeTwoPoint">2点指定</button>
         </div>
         <div class="hint" id="modeHint">スタート地点(=ゴール地点)を検索するか、現在地を使ってください。</div>
       </div>
@@ -501,26 +501,26 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
         <div id="geoLoopBlock" class="geoblock">
           <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">スタート/ゴール(同じ場所)</div>
           <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-            <input type="text" id="geoLoopInput" style="flex:1;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);font-size:14px;outline:none" placeholder="例: 〇〇大学、〇〇駅">
-            <button id="geoLoopBtn" type="button" class="btn btn--accent" style="white-space:nowrap;padding:12px 16px">検索</button>
+            <input type="text" id="geoLoopInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇大学、〇〇駅">
+            <button id="geoLoopBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
           </div>
-          <button class="secondary" id="useCurrentLocLoop" type="button">現在地を使用</button>
+          <button id="useCurrentLocLoop" style="width:100%;margin-top:8px;padding:13px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--f-jp)" type="button">現在地を使用</button>
           <div id="geoLoopResults"></div>
         </div>
 
         <div id="geoTwoBlock" class="geoblock" style="display:none;">
           <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">スタート地点</div>
           <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-            <input type="text" id="geoStartInput" style="flex:1;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);font-size:14px;outline:none" placeholder="例: 〇〇大学">
-            <button id="geoStartBtn" type="button" class="btn btn--accent" style="white-space:nowrap;padding:12px 16px">検索</button>
+            <input type="text" id="geoStartInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇大学">
+            <button id="geoStartBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
           </div>
-          <button class="secondary" id="useCurrentLocStart" type="button">現在地を使用</button>
+          <button id="useCurrentLocStart" style="width:100%;margin-top:8px;padding:13px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--f-jp)" type="button">現在地を使用</button>
           <div id="geoStartResults"></div>
 
           <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)" style="margin-top:12px;">ゴール地点</div>
           <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-            <input type="text" id="geoGoalInput" style="flex:1;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);font-size:14px;outline:none" placeholder="例: 〇〇公園">
-            <button id="geoGoalBtn" type="button" class="btn btn--accent" style="white-space:nowrap;padding:12px 16px">検索</button>
+            <input type="text" id="geoGoalInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇公園">
+            <button id="geoGoalBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
           </div>
           <div id="geoGoalResults"></div>
         </div>
