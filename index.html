@@ -569,13 +569,14 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
       <!-- どのくらい歩く？ -->
       <div class="section">
         <div class="section-head"><h3>どのくらい歩く？</h3></div>
-        <div class="stepper">
-          <button class="stepper-btn" style="width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;cursor:pointer" id="timeMinusBtn" type="button">−</button>
-          <div class="value">
-            <input type="number" id="timeMin" value="20" min="5" max="180" >
-            <span class="unit">分</span>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:18px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:10px">
+          <button type="button" id="timeMinusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">−</button>
+          <div style="flex:1;text-align:center">
+            <span id="timeDisplay" style="font-family:var(--f-num);font-style:italic;font-weight:800;font-size:48px;color:var(--accent);line-height:1">0</span>
+            <span style="font-size:16px;font-weight:700;color:var(--ink-soft);margin-left:4px">分</span>
+            <input type="hidden" id="timeMin" value="0">
           </div>
-          <button class="stepper-btn" style="width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;cursor:pointer" id="timePlusBtn" type="button">＋</button>
+          <button type="button" id="timePlusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">＋</button>
         </div>
         
 
@@ -591,13 +592,14 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
       <!-- 体重(任意) -->
       <div class="section">
         <div class="section-head"><h3>体重（任意）</h3></div>
-        <div class="stepper stepper--boxed">
-          <button class="stepper-btn" style="width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;cursor:pointer" id="weightMinusBtn" type="button">−</button>
-          <div class="value">
-            <input type="number" id="weightKg" value="60" min="30" max="150" >
-            <span class="unit">kg</span>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:18px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:10px">
+          <button type="button" id="weightMinusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">−</button>
+          <div style="flex:1;text-align:center">
+            <span id="weightDisplay" style="font-family:var(--f-num);font-style:italic;font-weight:800;font-size:42px;color:var(--ink);line-height:1">60</span>
+            <span style="font-size:16px;font-weight:700;color:var(--ink-soft);margin-left:4px">kg</span>
+            <input type="hidden" id="weightKg" value="60">
           </div>
-          <button class="stepper-btn" style="width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;cursor:pointer" id="weightPlusBtn" type="button">＋</button>
+          <button type="button" id="weightPlusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">＋</button>
         </div>
         <div class="hint">数字の欄をタップして入力できます。カロリー計算にだけ使い、未入力の場合は60kgで計算します。</div>
       </div>
@@ -1121,61 +1123,54 @@ async function geocodeGSI(query){
   } catch(e){ return []; }
 }
 
-// ② Overpass API: 施設名で直接OSMを検索(登録不要・最も正確)
-// 大学・駅・公園・コンビニ・病院など施設名検索に強い
-async function geocodeOverpass(query){
+// ② Nominatim詳細検索(日本限定・複数アプローチで精度向上)
+async function geocodeNominatimDetailed(query){
   try {
-    const margin = 0.15; // 現在地から約15km四方を検索
-    const bbox = [
-      searchBiasLat - margin, searchBiasLon - margin * 1.5,
-      searchBiasLat + margin, searchBiasLon + margin * 1.5
-    ].join(',');
+    // 現在地周辺を優先しつつ日本全体も対象
+    const url = 'https://nominatim.openstreetmap.org/search'
+      + '?q=' + encodeURIComponent(query)
+      + '&format=json&limit=8&countrycodes=jp&accept-language=ja'
+      + '&addressdetails=1&namedetails=1'
+      + '&viewbox=' + (searchBiasLon-0.8) + ',' + (searchBiasLat+0.5)
+      + ',' + (searchBiasLon+0.8) + ',' + (searchBiasLat-0.5)
+      + '&bounded=0';
 
-    // 施設名にクエリを含むノード・ウェイ・リレーションを検索
-    const q = `[out:json][timeout:10];
-(
-  node["name"~"${query}"](${bbox});
-  way["name"~"${query}"](${bbox});
-  relation["name"~"${query}"](${bbox});
-);
-out center 8;`;
-
-    const res = await fetch('https://overpass-api.de/api/interpreter', {
-      method: 'POST',
-      body: 'data=' + encodeURIComponent(q)
-    });
+    const res = await fetch(url, {headers:{'User-Agent':'WalkRouteMaker/1.0'}});
     if (!res.ok) return [];
     const data = await res.json();
 
-    return (data.elements || []).flatMap(el => {
-      const name = el.tags && el.tags.name;
-      if (!name) return [];
-      const lat = el.lat || (el.center && el.center.lat);
-      const lon = el.lon || (el.center && el.center.lon);
-      if (!lat || !lon) return [];
+    return (data || []).map(d => {
+      const nd = d.namedetails || {};
+      // 日本語名を優先
+      const name = nd['name:ja'] || nd['name'] || '';
+      const addr = d.address || {};
+      // 分かりやすい補足情報を作る
+      const sub = [addr.city || addr.town || addr.village, addr.suburb || addr.neighbourhood]
+        .filter(Boolean).join(' ');
+      const display = name + (sub ? '（' + sub + '）' : '');
 
-      // カテゴリを判定
-      const tags = el.tags || {};
-      let cat = '施設';
-      if (tags.railway === 'station' || tags.public_transport) cat = '駅';
-      else if (tags.amenity === 'university' || tags.amenity === 'school') cat = '学校';
-      else if (tags.leisure === 'park' || tags.landuse === 'park') cat = '公園';
-      else if (tags.amenity === 'hospital' || tags.amenity === 'clinic') cat = '医療';
-      else if (tags.shop) cat = '店舗';
+      // カテゴリ
+      const type = d.type || d.class || '';
+      let cat = '場所';
+      if (type === 'station' || d.class === 'railway') cat = '駅';
+      else if (type === 'university' || type === 'school' || type === 'college') cat = '学校';
+      else if (type === 'park' || d.class === 'leisure') cat = '公園';
+      else if (d.class === 'amenity') cat = '施設';
+      else if (d.class === 'highway') cat = '道路';
 
-      // 住所を補足情報として追加
-      const addr = [tags['addr:city'], tags['addr:quarter']].filter(Boolean).join('');
-      const displayName = addr ? name + '（' + addr + '）' : name;
-
-      return [{
-        lat, lon,
-        display_name: displayName,
+      return {
+        lat: parseFloat(d.lat),
+        lon: parseFloat(d.lon),
+        display_name: display || d.display_name.split(',')[0],
         category: cat,
-        _score: calcSearchScore(name, query) + 5
-      }];
-    });
+        _score: calcSearchScore(name, query) + Math.round((d.importance||0)*25)
+      };
+    }).filter(r => r.display_name);
   } catch(e){ return []; }
 }
+
+// Overpassは廃止(精度が悪いため)
+async function geocodeOverpass(){ return []; }
 
 // ③ Nominatim: 補完用(住所・地名の細かい表記に対応)
 async function geocodeNominatim(query){
@@ -1214,19 +1209,19 @@ function withTimeout(promise, ms){
 }
 
 async function geocodeSearch(query){
-  // 3つのAPIを並行して呼び出す。どれかが失敗/タイムアウトしても他の結果を使う
-  const [gsiRes, overpassRes, nominatimRes] = await Promise.allSettled([
+  // GSI(住所) + Nominatim詳細 + Nominatim標準 を並行実行
+  const [gsiRes, nominatimDetailRes, nominatimRes] = await Promise.allSettled([
     withTimeout(geocodeGSI(query), 4000),
-    withTimeout(geocodeOverpass(query), 6000),
+    withTimeout(geocodeNominatimDetailed(query), 6000),
     withTimeout(geocodeNominatim(query), 5000)
   ]);
 
-  const gsiResults      = gsiRes.status      === 'fulfilled' ? gsiRes.value      : [];
-  const overpassResults = overpassRes.status  === 'fulfilled' ? overpassRes.value  : [];
-  const nominatimResults= nominatimRes.status === 'fulfilled' ? nominatimRes.value : [];
+  const gsiResults        = gsiRes.status             === 'fulfilled' ? gsiRes.value             : [];
+  const nominatimDetailResults = nominatimDetailRes.status === 'fulfilled' ? nominatimDetailRes.value : [];
+  const nominatimResults  = nominatimRes.status        === 'fulfilled' ? nominatimRes.value        : [];
 
-  // Overpassを優先、次にGSI、最後にNominatim
-  const combined = [...overpassResults, ...gsiResults, ...nominatimResults];
+  // Nominatim詳細を優先、次にGSI住所、最後にNominatim標準
+  const combined = [...nominatimDetailResults, ...gsiResults, ...nominatimResults];
 
   // 150m以内の重複を除去
   const deduped = [];
@@ -1281,6 +1276,52 @@ async function runSearch(inputId, btnId, resultsId, onPick){
     btn.textContent = prevLabel;
   }
 }
+
+// ===== ステッパー(歩行時間・体重) =====
+(function(){
+  let timeVal = 0;
+  let weightVal = 60;
+
+  function updateTimeDisplay(){
+    document.getElementById('timeDisplay').textContent = timeVal;
+    document.getElementById('timeMin').value = timeVal;
+    // 予想値も更新
+    const weightKg = weightVal || 60;
+    if (timeVal > 0){
+      const dist = ((timeVal/60)*4.8).toFixed(2);
+      const steps = Math.round(timeVal * 100);
+      const cal = Math.round(3.5 * weightKg * (timeVal/60));
+      const pd = document.getElementById('previewDistance');
+      const ps = document.getElementById('previewSteps');
+      const pc = document.getElementById('previewCalorie');
+      if(pd) pd.textContent = dist;
+      if(ps) ps.textContent = steps.toLocaleString();
+      if(pc) pc.textContent = cal;
+    }
+  }
+
+  function updateWeightDisplay(){
+    document.getElementById('weightDisplay').textContent = weightVal;
+    document.getElementById('weightKg').value = weightVal;
+  }
+
+  document.getElementById('timePlusBtn').addEventListener('click', () => {
+    timeVal = Math.min(timeVal + 5, 180);
+    updateTimeDisplay();
+  });
+  document.getElementById('timeMinusBtn').addEventListener('click', () => {
+    timeVal = Math.max(timeVal - 5, 0);
+    updateTimeDisplay();
+  });
+  document.getElementById('weightPlusBtn').addEventListener('click', () => {
+    weightVal = Math.min(weightVal + 1, 150);
+    updateWeightDisplay();
+  });
+  document.getElementById('weightMinusBtn').addEventListener('click', () => {
+    weightVal = Math.max(weightVal - 1, 30);
+    updateWeightDisplay();
+  });
+})();
 
 document.getElementById('geoLoopBtn').addEventListener('click', () => {
   runSearch('geoLoopInput', 'geoLoopBtn', 'geoLoopResults', (r) => {
