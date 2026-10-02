@@ -781,8 +781,8 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
         </div>
       </div>
 
-      <!-- 閉じるボタン -->
-      <div style="animation:goalRise .5s ease .8s both; width:100%;">
+      <!-- ボタン群 -->
+      <div style="animation:goalRise .5s ease .8s both; width:100%; display:flex; flex-direction:column; gap:10px;">
         <button id="goalOverlayClose" type="button" style="
           width:100%; padding:16px;
           background:#fff; color:#1b2436;
@@ -790,6 +790,13 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);
           font-size:15px; font-weight:700; cursor:pointer;
           font-family:'Noto Sans JP',sans-serif;">記録を確認する</button>
+        <button id="goalOverlayFav" type="button" style="
+          width:100%; padding:14px;
+          background:rgba(255,255,255,0.15); color:#fff;
+          border:1.5px solid rgba(255,255,255,0.5); border-radius:0;
+          clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);
+          font-size:14px; font-weight:700; cursor:pointer;
+          font-family:'Noto Sans JP',sans-serif;">★ このルートをお気に入りに登録</button>
       </div>
     </div>
   </div>
@@ -2325,7 +2332,7 @@ function showGoalOverlay(distanceKm, calorie, steps, durationMin){
   overlay.style.display = 'flex';
 }
 
-document.getElementById('goalOverlayClose').addEventListener('click', () => {
+function closeGoalOverlay(callback){
   const overlay = document.getElementById('goalOverlay');
   overlay.style.opacity = '0';
   overlay.style.transition = 'opacity .4s ease';
@@ -2333,9 +2340,51 @@ document.getElementById('goalOverlayClose').addEventListener('click', () => {
     overlay.style.display = 'none';
     overlay.style.opacity = '';
     overlay.style.transition = '';
-    // 歩行記録画面を開く
-    openHistory();
+    if (callback) callback();
   }, 400);
+}
+
+document.getElementById('goalOverlayClose').addEventListener('click', () => {
+  closeGoalOverlay(() => openHistory());
+});
+
+document.getElementById('goalOverlayFav').addEventListener('click', () => {
+  if (!routeCoords || routeCoords.length < 2){
+    alert('登録できるルートがありません。');
+    return;
+  }
+  const name = prompt('このルートの名前を入力してください(例: 大学周辺30分コース)');
+  if (!name) return;
+
+  let distMeters = 0;
+  for (let i = 0; i < routeCoords.length - 1; i++){
+    distMeters += computeDistanceMeters(
+      routeCoords[i][0], routeCoords[i][1],
+      routeCoords[i+1][0], routeCoords[i+1][1]
+    );
+  }
+
+  const favorite = {
+    id: Date.now().toString(36),
+    name: name,
+    mode: mode,
+    startPoint: startPoint,
+    goalPoint: mode === 'twopoint' ? goalPoint : null,
+    routeCoords: routeCoords,
+    distanceMeters: distMeters,
+    totalTimeMs: lastRouteDurationMin * 60000,
+    createdAt: localDateStr()
+  };
+
+  const list = loadFavorites();
+  list.push(favorite);
+  saveFavoritesList(list);
+
+  // 登録完了メッセージをボタンに表示
+  const btn = document.getElementById('goalOverlayFav');
+  btn.textContent = '✓ 登録しました';
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
 });
 
 function sumRecords(records){
