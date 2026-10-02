@@ -1819,19 +1819,37 @@ function offsetLatLng(lat, lng, distanceMeters, bearingDeg){
   return {lat: lat2*180/Math.PI, lng: lng2*180/Math.PI};
 }
 
-// ルートに不自然なU-ターンが含まれているか判定する
-// 連続する区間で方向転換が急すぎる(150度以上の反転)箇所の割合が高いと不自然とみなす
-function hasUTurn(coordsLatLng, threshold = 0.08){
-  if (coordsLatLng.length < 3) return false;
-  let uTurnCount = 0;
-  for (let i = 1; i < coordsLatLng.length - 1; i++){
-    const b1 = computeBearing(coordsLatLng[i-1][0], coordsLatLng[i-1][1], coordsLatLng[i][0], coordsLatLng[i][1]);
-    const b2 = computeBearing(coordsLatLng[i][0], coordsLatLng[i][1], coordsLatLng[i+1][0], coordsLatLng[i+1][1]);
-    const diff = Math.abs(((b2 - b1 + 540) % 360) - 180);
-    if (diff > 150) uTurnCount++; // 150度以上の方向転換はU-ターンとみなす
+// ルートの前半と後半が同じ道を通っているか(折り返し)を検出する
+// 「行きと帰りが同じ道」を25m以内の近接で判定する
+function hasBacktracking(coords){
+  if (coords.length < 10) return false;
+  const half = Math.floor(coords.length / 2);
+  const outbound = coords.slice(0, half);   // 前半(行き)
+  const inbound  = coords.slice(half);      // 後半(帰り)
+
+  // 前半の代表点を最大20点サンプリング
+  const step = Math.max(1, Math.floor(outbound.length / 20));
+  let overlapCount = 0, totalChecked = 0;
+
+  for (let i = 0; i < outbound.length; i += step){
+    totalChecked++;
+    for (let j = 0; j < inbound.length; j++){
+      if (computeDistanceMeters(
+        outbound[i][0], outbound[i][1],
+        inbound[j][0],  inbound[j][1]
+      ) < 25){
+        overlapCount++;
+        break;
+      }
+    }
   }
-  return (uTurnCount / coordsLatLng.length) > threshold;
+
+  const ratio = overlapCount / totalChecked;
+  return ratio > 0.28; // 28%以上重なっていたら折り返しとみなす
 }
+
+// 旧関数名との互換
+function hasUTurn(coords){ return hasBacktracking(coords); }
 
 // 過去の歩行記録から「各方向にどれだけ歩いたか」を集計し、
 // 最も歩いていない方向を返す(新しい道を優先的に通るため)
@@ -1905,26 +1923,39 @@ function calcRouteOverlapWithHistory(coords){
 function buildLoopWaypoints(center, targetDistanceMeters, correctionFactor, parks){
   const cf = correctionFactor || 1.3;
   const totalDist = targetDistanceMeters * cf;
-
-  // 過去に歩いていない方向を基本方角として選ぶ
   const baseAngle = getLeastWalkedAngle(center);
 
-  // 経由点を3点・正三角形配置に近い形で置くことで折り返しを防ぐ
-  // ・A点: 基本方向の遠い場所(折り返し点)
-  // ・B点: Aから120度ずれた方向(三角形の2番目の頂点)
-  // ・C点: Bから120度ずれた方向=スタートに近い帰り道(三角形の3番目の頂点)
-  const radius = totalDist * 0.38;
+  // 折り返しを防ぐ配置の考え方:
+  // スタート(S)から見て、A→B→C→Sが「一方通行の輪」になるように配置する
+  // SはABCが作る三角形の"外側"に位置させる
+  //
+  //         A(前方最遠)
+  //        / \
+  //       B   C
+  //        \ /
+  //     S(スタート)  ← Sを底辺の下に配置
+  //
+  // こうすることで行きと帰りが別の道を通る確率が上がる
 
-  const aRaw = offsetLatLng(center.lat, center.lng, radius, baseAngle);
-  const aPoint = snapToNearestPark(aRaw, parks, radius * 0.4);
+  const lateralJitter = 60 + Math.random() * 30; // 60〜90度の横ずれ
+  const sign = Math.random() < 0.5 ? 1 : -1;
 
-  const angleB = baseAngle + 120 + (Math.random() * 20 - 10); // ±10度のゆらぎ
-  const bRaw = offsetLatLng(center.lat, center.lng, radius * 0.85, angleB);
-  const bPoint = snapToNearestPark(bRaw, parks, radius * 0.3);
+  // A: 最も遠い前方の点
+  const distA = totalDist * 0.42;
+  const aRaw = offsetLatLng(center.lat, center.lng, distA, baseAngle);
+  const aPoint = snapToNearestPark(aRaw, parks, distA * 0.3);
 
-  const angleC = baseAngle + 240 + (Math.random() * 20 - 10);
-  const cRaw = offsetLatLng(center.lat, center.lng, radius * 0.55, angleC);
-  const cPoint = snapToNearestPark(cRaw, parks, radius * 0.25);
+  // B: Aから横にずれた中間点(行きの寄り道)
+  const angleB = baseAngle + lateralJitter * sign;
+  const distB = totalDist * 0.30;
+  const bRaw = offsetLatLng(aPoint.lat, aPoint.lng, distB, angleB + 180);
+  const bPoint = snapToNearestPark(bRaw, parks, distB * 0.3);
+
+  // C: Sに戻る途中の中継点(帰り道はBとは反対側を経由)
+  const angleC = baseAngle - lateralJitter * sign;
+  const distC = totalDist * 0.25;
+  const cRaw = offsetLatLng(center.lat, center.lng, distC, angleC);
+  const cPoint = snapToNearestPark(cRaw, parks, distC * 0.25);
 
   return [aPoint, bPoint, cPoint];
 }
@@ -2094,32 +2125,42 @@ async function generateRoute(){
     if (mode === 'loop'){
       let distanceMeters = Math.round((targetMinutes/60) * walkingSpeedKmh * 1000);
       let correctionFactor = 1.3;
-      let bestOverlap = 1;
-      for (let i = 0; i < 3; i++){
+      let bestPath = null, bestScore = -1;
+      const MAX_TRIES = 5;
+      for (let i = 0; i < MAX_TRIES; i++){
         const waypoints = buildLoopWaypoints(startPoint, distanceMeters, correctionFactor, parks);
         const path = await requestRoute([startPoint, ...waypoints, startPoint]);
         const coords = path.points.coordinates.map(c => [c[1], c[0]]);
 
-        const uTurn = hasUTurn(coords);
-        const overlap = calcRouteOverlapWithHistory(coords);
+        const backtrack = hasBacktracking(coords);
+        const histOverlap = calcRouteOverlapWithHistory(coords);
+        const timeRatio = path.time / 60000 / targetMinutes;
+        const timeScore = 1 - Math.abs(timeRatio - 1); // 目標時間に近いほど高い
 
-        // 最後の試行でなく、U-ターンまたは重複が多い場合は再試行
-        if (i < 2 && (uTurn || overlap > 0.4)){
-          const reason = uTurn ? 'U-ターン' : '既に歩いた道が多い';
-          setStatus(reason + 'ため、別のルートを探しています...', 'info');
-          // 時間調整のみ行い、次の試行では別の方角の経由点が選ばれる
-          const ratio = targetMinutes / (path.time / 60000);
-          distanceMeters = Math.round(distanceMeters * ratio);
-          continue;
+        // 折り返しなし・歴史重複少・時間が近い → スコア計算
+        const qualityScore = (backtrack ? 0 : 1) * 0.5
+                           + (1 - histOverlap) * 0.3
+                           + timeScore * 0.2;
+
+        if (qualityScore > bestScore){
+          bestScore = qualityScore;
+          bestPath = path;
         }
 
-        attempts.push(path);
-        bestOverlap = overlap;
-        const actualMinutes = path.time / 60000;
-        const ratio = targetMinutes / actualMinutes;
-        if (Math.abs(actualMinutes - targetMinutes) / targetMinutes < 0.12 || i === 2){ best = path; break; }
-        distanceMeters = Math.round(distanceMeters * ratio);
+        // 折り返しも重複もなく時間も近ければ即採用
+        if (!backtrack && histOverlap <= 0.4 && Math.abs(timeRatio - 1) < 0.15) {
+          best = path; break;
+        }
+
+        if (i < MAX_TRIES - 1){
+          const reason = backtrack ? '折り返しルート' : '既に歩いた道が多い';
+          setStatus(reason + 'のため別のルートを探しています... (' + (i+1) + '/' + MAX_TRIES + ')', 'info');
+          const ratio = targetMinutes / (path.time / 60000);
+          distanceMeters = Math.round(distanceMeters * Math.min(Math.max(ratio, 0.7), 1.4));
+        }
       }
+      // 全試行の中でベストなものを使う
+      if (!best) best = bestPath;
     } else {
       // 2点指定でも、直行ルートが目標時間より大幅に短い場合は寄り道の経由点を追加する。
       // 例: 10分で戻れる距離なのに30分歩きたい場合、途中に経由点を置いて遠回りさせる。
