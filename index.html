@@ -1652,27 +1652,28 @@ function setupToggleChip(id){
 let mapOriginalParent = null;
 let mapOriginalNextSibling = null;
 
+let mapClipOriginalStyle = '';
+
 function openFullscreenMap(){
-  const overlay  = document.getElementById('mapFullscreenOverlay');
-  const fsInner  = document.getElementById('mapFullscreenMap');
-  const mapClip  = document.querySelector('.mapview-clip');
+  const overlay = document.getElementById('mapFullscreenOverlay');
+  const fsInner = document.getElementById('mapFullscreenMap');
+  const mapClip = document.querySelector('.mapview-clip');
   if (!mapClip) return;
 
-  // 元の位置を記憶
+  // 元の位置・スタイルを記憶
   mapOriginalParent      = mapClip.parentNode;
   mapOriginalNextSibling = mapClip.nextSibling;
+  mapClipOriginalStyle   = mapClip.getAttribute('style') || '';
 
-  // 全画面オーバーレイに地図を移動
-  fsInner.appendChild(mapClip);
+  // 全画面スタイルを適用して移動
   mapClip.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border-radius:0;border:none;';
-
+  fsInner.appendChild(mapClip);
   overlay.classList.add('active');
 
-  // LeafletにサイズをLしなおさせる
   setTimeout(() => {
     map.invalidateSize();
-    if (lastDisplayedLatLng) map.setView(lastDisplayedLatLng, map.getZoom());
-  }, 80);
+    if (lastDisplayedLatLng) map.panTo(lastDisplayedLatLng, {animate:false});
+  }, 100);
 }
 
 function closeFullscreenMap(){
@@ -1680,8 +1681,9 @@ function closeFullscreenMap(){
   const mapClip = document.querySelector('.mapview-clip');
   if (!mapClip || !mapOriginalParent) return;
 
-  // 元の位置に戻す
-  mapClip.style.cssText = '';
+  // 元の位置に戻す前にスタイルをリセット
+  mapClip.style.cssText = mapClipOriginalStyle;
+
   if (mapOriginalNextSibling){
     mapOriginalParent.insertBefore(mapClip, mapOriginalNextSibling);
   } else {
@@ -1690,7 +1692,11 @@ function closeFullscreenMap(){
 
   overlay.classList.remove('active');
 
-  setTimeout(() => map.invalidateSize(), 80);
+  // Leafletのサイズを再計算(少し待ってからDOMが安定するのを待つ)
+  setTimeout(() => {
+    map.invalidateSize();
+    if (lastDisplayedLatLng) map.panTo(lastDisplayedLatLng, {animate:false});
+  }, 150);
 }
 
 on('mapFullscreenBtn','click', openFullscreenMap);
