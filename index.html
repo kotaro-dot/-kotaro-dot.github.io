@@ -214,11 +214,9 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .live-badge{position:absolute;left:12px;top:12px;z-index:500;font-family:var(--f-mono);font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--accent-ink);background:var(--accent);padding:4px 8px;border-radius:var(--r-s)}
 /* 全画面マップ */
 .map-fullscreen-btn{position:absolute;right:12px;top:12px;z-index:500;width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.92);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);font-size:17px}
-#mapFullscreenOverlay{display:none;position:fixed;inset:0;z-index:7000;background:#000;flex-direction:column}
-#mapFullscreenOverlay.active{display:flex}
-#mapFullscreenMap{flex:1;position:relative;overflow:hidden}
-#mapFullscreenMap .mapview-clip{width:100%!important;height:100%!important;border-radius:0!important;border:none!important}
-#mapFullscreenMap #map{width:200%!important;height:200%!important}
+#mapFullscreenOverlay{display:none;position:fixed;inset:0;z-index:7000;background:#000}
+#mapFullscreenOverlay.active{display:block}
+#mapFullscreenMap{position:absolute;inset:0}
 .map-exit-btn{position:absolute;top:calc(env(safe-area-inset-top,0px)+14px);right:14px;z-index:7100;width:44px;height:44px;border-radius:12px;background:rgba(0,0,0,.55);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:#fff}
 /* 結果数字 */
 .result-num{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:44px;line-height:.9;color:var(--accent)}
@@ -627,8 +625,8 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
         </button>
       </div>
 
-      <button class="primary" id="toResultBtn">ルートを作成する ›</button>
-      <div id="statusBoxSettings" class="status info" style="display:none;"></div>
+      <button class="primary" id="toResultBtn" style="margin-bottom:16px;">ルートを作成する ›</button>
+      <div id="statusBoxSettings" class="status info" style="display:none;margin-bottom:16px;"></div>
     </div>
   </div>
 
@@ -1648,52 +1646,51 @@ function setupToggleChip(id){
 
 
 /* ===================== 全画面マップ ===================== */
-let fullscreenMap = null;
-let fullscreenShadowLayer = null;
+// 既存の地図コンテナごと全画面オーバーレイに移動する方式
+// → ルート・矢印・追跡・回転パッチが全て自動引き継ぎ、スクロール反転なし
+
+let mapOriginalParent = null;
+let mapOriginalNextSibling = null;
 
 function openFullscreenMap(){
-  const overlay = document.getElementById('mapFullscreenOverlay');
+  const overlay  = document.getElementById('mapFullscreenOverlay');
+  const fsInner  = document.getElementById('mapFullscreenMap');
+  const mapClip  = document.querySelector('.mapview-clip');
+  if (!mapClip) return;
+
+  // 元の位置を記憶
+  mapOriginalParent      = mapClip.parentNode;
+  mapOriginalNextSibling = mapClip.nextSibling;
+
+  // 全画面オーバーレイに地図を移動
+  fsInner.appendChild(mapClip);
+  mapClip.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border-radius:0;border:none;';
+
   overlay.classList.add('active');
 
-  // 全画面マップ初期化(初回のみ)
-  if (!fullscreenMap){
-    const container = document.getElementById('mapFullscreenMap');
-    // mapview-clipをオーバーレイにクローン
-    const clip = document.createElement('div');
-    clip.style.cssText = 'position:absolute;inset:0;overflow:hidden;';
-    container.appendChild(clip);
-
-    const mapEl = document.createElement('div');
-    mapEl.id = 'mapFullscreen';
-    mapEl.style.cssText = 'width:100%;height:100%;';
-    clip.appendChild(mapEl);
-
-    fullscreenMap = L.map('mapFullscreen', {zoomControl:true}).setView(map.getCenter(), map.getZoom());
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{
-      maxZoom:19,
-      attribution:'Tiles &copy; <a href="https://www.esri.com/">Esri</a>'
-    }).addTo(fullscreenMap);
-  } else {
-    // 現在の地図と同期
-    fullscreenMap.setView(map.getCenter(), map.getZoom());
-  }
-
-  // 現在のルートを全画面マップにも描画
-  if (routeCoords && routeCoords.length > 1){
-    fullscreenMap.eachLayer(l => { if (l instanceof L.Polyline || l instanceof L.Marker) fullscreenMap.removeLayer(l); });
-    L.polyline(routeCoords.slice(routeSegments[activeSegIdx]?.start || 0), {color:'#1a55e0', weight:5}).addTo(fullscreenMap);
-    if (lastDisplayedLatLng){
-      L.circleMarker(lastDisplayedLatLng, {radius:8, color:'#fff', weight:3, fillColor:'#1a55e0', fillOpacity:1}).addTo(fullscreenMap);
-    }
-  }
-
-  setTimeout(() => fullscreenMap.invalidateSize(), 100);
+  // LeafletにサイズをLしなおさせる
+  setTimeout(() => {
+    map.invalidateSize();
+    if (lastDisplayedLatLng) map.setView(lastDisplayedLatLng, map.getZoom());
+  }, 80);
 }
 
 function closeFullscreenMap(){
-  document.getElementById('mapFullscreenOverlay').classList.remove('active');
-  // メインマップの位置を全画面と同期
-  if (fullscreenMap) map.setView(fullscreenMap.getCenter(), fullscreenMap.getZoom());
+  const overlay = document.getElementById('mapFullscreenOverlay');
+  const mapClip = document.querySelector('.mapview-clip');
+  if (!mapClip || !mapOriginalParent) return;
+
+  // 元の位置に戻す
+  mapClip.style.cssText = '';
+  if (mapOriginalNextSibling){
+    mapOriginalParent.insertBefore(mapClip, mapOriginalNextSibling);
+  } else {
+    mapOriginalParent.appendChild(mapClip);
+  }
+
+  overlay.classList.remove('active');
+
+  setTimeout(() => map.invalidateSize(), 80);
 }
 
 on('mapFullscreenBtn','click', openFullscreenMap);
