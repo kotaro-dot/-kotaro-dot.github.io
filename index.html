@@ -218,8 +218,7 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .mapview-clip.fullscreen{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;z-index:7000!important;border-radius:0!important;border:none!important;}
 .mapview-clip.fullscreen #map{width:200%!important;height:200%!important}
 #mapFullscreenOverlay{display:none}
-.map-exit-btn{display:none;position:absolute;top:12px;right:56px;z-index:7100;width:38px;height:38px;border-radius:10px;background:rgba(0,0,0,.6);border:none;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#fff}
-.map-exit-btn.visible{display:flex!important}
+
 /* 結果数字 */
 .result-num{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:44px;line-height:.9;color:var(--accent)}
 .result-unit{font:10px var(--f-mono);letter-spacing:.1em;color:var(--ink-soft);display:block;margin-top:6px}
@@ -658,7 +657,6 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           <span class="live-badge" id="liveBadge" style="display:none;">LIVE</span>
           <button class="map-fullscreen-btn" id="mapFullscreenBtn" type="button" title="全画面表示">⛶</button>
           <button class="compass-btn" id="compassBtn" type="button" title="北向きにリセット">N</button>
-          <button class="map-exit-btn" id="mapExitFullscreenBtn" type="button">✕</button>
         </div>
         <!-- 日陰マップ -->
         <div class="toggle-chip-row" style="margin-top:10px;">
@@ -868,6 +866,16 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
   </div>
 
 </div>
+
+<!-- 全画面終了ボタン: body直下・最高z-index -->
+<button id="mapExitFullscreenBtn" type="button" style="
+  display:none;position:fixed;
+  top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;
+  z-index:9999;width:44px;height:44px;
+  border-radius:12px;background:rgba(0,0,0,.7);border:none;
+  color:#fff;font-size:20px;cursor:pointer;
+  align-items:center;justify-content:center;
+">✕</button>
 
 <!-- ボトムナビゲーション -->
 <nav class="bottom-nav" id="bottomNav">
@@ -1650,7 +1658,7 @@ function openFullscreenMap(){
   if (!mapClip) return;
   mapClip.classList.add('fullscreen');
   const exitBtn = document.getElementById('mapExitFullscreenBtn');
-  if (exitBtn) exitBtn.classList.add('visible');
+  if (exitBtn) exitBtn.style.display = 'flex';
   setTimeout(() => map.invalidateSize(), 60);
 }
 
@@ -1659,12 +1667,23 @@ function closeFullscreenMap(){
   if (!mapClip) return;
   mapClip.classList.remove('fullscreen');
   const exitBtn = document.getElementById('mapExitFullscreenBtn');
-  if (exitBtn) exitBtn.classList.remove('visible');
+  if (exitBtn) exitBtn.style.display = 'none';
   setTimeout(() => map.invalidateSize(), 60);
 }
 
 on('mapFullscreenBtn','click', openFullscreenMap);
-on('mapExitFullscreenBtn','click', closeFullscreenMap);
+// 終了ボタンはcapture:trueで最優先でイベントを受け取る
+(function(){
+  const btn = document.getElementById('mapExitFullscreenBtn');
+  if (!btn) return;
+  ['click','touchend'].forEach(evt => {
+    btn.addEventListener(evt, (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      closeFullscreenMap();
+    }, {capture: true});
+  });
+})();
 
 
 // スマート自動追従: 手動でパンしたら一時停止し、5秒後に再開
