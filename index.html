@@ -209,7 +209,7 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 /* 地図クリップ */
 .mapview-clip{position:relative;width:100%;height:270px;overflow:hidden;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px;-webkit-transform:translateZ(0);transform:translateZ(0)}
 #mapConfirm{width:100%;height:190px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);margin-top:2px;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
-#map{position:absolute;top:50%;left:50%;width:200%;height:200%;transform:translate(-50%,-50%);transform-origin:center center;transition:transform .5s ease-out;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+#map{position:absolute;top:50%;left:50%;width:200%;height:200%;transform:translate(-50%,-50%);transform-origin:center center;transition:transform .4s ease-out;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden;image-rendering:-webkit-optimize-contrast}
 #dayDetailMap{width:100%;height:100%}
 .live-badge{position:absolute;left:12px;top:12px;z-index:500;font-family:var(--f-mono);font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--accent-ink);background:var(--accent);padding:4px 8px;border-radius:var(--r-s)}
 /* 全画面マップ */
@@ -917,10 +917,13 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_M
 }).addTo(mapConfirm);
 
 /* ---- 結果表示用マップ(STEP4) ---- */
-const map = L.map('map', {zoomControl: false}).setView([35.681236, 139.767125], 14);
+const map = L.map('map', {zoomControl:false, preferCanvas:true, zoomAnimation:true, fadeAnimation:false, markerZoomAnimation:false}).setView([35.681236, 139.767125], 14);
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
   maxZoom: 19,
-  attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a> | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  keepBuffer: 4,
+  updateWhenIdle: false,
+  updateWhenZooming: false,
+  attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a>'
 }).addTo(map);
 setTimeout(() => map.invalidateSize(), 100);
 
@@ -1519,7 +1522,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
     const movedSinceDisplayed = lastDisplayedLatLng
       ? computeDistanceMeters(lastDisplayedLatLng[0], lastDisplayedLatLng[1], lat, lng)
       : Infinity;
-    if (movedSinceDisplayed > 6){
+    if (movedSinceDisplayed > 8){
       liveMarker.setLatLng(latlng);
       lastDisplayedLatLng = latlng;
     }
@@ -1535,7 +1538,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
     }
   }
 
-  map.panTo(lastDisplayedLatLng, {animate:true, duration:0.4, easeLinearity:0.5}); // 自動追従(滑らか)
+  map.setView(lastDisplayedLatLng, map.getZoom(), {animate:false}); // 自動追従(即時)
 
   trimRouteToCurrentPosition(lat, lng);
   updateFinishTimeEstimate();
