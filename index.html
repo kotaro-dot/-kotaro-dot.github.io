@@ -884,6 +884,10 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
 </nav>
 
 <script>
+
+// 安全なイベントリスナー追加(要素がなくてもクラッシュしない)
+function on(id, evt, fn){ const el=document.getElementById(id); if(el) el.addEventListener(evt,fn); }
+
 let mode = 'loop';
 let startPoint = null;
 let goalPoint = null;
@@ -1010,7 +1014,7 @@ document.getElementById('toResultBtn').addEventListener('click', async () => {
   await generateRoute();
 });
 
-document.getElementById('viewHistoryBtn').addEventListener('click', openHistory);
+on('viewHistoryBtn','click',openHistory);
 
 let lastGenerateTime = 0;
 document.getElementById('regenerateBtn').addEventListener('click', () => {
@@ -1061,7 +1065,7 @@ function resetPoints(){
   updateChips();
   setStatusBox('statusBoxCourse', '地点をリセットしました。地図をタップして地点を決めてください。', 'info');
 }
-document.getElementById('resetPoints').addEventListener('click', resetPoints);
+on('resetPoints','click',resetPoints);
 
 mapConfirm.on('click', function(e){
   const latlng = {lat: e.latlng.lat, lng: e.latlng.lng};
@@ -2657,7 +2661,7 @@ function closeHistory(){
   document.getElementById('navTabHistory').classList.remove('active');
 }
 
-document.getElementById('openHistoryBtn').addEventListener('click', openHistory);
+on('openHistoryBtn','click',openHistory);
 
 // ボトムナビゲーション
 document.getElementById('navTabRoute').addEventListener('click', () => {
@@ -2680,7 +2684,7 @@ document.getElementById('navTabHistory').addEventListener('click', () => {
   document.getElementById('navTabRoute').classList.remove('active');
   openHistory();
 });
-document.getElementById('closeHistoryBtn').addEventListener('click', closeHistory);
+on('closeHistoryBtn','click',closeHistory);
 
 /* ---- カレンダー表示 ---- */
 
