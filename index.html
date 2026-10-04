@@ -216,31 +216,11 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .compass-btn{
   position:absolute;right:10px;bottom:50px;z-index:500;
   width:44px;height:44px;border-radius:50%;
-  background:#fff;border:none;
+  background:#fff;border:none;padding:0;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
-  box-shadow:0 2px 10px rgba(0,0,0,.28);
+  box-shadow:0 2px 10px rgba(0,0,0,.3);
   transition:transform .3s;
-  padding:0;
-  overflow:hidden;
-}
-.compass-btn::before{
-  content:"";
-  position:absolute;inset:0;
-  border-radius:50%;
-  border:2.5px solid rgba(0,0,0,.08);
-}
-.compass-btn-inner{
-  display:flex;flex-direction:column;align-items:center;
-  gap:1px;line-height:1;
-}
-.compass-btn-n{
-  font-family:var(--f-mono);font-weight:900;font-size:14px;
-  color:#e03030;letter-spacing:.02em;
-}
-.compass-btn-s{
-  font-family:var(--f-mono);font-weight:700;font-size:10px;
-  color:#888;letter-spacing:.02em;
 }
 .map-fullscreen-btn{position:absolute;right:12px;top:12px;z-index:500;width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.92);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);font-size:17px}
 .mapview-clip.fullscreen{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;z-index:7000!important;border-radius:0!important;border:none!important;}
@@ -685,10 +665,13 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           <span class="live-badge" id="liveBadge" style="display:none;">LIVE</span>
           <button class="map-fullscreen-btn" id="mapFullscreenBtn" type="button" title="全画面表示">⛶</button>
           <button class="compass-btn" id="compassBtn" type="button" title="北向きにリセット">
-            <div class="compass-btn-inner">
-              <span class="compass-btn-n">N</span>
-              <span class="compass-btn-s">S</span>
-            </div>
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="18" r="16.5" stroke="#222" stroke-width="2"/>
+              <!-- 北(上)の三角: 赤塗り -->
+              <polygon points="18,4 22.5,18 18,15 13.5,18" fill="#e03030"/>
+              <!-- 南(下)の三角: 白塗り+枠線 -->
+              <polygon points="18,32 13.5,18 18,21 22.5,18" fill="#fff" stroke="#222" stroke-width="1.2"/>
+            </svg>
           </button>
         </div>
         <!-- 日陰マップ -->
