@@ -964,6 +964,7 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_M
 }).addTo(map);
 setTimeout(() => map.invalidateSize(), 100);
 map.on("dragstart", pauseAutoFollow);
+map.on("drag", pauseAutoFollow);
 
 // ドラッグ方向の回転補正パッチ:
 // CSSでmap要素を回転させるとLeafletの内部座標系とズレが生じ、スクロール方向が反転する。
@@ -1573,7 +1574,17 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
     }
   }
 
-  if (autoFollowEnabled) map.setView(lastDisplayedLatLng, map.getZoom(), {animate:false}); // スマート自動追従
+  // スマート自動追従: 地図中心と現在地が20m以上離れた時だけ滑らかに移動
+  if (autoFollowEnabled && lastDisplayedLatLng){
+    const center = map.getCenter();
+    const distFromCenter = computeDistanceMeters(
+      center.lat, center.lng,
+      lastDisplayedLatLng[0], lastDisplayedLatLng[1]
+    );
+    if (distFromCenter > 20){
+      map.panTo(lastDisplayedLatLng, {animate:true, duration:0.6, easeLinearity:0.3});
+    }
+  }
 
   trimRouteToCurrentPosition(lat, lng);
   updateFinishTimeEstimate();
