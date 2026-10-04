@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="20261004-002157">
 <title>散歩ルートメーカー</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
@@ -2111,15 +2111,13 @@ function offsetLatLng(lat, lng, distanceMeters, bearingDeg){
   return {lat: lat2*180/Math.PI, lng: lng2*180/Math.PI};
 }
 
-// ルートの前半と後半が同じ道を通っているか(折り返し)を検出する
-// 「行きと帰りが同じ道」を25m以内の近接で判定する
+// ① 前半と後半の近接チェック(閾値50m: 平行する隣接道路も検出)
 function hasBacktracking(coords){
   if (coords.length < 10) return false;
   const half = Math.floor(coords.length / 2);
-  const outbound = coords.slice(0, half);   // 前半(行き)
-  const inbound  = coords.slice(half);      // 後半(帰り)
+  const outbound = coords.slice(0, half);
+  const inbound  = coords.slice(half);
 
-  // 前半の代表点を最大20点サンプリング
   const step = Math.max(1, Math.floor(outbound.length / 20));
   let overlapCount = 0, totalChecked = 0;
 
@@ -2129,18 +2127,35 @@ function hasBacktracking(coords){
       if (computeDistanceMeters(
         outbound[i][0], outbound[i][1],
         inbound[j][0],  inbound[j][1]
-      ) < 25){
+      ) < 50){ // 25m→50mに拡大(平行道路の往復も検出)
         overlapCount++;
         break;
       }
     }
   }
+  if (overlapCount / totalChecked > 0.35) return true;
 
-  const ratio = overlapCount / totalChecked;
-  return ratio > 0.28; // 28%以上重なっていたら折り返しとみなす
+  // ② ルートの「細長さ」チェック
+  // スクリーンショットのような往復ルートは、総距離に比べてカバーエリアが狭い
+  // 緯度・経度の標準偏差(=広がり)を計算して細長さを判定
+  const lats = coords.map(c => c[0]);
+  const lngs = coords.map(c => c[1]);
+  const latSpread = (Math.max(...lats) - Math.min(...lats)) * 111111; // メートル換算
+  const lngSpread = (Math.max(...lngs) - Math.min(...lngs)) * 111111 * Math.cos(lats[0] * Math.PI / 180);
+  const diagonal  = Math.sqrt(latSpread * latSpread + lngSpread * lngSpread);
+
+  // ルート総距離を計算
+  let totalDist = 0;
+  for (let i = 0; i < coords.length - 1; i++){
+    totalDist += computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
+  }
+
+  // 総距離がカバーエリアの対角線の3.5倍以上 = 細長い往復ルート
+  if (diagonal > 0 && totalDist / diagonal > 3.5) return true;
+
+  return false;
 }
 
-// 旧関数名との互換
 function hasUTurn(coords){ return hasBacktracking(coords); }
 
 // 過去の歩行記録から「各方向にどれだけ歩いたか」を集計し、
