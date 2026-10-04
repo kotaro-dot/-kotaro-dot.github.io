@@ -2413,6 +2413,23 @@ async function generateRoute(){
       return data.paths[0];
     }
 
+    // GraphHopperのround_tripアルゴリズム(折り返しを防ぐ専用ループルート生成)
+    async function requestRoundTrip(lat, lng, distMeters, seed){
+      try {
+        const url = 'https://graphhopper.com/api/1/route'
+          + '?point=' + lat.toFixed(6) + ',' + lng.toFixed(6)
+          + '&algorithm=round_trip'
+          + '&round_trip.distance=' + distMeters
+          + '&round_trip.seed=' + seed
+          + '&profile=foot&locale=ja&points_encoded=false'
+          + '&key=' + encodeURIComponent(apiKey);
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!res.ok || !data.paths || !data.paths.length) return null;
+        return data.paths[0];
+      } catch(e){ return null; }
+    }
+
     if (mode === 'loop'){
       let distanceMeters = Math.round((targetMinutes/60) * walkingSpeedKmh * 1000);
       let correctionFactor = 1.3;
@@ -2436,17 +2453,26 @@ async function generateRoute(){
       }
 
       for (let i = 0; i < MAX_TRIES; i++){
-        const waypoints = buildLoopWaypoints(startPoint, distanceMeters, correctionFactor, parks, shadowPolygons);
-        const path = await requestRoute([startPoint, ...waypoints, startPoint]);
-        const coords = path.points.coordinates.map(c => [c[1], c[0]]);
+        setStatus('ルートを生成しています... (' + (i+1) + '/' + MAX_TRIES + ')', 'info');
 
+        // round_tripアルゴリズムを優先(GraphHopper組み込みの折り返し防止ループ生成)
+        // シードを変えるたびに異なるルートが生成される
+        const seed = Date.now() + i * 7919;
+        let path = await requestRoundTrip(startPoint.lat, startPoint.lng, distanceMeters, seed);
+
+        // round_tripが失敗した場合のみ手動経由点にフォールバック
+        if (!path){
+          const waypoints = buildLoopWaypoints(startPoint, distanceMeters, 1.3, parks, shadowPolygons);
+          path = await requestRoute([startPoint, ...waypoints, startPoint]);
+        }
+
+        const coords = path.points.coordinates.map(c => [c[1], c[0]]);
         const backtrack = hasBacktracking(coords);
         const histOverlap = calcRouteOverlapWithHistory(coords);
         const timeRatio = path.time / 60000 / targetMinutes;
-        const timeScore = 1 - Math.abs(timeRatio - 1); // 目標時間に近いほど高い
+        const timeScore = 1 - Math.abs(timeRatio - 1);
 
-        // 折り返しなし・歴史重複少・時間が近い → スコア計算
-        const qualityScore = (backtrack ? 0 : 1) * 0.5
+        const qualityScore = (backtrack ? 0 : 0.5)
                            + (1 - histOverlap) * 0.3
                            + timeScore * 0.2;
 
@@ -2455,16 +2481,15 @@ async function generateRoute(){
           bestPath = path;
         }
 
-        // 折り返しも重複もなく時間も近ければ即採用
-        if (!backtrack && histOverlap <= 0.4 && Math.abs(timeRatio - 1) < 0.15) {
+        if (!backtrack && histOverlap <= 0.4 && Math.abs(timeRatio - 1) < 0.2){
           best = path; break;
         }
 
         if (i < MAX_TRIES - 1){
-          const reason = backtrack ? '折り返しルート' : '既に歩いた道が多い';
-          setStatus(reason + 'のため別のルートを探しています... (' + (i+1) + '/' + MAX_TRIES + ')', 'info');
+          const reason = backtrack ? '折り返しルートのため別ルートを探しています' : '既に歩いた道が多いため別ルートを探しています';
+          setStatus(reason + '... (' + (i+1) + '/' + MAX_TRIES + ')', 'info');
           const ratio = targetMinutes / (path.time / 60000);
-          distanceMeters = Math.round(distanceMeters * Math.min(Math.max(ratio, 0.7), 1.4));
+          distanceMeters = Math.round(distanceMeters * Math.min(Math.max(ratio, 0.8), 1.3));
         }
       }
       // 全試行の中でベストなものを使う
