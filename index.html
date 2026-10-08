@@ -2114,20 +2114,37 @@ function offsetLatLng(lat, lng, distanceMeters, bearingDeg){
 // ① 前半と後半の近接チェック(閾値50m: 平行する隣接道路も検出)
 function hasBacktracking(coords){
   if (coords.length < 10) return false;
+
+  // ① 局所的なUターン検出
+  // 連続する3点の進行方向が150度以上逆転していればUターンとみなす
+  // そのような箇所がルート全体の5%以上あれば折り返しルートと判定
+  let uTurnCount = 0;
+  const bearings = [];
+  for (let i = 0; i < coords.length - 1; i++){
+    bearings.push(computeBearing(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]));
+  }
+  for (let i = 0; i < bearings.length - 1; i++){
+    // 移動距離が短すぎる点はスキップ(GPS誤差の影響を避ける)
+    const segDist = computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
+    if (segDist < 3) continue;
+    const angleDiff = Math.abs(((bearings[i+1] - bearings[i] + 540) % 360) - 180);
+    if (angleDiff > 150) uTurnCount++;
+  }
+  if (uTurnCount / bearings.length > 0.05) return true;
+
+  // ② 前半と後半の近接チェック(50m以内: 平行道路の往復も検出)
   const half = Math.floor(coords.length / 2);
   const outbound = coords.slice(0, half);
   const inbound  = coords.slice(half);
-
   const step = Math.max(1, Math.floor(outbound.length / 20));
   let overlapCount = 0, totalChecked = 0;
-
   for (let i = 0; i < outbound.length; i += step){
     totalChecked++;
     for (let j = 0; j < inbound.length; j++){
       if (computeDistanceMeters(
         outbound[i][0], outbound[i][1],
         inbound[j][0],  inbound[j][1]
-      ) < 50){ // 25m→50mに拡大(平行道路の往復も検出)
+      ) < 50){
         overlapCount++;
         break;
       }
@@ -2135,22 +2152,16 @@ function hasBacktracking(coords){
   }
   if (overlapCount / totalChecked > 0.35) return true;
 
-  // ② ルートの「細長さ」チェック
-  // スクリーンショットのような往復ルートは、総距離に比べてカバーエリアが狭い
-  // 緯度・経度の標準偏差(=広がり)を計算して細長さを判定
+  // ③ ルートの「細長さ」チェック
   const lats = coords.map(c => c[0]);
   const lngs = coords.map(c => c[1]);
-  const latSpread = (Math.max(...lats) - Math.min(...lats)) * 111111; // メートル換算
+  const latSpread = (Math.max(...lats) - Math.min(...lats)) * 111111;
   const lngSpread = (Math.max(...lngs) - Math.min(...lngs)) * 111111 * Math.cos(lats[0] * Math.PI / 180);
   const diagonal  = Math.sqrt(latSpread * latSpread + lngSpread * lngSpread);
-
-  // ルート総距離を計算
   let totalDist = 0;
   for (let i = 0; i < coords.length - 1; i++){
     totalDist += computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
   }
-
-  // 総距離がカバーエリアの対角線の3.5倍以上 = 細長い往復ルート
   if (diagonal > 0 && totalDist / diagonal > 3.5) return true;
 
   return false;
