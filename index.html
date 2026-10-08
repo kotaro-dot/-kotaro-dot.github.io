@@ -16,6 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-rotate@0.2.8/dist/leaflet-rotate-src.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
 <style>
 
@@ -942,7 +943,7 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_M
 }).addTo(mapConfirm);
 
 /* ---- 結果表示用マップ(STEP4) ---- */
-const map = L.map('map', {zoomControl:false, preferCanvas:true, zoomAnimation:true, fadeAnimation:false, markerZoomAnimation:false}).setView([35.681236, 139.767125], 14);
+const map = L.map('map', {zoomControl:false, preferCanvas:true, zoomAnimation:true, fadeAnimation:false, markerZoomAnimation:false, rotate:true, touchRotate:false, bearing:0}).setView([35.681236, 139.767125], 14);
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
   maxZoom: 19,
   keepBuffer: 4,
@@ -954,40 +955,7 @@ setTimeout(() => map.invalidateSize(), 100);
 map.on("dragstart", pauseAutoFollow);
 map.on("drag", pauseAutoFollow);
 
-// ドラッグ方向の回転補正パッチ:
-// CSSでmap要素を回転させるとLeafletの内部座標系とズレが生じ、スクロール方向が反転する。
-// ドラッグのオフセットベクトルを、地図の回転角の逆方向に回転させることで補正する。
-(function patchLeafletDraggable(){
-  const orig = L.Draggable.prototype._onMove;
-  L.Draggable.prototype._onMove = function(e){
-    const deg = mapRotationDeg;
-    if (!deg){ orig.call(this, e); return; }
-
-    const first = (e.touches && e.touches.length === 1 ? e.touches[0] : e);
-    const rawX = first.clientX, rawY = first.clientY;
-    const dx = rawX - this._startPoint.x, dy = rawY - this._startPoint.y;
-
-    // オフセットを -deg 回転(地図が -deg 傾いているので +deg 戻す)
-    // currentHeading が上になるよう deg = -heading なので +heading 分戻す
-    const rad = (-deg) * Math.PI / 180; // = currentHeading ラジアン
-    const cos = Math.cos(rad), sin = Math.sin(rad);
-    const rotX = dx * cos - dy * sin;
-    const rotY = dx * sin + dy * cos;
-
-    const synthetic = {
-      type: e.type, target: e.target, srcElement: e.srcElement,
-      clientX: this._startPoint.x + rotX,
-      clientY: this._startPoint.y + rotY,
-      preventDefault: () => e.preventDefault(),
-      stopPropagation: () => e.stopPropagation(),
-      stopImmediatePropagation: () => e.stopImmediatePropagation && e.stopImmediatePropagation()
-    };
-    if (e.touches){
-      synthetic.touches = [{ clientX: synthetic.clientX, clientY: synthetic.clientY }];
-    }
-    orig.call(this, synthetic);
-  };
-})();
+// leaflet-rotate導入によりドラッグ補正パッチは不要
 
 // 古いサービスワーカーを全て削除する(キャッシュ問題を完全解消)
 if ('serviceWorker' in navigator){
@@ -1530,7 +1498,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   }
 
   if (!liveMarker){
-    liveMarker = L.marker(latlng, {icon: createLiveIcon(currentHeading), zIndexOffset: 1000}).addTo(map);
+    liveMarker = L.marker(latlng, {icon: createLiveIcon(0), zIndexOffset: 1000}).addTo(map);
     lastDisplayedHeading = currentHeading;
     lastHeadingApplyTime = now;
     lastDisplayedLatLng = latlng;
@@ -1551,8 +1519,13 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
       if (!pendingIconUpdate){
         const headingSnap = currentHeading;
         pendingIconUpdate = requestAnimationFrame(() => {
-          liveMarker.setIcon(createLiveIcon(headingSnap));
-          document.getElementById('map').style.transform = 'translate(-50%,-50%)';
+          // ヘッドアップモード: 進行方向が常に上になるよう地図を回転
+          if (map && map.setBearing && !manualRotationActive) map.setBearing(headingSnap);
+          // ビームアイコンは常に上向き(地図が回転するため方向は常に0)
+          liveMarker.setIcon(createLiveIcon(0));
+          // コンパスボタンに現在の北の方向を反映
+          const compassBtn = document.getElementById('compassBtn');
+          if (compassBtn) compassBtn.style.transform = 'rotate(' + headingSnap + 'deg)';
           pendingIconUpdate = null;
         });
       }
@@ -1720,6 +1693,7 @@ on('mapFullscreenBtn','click', openFullscreenMap);
 // スマート自動追従: 手動でパンしたら一時停止し、5秒後に再開
 let autoFollowEnabled = true;
 let autoFollowTimer = null;
+let manualRotationActive = false; // コンパスボタンで手動回転後は自動ヘッドアップを停止
 
 function pauseAutoFollow(){
   autoFollowEnabled = false;
@@ -1741,18 +1715,15 @@ function getTouchAngle(e){
 
 function applyMapRotation(deg){
   mapUserRotation = ((deg % 360) + 360) % 360;
-  mapRotationDeg = -mapUserRotation; // ドラッグ補正パッチ用
-  const mapEl = document.getElementById('map');
-  if (mapEl) mapEl.style.transform = mapUserRotation !== 0
-    ? 'translate(-50%,-50%) rotate(' + (-mapUserRotation) + 'deg)'
-    : 'translate(-50%,-50%)';
+  mapRotationDeg = mapUserRotation;
+  // leaflet-rotate の setBearing で地図をネイティブに回転
+  if (map && map.setBearing) map.setBearing(mapUserRotation);
   // コンパスボタンの向きを更新
   const btn = document.getElementById('compassBtn');
   if (btn){
     btn.style.transform = 'rotate(' + mapUserRotation + 'deg)';
     btn.style.color = mapUserRotation !== 0 ? 'var(--accent)' : '';
   }
-  setTimeout(() => map.invalidateSize(), 30);
 }
 
 (function initMapRotation(){
@@ -1769,7 +1740,7 @@ function applyMapRotation(deg){
   clip.addEventListener('touchmove', (e) => {
     if (e.touches.length === 2 && twoFingerStartAngle !== null){
       const delta = getTouchAngle(e) - twoFingerStartAngle;
-      applyMapRotation(twoFingerStartRotation - delta);
+      manualRotationActive = true; applyMapRotation(twoFingerStartRotation - delta);
     }
   }, {passive: true});
 
@@ -1779,7 +1750,7 @@ function applyMapRotation(deg){
 })();
 
 // コンパスボタン: タップで北向きにリセット
-on('compassBtn', 'click', () => applyMapRotation(0));
+on('compassBtn', 'click', () => { manualRotationActive = false; applyMapRotation(0); });
 
 /* ===================== 日陰優先モード ===================== */
 
