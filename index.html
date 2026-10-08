@@ -16,7 +16,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet-rotate@0.2.8/dist/leaflet-rotate-src.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
 <style>
 
@@ -943,7 +942,7 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_M
 }).addTo(mapConfirm);
 
 /* ---- 結果表示用マップ(STEP4) ---- */
-const map = L.map('map', {zoomControl:false, preferCanvas:true, zoomAnimation:true, fadeAnimation:false, markerZoomAnimation:false, rotate:true, touchRotate:false, bearing:0}).setView([35.681236, 139.767125], 14);
+const map = L.map('map', {zoomControl:false, preferCanvas:true, zoomAnimation:true, fadeAnimation:false, markerZoomAnimation:false}).setView([35.681236, 139.767125], 14);
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
   maxZoom: 19,
   keepBuffer: 4,
@@ -955,7 +954,29 @@ setTimeout(() => map.invalidateSize(), 100);
 map.on("dragstart", pauseAutoFollow);
 map.on("drag", pauseAutoFollow);
 
-// leaflet-rotate導入によりドラッグ補正パッチは不要
+// ドラッグ補正パッチ(CSS rotate使用時のLeaflet座標ズレ補正)
+(function patchLeafletDraggable(){
+  const orig = L.Draggable.prototype._onMove;
+  L.Draggable.prototype._onMove = function(e){
+    const deg = -mapUserRotation;
+    if (!deg){ orig.call(this, e); return; }
+    const first = (e.touches && e.touches.length === 1 ? e.touches[0] : e);
+    const dx = first.clientX - this._startPoint.x;
+    const dy = first.clientY - this._startPoint.y;
+    const rad = deg * Math.PI / 180;
+    const cos = Math.cos(rad), sin = Math.sin(rad);
+    const synthetic = {
+      type:e.type, target:e.target, srcElement:e.srcElement,
+      clientX: this._startPoint.x + dx*cos - dy*sin,
+      clientY: this._startPoint.y + dx*sin + dy*cos,
+      preventDefault:()=>e.preventDefault(),
+      stopPropagation:()=>e.stopPropagation(),
+      stopImmediatePropagation:()=>e.stopImmediatePropagation&&e.stopImmediatePropagation()
+    };
+    if(e.touches) synthetic.touches=[{clientX:synthetic.clientX,clientY:synthetic.clientY}];
+    orig.call(this, synthetic);
+  };
+})();
 
 // 古いサービスワーカーを全て削除する(キャッシュ問題を完全解消)
 if ('serviceWorker' in navigator){
@@ -1519,8 +1540,12 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
       if (!pendingIconUpdate){
         const headingSnap = currentHeading;
         pendingIconUpdate = requestAnimationFrame(() => {
-          // ヘッドアップモード: 進行方向が常に上になるよう地図を回転
-          if (map && map.setBearing && !manualRotationActive) map.setBearing(headingSnap);
+          // ヘッドアップモード: 進行方向が常に上になるよう地図をCSS回転
+          if (!manualRotationActive){
+            const mapEl2 = document.getElementById('map');
+            if (mapEl2) mapEl2.style.transform = 'translate(-50%,-50%) rotate(' + (-headingSnap) + 'deg)';
+            mapUserRotation = ((headingSnap % 360) + 360) % 360;
+          }
           // ビームアイコンは常に上向き(地図が回転するため方向は常に0)
           liveMarker.setIcon(createLiveIcon(0));
           // コンパスボタンに現在の北の方向を反映
@@ -1716,8 +1741,9 @@ function getTouchAngle(e){
 function applyMapRotation(deg){
   mapUserRotation = ((deg % 360) + 360) % 360;
   mapRotationDeg = mapUserRotation;
-  // leaflet-rotate の setBearing で地図をネイティブに回転
-  if (map && map.setBearing) map.setBearing(mapUserRotation);
+  // CSSで地図を回転
+  const mapEl = document.getElementById('map');
+  if (mapEl) mapEl.style.transform = mapUserRotation !== 0 ? 'translate(-50%,-50%) rotate(' + (-mapUserRotation) + 'deg)' : 'translate(-50%,-50%)';
   // コンパスボタンの向きを更新
   const btn = document.getElementById('compassBtn');
   if (btn){
