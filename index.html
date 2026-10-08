@@ -1477,22 +1477,9 @@ function createLiveIcon(headingDeg){
 }
 
 function handleOrientation(e){
-  let heading = null;
-  if (typeof e.webkitCompassHeading === 'number'){ heading = e.webkitCompassHeading; }
-  else if (typeof e.alpha === 'number'){ heading = 360 - e.alpha; }
-  if (heading !== null){
-    if (currentHeading !== null){
-      const diff = Math.abs(((heading - currentHeading + 540) % 360) - 180);
-      if (diff > 90) return; // 急変はノイズとして無視
-    }
-    lastCompassUpdate = Date.now();
-    compassIsActive = true;
-    // GPS移動方向がある場合はコンパスを使わない(GPS移動方向の方が正確)
-    // 静止中(GPS移動方向なし)のみコンパスで方角を補完する
-    if (gpsMovementHeading === null){
-      currentHeading = smoothAngle(currentHeading, heading, 0.1);
-    }
-  }
+  // コンパス(デバイスの向き)は使用しない。
+  // ビームアイコンはGPS移動方向のみで制御する。
+  // (handleOrientationは登録されるが何もしない)
 }
 
 function smoothAngle(prevDeg, nextDeg, factor){
@@ -1523,11 +1510,11 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   }
 
   // ③ 表示する方角の決定:
-  // GPS移動方向がある場合はそれを主軸に使う(実際に進んでいる方向なので最も正確)
-  // コンパスは静止時の補助として機能する
+  // GPS移動方向のみを使用する。静止時は最後の方向を維持(コンパスは使わない)
   if (gpsMovementHeading !== null){
     currentHeading = smoothAngle(currentHeading, gpsMovementHeading, 0.45);
   }
+  // currentHeadingがnullのままの場合(まだ動いていない)はビームなし
 
   const rotating = false; // 常にNorth-up
 
@@ -1590,7 +1577,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   updateFinishTimeEstimate();
 
   const compassFresh = (Date.now() - lastCompassUpdate) < 2000;
-  const headingSource = currentHeading === null ? '' : (compassFresh ? '(コンパス)' : '(GPS移動から推定)');
+  const headingSource = currentHeading === null ? '' : '(GPS移動方向)';
   document.getElementById('liveStatus').textContent = '現在地を追跡中(精度: 約' + Math.round(accuracy) + 'm)' + (currentHeading!==null ? ' / 方角: ' + Math.round(currentHeading) + '°' + headingSource : '');
 }
 
