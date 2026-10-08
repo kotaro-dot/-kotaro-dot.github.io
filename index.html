@@ -927,6 +927,10 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
 // 安全なイベントリスナー追加(要素がなくてもクラッシュしない)
 function on(id, evt, fn){ const el=document.getElementById(id); if(el) el.addEventListener(evt,fn); }
 
+// 地図回転関連変数(ドラッグ補正パッチより前に宣言必須)
+let mapUserRotation = 0;     // 現在の地図回転角度(度)
+let manualRotationActive = false; // trueの間はヘッドアップ自動回転を停止
+
 let mode = 'loop';
 let startPoint = null;
 let goalPoint = null;
@@ -993,14 +997,21 @@ if ('serviceWorker' in navigator){
   const splash = document.getElementById('splashOverlay');
   if (!splash) return;
   function hideSplash(){
-    splash.style.opacity = '0';
     splash.style.transition = 'opacity 0.5s ease';
-    setTimeout(() => { splash.style.display = 'none'; }, 550);
+    splash.style.opacity = '0';
+    setTimeout(() => { splash.style.display = 'none'; splash.style.visibility = 'hidden'; }, 550);
   }
   // 4.4秒後にフェードアウト(アニメーション完了に合わせる)
   setTimeout(hideSplash, 4400);
-  // 保険: 6秒後に強制非表示
-  setTimeout(() => { splash.style.display = 'none'; }, 6000);
+  // 保険1: 5秒後に強制非表示
+  setTimeout(() => { splash.style.display = 'none'; splash.style.visibility = 'hidden'; }, 5000);
+  // 保険2: 8秒後に確実に非表示(pointer-eventsも無効化)
+  setTimeout(() => {
+    splash.style.display = 'none';
+    splash.style.visibility = 'hidden';
+    splash.style.pointerEvents = 'none';
+    splash.style.zIndex = '-1';
+  }, 8000);
 })();
 
 /* ---------------- 画面切り替え ---------------- */
@@ -1718,8 +1729,6 @@ on('mapFullscreenBtn','click', openFullscreenMap);
 // スマート自動追従: 手動でパンしたら一時停止し、5秒後に再開
 let autoFollowEnabled = true;
 let autoFollowTimer = null;
-let manualRotationActive = false; // コンパスボタンで手動回転後は自動ヘッドアップを停止
-
 function pauseAutoFollow(){
   autoFollowEnabled = false;
   if (autoFollowTimer) clearTimeout(autoFollowTimer);
@@ -1729,7 +1738,6 @@ function pauseAutoFollow(){
 }
 
 /* ===== 2本指による地図回転 ===== */
-let mapUserRotation = 0; // ユーザーが手動で設定した回転角度
 let twoFingerStartAngle = null;
 let twoFingerStartRotation = 0;
 
