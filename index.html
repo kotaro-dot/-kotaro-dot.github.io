@@ -955,15 +955,22 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_M
   attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a>'
 }).addTo(map);
 setTimeout(() => map.invalidateSize(), 100);
-map.on("dragstart", pauseAutoFollow);
+map.on("dragstart", function(){ pauseAutoFollow(); manualRotationActive = true; });
 map.on("drag", pauseAutoFollow);
+map.on("dragend", function(){ manualRotationActive = false; });
 
 // ドラッグ補正パッチ(CSS rotate使用時のLeaflet座標ズレ補正)
 (function patchLeafletDraggable(){
-  const orig = L.Draggable.prototype._onMove;
+  const origMove = L.Draggable.prototype._onMove;
+  const origDown = L.Draggable.prototype._onDown;
+  // ドラッグ開始時の回転角度を記録(ドラッグ中に角度が変わらないように)
+  L.Draggable.prototype._onDown = function(e){
+    this._dragRotationDeg = mapUserRotation;
+    return origDown.call(this, e);
+  };
   L.Draggable.prototype._onMove = function(e){
-    const deg = -mapUserRotation;
-    if (!deg){ orig.call(this, e); return; }
+    const deg = this._dragRotationDeg || 0;
+    if (!deg){ origMove.call(this, e); return; }
     const first = (e.touches && e.touches.length === 1 ? e.touches[0] : e);
     const dx = first.clientX - this._startPoint.x;
     const dy = first.clientY - this._startPoint.y;
@@ -971,6 +978,7 @@ map.on("drag", pauseAutoFollow);
     const cos = Math.cos(rad), sin = Math.sin(rad);
     const synthetic = {
       type:e.type, target:e.target, srcElement:e.srcElement,
+      pointerId:e.pointerId, pointerType:e.pointerType, button:e.button,
       clientX: this._startPoint.x + dx*cos - dy*sin,
       clientY: this._startPoint.y + dx*sin + dy*cos,
       preventDefault:()=>e.preventDefault(),
@@ -978,7 +986,7 @@ map.on("drag", pauseAutoFollow);
       stopImmediatePropagation:()=>e.stopImmediatePropagation&&e.stopImmediatePropagation()
     };
     if(e.touches) synthetic.touches=[{clientX:synthetic.clientX,clientY:synthetic.clientY}];
-    orig.call(this, synthetic);
+    origMove.call(this, synthetic);
   };
 })();
 
