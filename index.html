@@ -1530,7 +1530,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   }
 
   if (!liveMarker){
-    liveMarker = L.marker(latlng, {icon: createLiveIcon(0), zIndexOffset: 1000}).addTo(map);
+    liveMarker = L.marker(latlng, {icon: createLiveIcon(currentHeading ?? 0), zIndexOffset: 1000}).addTo(map);
     lastDisplayedHeading = currentHeading;
     lastHeadingApplyTime = now;
     lastDisplayedLatLng = latlng;
@@ -1557,8 +1557,9 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
             if (mapEl2) mapEl2.style.transform = 'translate(-50%,-50%) rotate(' + (-headingSnap) + 'deg)';
             mapUserRotation = ((headingSnap % 360) + 360) % 360;
           }
-          // ビームアイコンは常に上向き(地図が回転するため方向は常に0)
-          liveMarker.setIcon(createLiveIcon(0));
+          // ビームアイコン: 地図上での進行方向を向く(手動回転時も正確に)
+          const relativeHeading = ((headingSnap - mapUserRotation) % 360 + 360) % 360;
+          liveMarker.setIcon(createLiveIcon(relativeHeading));
           // コンパスボタンに現在の北の方向を反映
           const compassBtn = document.getElementById('compassBtn');
           if (compassBtn) compassBtn.style.transform = 'rotate(' + headingSnap + 'deg)';
