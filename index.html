@@ -2384,29 +2384,7 @@ function drawRoute(coordsLatLng){
   map.fitBounds(L.latLngBounds(coordsLatLng), {padding:[24,24]});
 }
 
-function trimRouteToCurrentPosition(lat, lng){
-  if (!routeCoords.length || !routeSegments.length) return;
-
-  const seg = routeSegments[activeSegIdx];
-  const endPt = routeCoords[seg.end];
-  const distToEnd = computeDistanceMeters(lat, lng, endPt[0], endPt[1]);
-
-  // 現在地が現在区間の終端から15m以内に入ったら、区間完了とみなす
-  if (distToEnd > 15){
-    // 区間の途中では矢印だけ現在地付近に更新する
-    if (arrowGroup){
-      // 現在地に最も近いルート上の点を見つけて矢印の基点にする
-      let nearestIdx = seg.start, nearestDist = Infinity;
-      for (let i = seg.start; i <= seg.end; i++){
-        const d = computeDistanceMeters(lat, lng, routeCoords[i][0], routeCoords[i][1]);
-        if (d < nearestDist){ nearestDist = d; nearestIdx = i; }
-      }
-      drawArrowsNearPosition(nearestIdx);
-    }
-    return;
-  }
-
-  // 区間完了
+function advanceSegment(lat, lng){
   if (activeSegIdx >= routeSegments.length - 1){
     // 全区間完了 → ゴール
     if (routeLine){ map.removeLayer(routeLine); routeLine = null; }
@@ -2416,10 +2394,56 @@ function trimRouteToCurrentPosition(lat, lng){
     handleGoalReached();
     return;
   }
-
-  // 次の区間へ
   activeSegIdx++;
   redrawActiveSegment();
+}
+
+function trimRouteToCurrentPosition(lat, lng){
+  if (!routeCoords.length || !routeSegments.length) return;
+
+  const seg = routeSegments[activeSegIdx];
+  const endPt = routeCoords[seg.end];
+  const distToEnd = computeDistanceMeters(lat, lng, endPt[0], endPt[1]);
+
+  // 現在地が現在区間の終端から15m以内に入ったら、区間完了とみなす
+  if (distToEnd <= 15){
+    advanceSegment(lat, lng);
+    return;
+  }
+
+  // 終端15m判定を逃した場合のフォールバック:
+  // 現在地が未来の区間のルート座標に近ければ、そこまでスキップ
+  const SKIP_THRESHOLD = 30; // メートル
+  let skipToSegIdx = -1;
+  for (let si = activeSegIdx + 1; si < routeSegments.length; si++){
+    const fSeg = routeSegments[si];
+    for (let i = fSeg.start; i <= fSeg.end; i++){
+      const d = computeDistanceMeters(lat, lng, routeCoords[i][0], routeCoords[i][1]);
+      if (d < SKIP_THRESHOLD){
+        skipToSegIdx = si;
+        break;
+      }
+    }
+    if (skipToSegIdx >= 0) break;
+    // 現在の区間から2つ以上先は探索しない(折り返しルートの誤判定を防ぐ)
+    if (si >= activeSegIdx + 3) break;
+  }
+
+  if (skipToSegIdx >= 0){
+    activeSegIdx = skipToSegIdx;
+    advanceSegment(lat, lng);
+    return;
+  }
+
+  // 区間の途中では矢印だけ現在地付近に更新する
+  if (arrowGroup){
+    let nearestIdx = seg.start, nearestDist = Infinity;
+    for (let i = seg.start; i <= seg.end; i++){
+      const d = computeDistanceMeters(lat, lng, routeCoords[i][0], routeCoords[i][1]);
+      if (d < nearestDist){ nearestDist = d; nearestIdx = i; }
+    }
+    drawArrowsNearPosition(nearestIdx);
+  }
 }
 
 // 旧変数の互換定義
