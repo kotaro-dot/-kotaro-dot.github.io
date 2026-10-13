@@ -1559,18 +1559,9 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
       if (!pendingIconUpdate){
         const headingSnap = currentHeading;
         pendingIconUpdate = requestAnimationFrame(() => {
-          // ヘッドアップモード: 進行方向が常に上になるよう地図をCSS回転
-          if (!manualRotationActive){
-            const mapEl2 = document.getElementById('map');
-            if (mapEl2) mapEl2.style.transform = 'translate(-50%,-50%) rotate(' + (-headingSnap) + 'deg)';
-            mapUserRotation = ((headingSnap % 360) + 360) % 360;
-          }
-          // ビームアイコン: 地図上での進行方向を向く(手動回転時も正確に)
+          // ビームアイコン: GPS進行方向を向く（地図回転を考慮した相対角度）
           const relativeHeading = ((headingSnap - mapUserRotation) % 360 + 360) % 360;
           liveMarker.setIcon(createLiveIcon(relativeHeading));
-          // コンパスボタンに現在の北の方向を反映
-          const compassBtn = document.getElementById('compassBtn');
-          if (compassBtn) compassBtn.style.transform = 'rotate(' + headingSnap + 'deg)';
           pendingIconUpdate = null;
         });
       }
@@ -1792,8 +1783,14 @@ function applyMapRotation(deg){
   }, {passive: true});
 })();
 
-// コンパスボタン: タップで北向きにリセット
-on('compassBtn', 'click', () => { manualRotationActive = false; applyMapRotation(0); });
+// コンパスボタン: タップで現在地に戻る
+on('compassBtn', 'click', () => {
+  if (lastDisplayedLatLng){
+    map.panTo(lastDisplayedLatLng, {animate:true, duration:0.5});
+  }
+  autoFollowEnabled = true;
+  if (autoFollowTimer) clearTimeout(autoFollowTimer);
+});
 
 /* ===================== 日陰優先モード ===================== */
 
