@@ -1436,6 +1436,21 @@ function computeDistanceMeters(lat1, lng1, lat2, lng2){
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
+// 点Pから線分ABへの最短距離(メートル)
+function distPointToSegment(pLat, pLng, aLat, aLng, bLat, bLng){
+  const dAB = computeDistanceMeters(aLat, aLng, bLat, bLng);
+  if (dAB < 0.1) return computeDistanceMeters(pLat, pLng, aLat, aLng);
+  // 線分上の最近接点をパラメータtで求める
+  const dAP = computeDistanceMeters(aLat, aLng, pLat, pLng);
+  const dBP = computeDistanceMeters(bLat, bLng, pLat, pLng);
+  const dAB2 = dAB * dAB, dAP2 = dAP * dAP, dBP2 = dBP * dBP;
+  let t = (dAP2 - dBP2 + dAB2) / (2 * dAB2);
+  t = Math.max(0, Math.min(1, t));
+  const cLat = aLat + t * (bLat - aLat);
+  const cLng = aLng + t * (bLng - aLng);
+  return computeDistanceMeters(pLat, pLng, cLat, cLng);
+}
+
 let watchId = null;
 let liveMarker = null;
 let currentHeading = null;
@@ -2409,27 +2424,46 @@ function trimRouteToCurrentPosition(lat, lng){
   }
 
   // 終端15m判定を逃した場合のフォールバック:
-  // 現在地が未来の区間のルート座標に近ければ、そこまでスキップ
-  const SKIP_THRESHOLD = 30; // メートル
-  let skipToSegIdx = -1;
-  for (let si = activeSegIdx + 1; si < routeSegments.length; si++){
-    const fSeg = routeSegments[si];
-    for (let i = fSeg.start; i <= fSeg.end; i++){
-      const d = computeDistanceMeters(lat, lng, routeCoords[i][0], routeCoords[i][1]);
-      if (d < SKIP_THRESHOLD){
-        skipToSegIdx = si;
-        break;
-      }
-    }
-    if (skipToSegIdx >= 0) break;
-    // 現在の区間から2つ以上先は探索しない(折り返しルートの誤判定を防ぐ)
-    if (si >= activeSegIdx + 3) break;
+  // 3条件すべてを満たす場合のみ未来区間にスキップ:
+  //   (1) 現在地が未来区間の線分から10m以内（その道の上にいる）
+  //   (2) GPS進行方向がその線分の方向と角度差30度以内
+  //   (3) 現在地が実線（現在区間）のどの線分からも30m以上離れている
+
+  // 条件(3): 現在区間の最短線分距離を計算
+  let minDistToActiveSeg = Infinity;
+  for (let i = seg.start; i < seg.end; i++){
+    const d = distPointToSegment(lat, lng, routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
+    if (d < minDistToActiveSeg) minDistToActiveSeg = d;
   }
 
-  if (skipToSegIdx >= 0){
-    activeSegIdx = skipToSegIdx;
-    advanceSegment(lat, lng);
-    return;
+  if (minDistToActiveSeg >= 30){
+    let skipToSegIdx = -1;
+    for (let si = activeSegIdx + 1; si < routeSegments.length; si++){
+      const fSeg = routeSegments[si];
+      for (let i = fSeg.start; i < fSeg.end; i++){
+        // 条件(1): 線分からの距離が10m以内
+        const d = distPointToSegment(lat, lng, routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
+        if (d < 10){
+          // 条件(2): 進行方向がその線分の方向と30度以内
+          if (currentHeading !== null){
+            const segBearing = computeBearing(routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
+            const angleDiff = Math.abs(((currentHeading - segBearing + 540) % 360) - 180);
+            if (angleDiff <= 30){
+              skipToSegIdx = si;
+              break;
+            }
+          }
+        }
+      }
+      if (skipToSegIdx >= 0) break;
+      if (si >= activeSegIdx + 3) break;
+    }
+
+    if (skipToSegIdx >= 0){
+      activeSegIdx = skipToSegIdx;
+      advanceSegment(lat, lng);
+      return;
+    }
   }
 
   // 区間の途中では矢印だけ現在地付近に更新する
