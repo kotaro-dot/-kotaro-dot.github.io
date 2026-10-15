@@ -1535,7 +1535,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   // ③ 表示する方角の決定:
   // GPS移動方向のみを使用する。静止時は最後の方向を維持(コンパスは使わない)
   if (gpsMovementHeading !== null){
-    currentHeading = smoothAngle(currentHeading, gpsMovementHeading, 0.45);
+    currentHeading = smoothAngle(currentHeading, gpsMovementHeading, 0.6);
   }
   // currentHeadingがnullのままの場合(まだ動いていない)はビームなし
 
@@ -1548,12 +1548,13 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
       headingUpdateDue = true;
     } else {
       const diff = Math.abs(((currentHeading - lastDisplayedHeading + 540) % 360) - 180);
-      headingUpdateDue = diff >= 25; // 25度以上変わった時だけ地図を回転する
+      headingUpdateDue = diff >= 10; // 10度以上変わった時だけアイコンを更新する
     }
   }
 
   if (!liveMarker){
-    liveMarker = L.marker(latlng, {icon: createLiveIcon(currentHeading ?? 0), zIndexOffset: 1000}).addTo(map);
+    const initHeading = currentHeading !== null ? ((currentHeading - mapUserRotation) % 360 + 360) % 360 : 0;
+    liveMarker = L.marker(latlng, {icon: createLiveIcon(initHeading), zIndexOffset: 1000}).addTo(map);
     lastDisplayedHeading = currentHeading;
     lastHeadingApplyTime = now;
     lastDisplayedLatLng = latlng;
@@ -1772,6 +1773,12 @@ function applyMapRotation(deg){
   if (btn){
     btn.style.transform = 'rotate(' + mapUserRotation + 'deg)';
     btn.style.color = mapUserRotation !== 0 ? 'var(--accent)' : '';
+  }
+  // ビームアイコンの向きを地図回転に合わせて即座に更新
+  if (liveMarker && currentHeading !== null){
+    const relH = ((currentHeading - mapUserRotation) % 360 + 360) % 360;
+    liveMarker.setIcon(createLiveIcon(relH));
+    lastDisplayedHeading = currentHeading;
   }
 }
 
