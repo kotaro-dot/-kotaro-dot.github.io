@@ -989,6 +989,7 @@ map.on("dragend", function(){ manualRotationActive = false; });
     // 地図が回転中 → Leafletのドラッグを止めて自前で処理
     map.dragging.disable();
     customDragActive = true;
+    pauseAutoFollow(); // 自動追従を一時停止(Leafletのdragstartが発火しないため手動で呼ぶ)
     const t = e.touches[0];
     dragLastX = t.clientX;
     dragLastY = t.clientY;
@@ -1031,6 +1032,7 @@ map.on("dragend", function(){ manualRotationActive = false; });
     if (!mapUserRotation || e.button !== 0) return;
     map.dragging.disable();
     mouseDragActive = true;
+    pauseAutoFollow();
     dragLastX = e.clientX;
     dragLastY = e.clientY;
     e.preventDefault();
