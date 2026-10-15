@@ -979,8 +979,8 @@ map.on("dragend", function(){ manualRotationActive = false; });
     const synthetic = {
       type:e.type, target:e.target, srcElement:e.srcElement,
       pointerId:e.pointerId, pointerType:e.pointerType, button:e.button,
-      clientX: this._startPoint.x + dx*cos - dy*sin,
-      clientY: this._startPoint.y + dx*sin + dy*cos,
+      clientX: this._startPoint.x + dx*cos + dy*sin,
+      clientY: this._startPoint.y - dx*sin + dy*cos,
       preventDefault:()=>e.preventDefault(),
       stopPropagation:()=>e.stopPropagation(),
       stopImmediatePropagation:()=>e.stopImmediatePropagation&&e.stopImmediatePropagation()
