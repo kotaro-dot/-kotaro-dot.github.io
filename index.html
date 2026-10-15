@@ -979,8 +979,8 @@ map.on("dragend", function(){ manualRotationActive = false; });
     const synthetic = {
       type:e.type, target:e.target, srcElement:e.srcElement,
       pointerId:e.pointerId, pointerType:e.pointerType, button:e.button,
-      clientX: this._startPoint.x + dx*cos + dy*sin,
-      clientY: this._startPoint.y - dx*sin + dy*cos,
+      clientX: this._startPoint.x + dx*cos - dy*sin,
+      clientY: this._startPoint.y + dx*sin + dy*cos,
       preventDefault:()=>e.preventDefault(),
       stopPropagation:()=>e.stopPropagation(),
       stopImmediatePropagation:()=>e.stopImmediatePropagation&&e.stopImmediatePropagation()
@@ -1553,8 +1553,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   }
 
   if (!liveMarker){
-    const initHeading = currentHeading !== null ? ((currentHeading - mapUserRotation) % 360 + 360) % 360 : 0;
-    liveMarker = L.marker(latlng, {icon: createLiveIcon(initHeading), zIndexOffset: 1000}).addTo(map);
+    liveMarker = L.marker(latlng, {icon: createLiveIcon(currentHeading ?? 0), zIndexOffset: 1000}).addTo(map);
     lastDisplayedHeading = currentHeading;
     lastHeadingApplyTime = now;
     lastDisplayedLatLng = latlng;
@@ -1575,9 +1574,9 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
       if (!pendingIconUpdate){
         const headingSnap = currentHeading;
         pendingIconUpdate = requestAnimationFrame(() => {
-          // ビームアイコン: GPS進行方向を向く（地図回転を考慮した相対角度）
-          const relativeHeading = ((headingSnap - mapUserRotation) % 360 + 360) % 360;
-          liveMarker.setIcon(createLiveIcon(relativeHeading));
+          // ビームアイコン: GPS進行方向をそのまま渡す
+          // (地図がCSS rotateで回転→マーカーも一緒に回転するため、補正不要)
+          liveMarker.setIcon(createLiveIcon(headingSnap));
           pendingIconUpdate = null;
         });
       }
@@ -1773,12 +1772,6 @@ function applyMapRotation(deg){
   if (btn){
     btn.style.transform = 'rotate(' + mapUserRotation + 'deg)';
     btn.style.color = mapUserRotation !== 0 ? 'var(--accent)' : '';
-  }
-  // ビームアイコンの向きを地図回転に合わせて即座に更新
-  if (liveMarker && currentHeading !== null){
-    const relH = ((currentHeading - mapUserRotation) % 360 + 360) % 360;
-    liveMarker.setIcon(createLiveIcon(relH));
-    lastDisplayedHeading = currentHeading;
   }
 }
 
