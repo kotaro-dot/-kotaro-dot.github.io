@@ -1009,9 +1009,10 @@ map.on("dragend", function(){ manualRotationActive = false; });
     dragLastY = t.clientY;
 
     const d = getRotatedDelta(screenDx, screenDy);
-    // panByは「地図をどれだけピクセル移動するか」ではなく
-    // 「ビューポートをどの方向に動かすか」なので符号を反転
     map.panBy([-d.dx, -d.dy], {animate: false});
+    // デバッグ: カスタムドラッグが動作していることを表示
+    const dbg = document.getElementById('liveStatus');
+    if (dbg) dbg.textContent = 'v3 ドラッグ中 rot:' + Math.round(mapUserRotation) + '° screen(' + Math.round(screenDx) + ',' + Math.round(screenDy) + ') map(' + Math.round(d.dx) + ',' + Math.round(d.dy) + ')';
   }, {passive: true});
 
   clip.addEventListener('touchend', function(e){
@@ -1677,7 +1678,8 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
 
   const compassFresh = (Date.now() - lastCompassUpdate) < 2000;
   const headingSource = currentHeading === null ? '' : '(GPS移動方向)';
-  document.getElementById('liveStatus').textContent = '現在地を追跡中(精度: 約' + Math.round(accuracy) + 'm)' + (currentHeading!==null ? ' / 方角: ' + Math.round(currentHeading) + '°' + headingSource : '');
+  const movedInfo = lastLiveLatLng ? ' moved:' + Math.round(computeDistanceMeters(lastLiveLatLng[0], lastLiveLatLng[1], lat, lng)) + 'm' : ' init';
+  document.getElementById('liveStatus').textContent = 'v3 追跡中(精度:' + Math.round(accuracy) + 'm)' + (currentHeading!==null ? ' 方角:' + Math.round(currentHeading) + '°' + headingSource : ' 方角:計算中') + movedInfo;
 }
 
 function getRemainingMeters(){
