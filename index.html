@@ -2156,9 +2156,9 @@ function hasBacktracking(coords){
     const angleDiff = Math.abs(((bearings[i+1] - bearings[i] + 540) % 360) - 180);
     if (angleDiff > 150) uTurnCount++;
   }
-  if (uTurnCount / bearings.length > 0.05) return true;
+  if (uTurnCount / bearings.length > 0.03) return true;
 
-  // ② 前半と後半の近接チェック(50m以内: 平行道路の往復も検出)
+  // ② 前半と後半の近接チェック(30m以内: 平行道路の往復も検出)
   const half = Math.floor(coords.length / 2);
   const outbound = coords.slice(0, half);
   const inbound  = coords.slice(half);
@@ -2170,13 +2170,13 @@ function hasBacktracking(coords){
       if (computeDistanceMeters(
         outbound[i][0], outbound[i][1],
         inbound[j][0],  inbound[j][1]
-      ) < 50){
+      ) < 30){
         overlapCount++;
         break;
       }
     }
   }
-  if (overlapCount / totalChecked > 0.35) return true;
+  if (overlapCount / totalChecked > 0.25) return true;
 
   // ③ ルートの「細長さ」チェック
   const lats = coords.map(c => c[0]);
@@ -2194,6 +2194,67 @@ function hasBacktracking(coords){
 }
 
 function hasUTurn(coords){ return hasBacktracking(coords); }
+
+// 折り返し(同じ道の往復)部分を検出し除去する後処理関数
+// 戻り値: 折り返し除去後の座標配列
+function removeBacktracking(coords){
+  if (coords.length < 6) return coords;
+
+  const NEAR_THRESHOLD = 25;   // 折り返し地点と戻り地点が25m以内なら同じ場所とみなす
+  const MIN_SKIP = 6;          // 最低6ポイント以上離れている場合のみ折り返しとみなす(小さなカーブを誤検出しない)
+  const BEARING_REVERSE = 120; // 折り返し前後で進行方向が120度以上異なる場合に折り返しと判定
+
+  let result = coords.slice(); // コピーして操作
+  let changed = true;
+
+  // 複数箇所の折り返しに対応するため繰り返す(最大5回)
+  for (let pass = 0; pass < 5 && changed; pass++){
+    changed = false;
+    for (let i = 0; i < result.length - MIN_SKIP; i++){
+      // i地点から先に進んで、i地点の近くに戻ってくる箇所を探す
+      // 折り返しの「行き」の方向を計算
+      const nextIdx = Math.min(i + 2, result.length - 1);
+      const outBearing = computeBearing(result[i][0], result[i][1], result[nextIdx][0], result[nextIdx][1]);
+
+      for (let j = i + MIN_SKIP; j < result.length; j++){
+        const dist = computeDistanceMeters(result[i][0], result[i][1], result[j][0], result[j][1]);
+        if (dist < NEAR_THRESHOLD){
+          // 「戻り」の方向を計算(j地点からj+2地点への方向)
+          const afterIdx = Math.min(j + 2, result.length - 1);
+          if (afterIdx <= j) continue;
+          const inBearing = computeBearing(result[j][0], result[j][1], result[afterIdx][0], result[afterIdx][1]);
+
+          // 折り返し前の方向と折り返し後の方向が概ね同じ方向なら、間が折り返し
+          // (行って戻ってきたので、出発方向と帰還後の方向は似ているはず)
+          const angleDiff = Math.abs(((outBearing - inBearing + 540) % 360) - 180);
+          if (angleDiff < 60){
+            // i〜jの間を除去(iとjは近い地点なのでjから続ける)
+            result = result.slice(0, i + 1).concat(result.slice(j));
+            changed = true;
+            break;
+          }
+
+          // もう一つの判定: 折り返し直前と直後の方向が大きく逆転している
+          const beforeIdx = Math.max(0, i - 1);
+          const bearingBefore = computeBearing(result[beforeIdx][0], result[beforeIdx][1], result[i][0], result[i][1]);
+          const bearingAtI = computeBearing(result[i][0], result[i][1], result[i+1][0], result[i+1][1]);
+          const bearingAtJ = (j + 1 < result.length) ?
+            computeBearing(result[j][0], result[j][1], result[j+1][0], result[j+1][1]) : bearingBefore;
+
+          // i→i+1の方向とj→j+1の方向が大きく逆転していれば折り返し
+          const reverseDiff = Math.abs(((bearingAtI - bearingAtJ + 540) % 360) - 180);
+          if (reverseDiff > BEARING_REVERSE){
+            result = result.slice(0, i + 1).concat(result.slice(j));
+            changed = true;
+            break;
+          }
+        }
+      }
+      if (changed) break; // 変更があったら最初からやり直す
+    }
+  }
+  return result;
+}
 
 // 過去の歩行記録から「各方向にどれだけ歩いたか」を集計し、
 // 最も歩いていない方向を返す(新しい道を優先的に通るため)
@@ -2642,16 +2703,35 @@ async function generateRoute(){
       }
     }
 
-    const coords = best.points.coordinates.map(c => [c[1], c[0]]);
+    let coords = best.points.coordinates.map(c => [c[1], c[0]]);
+
+    // 折り返し部分を除去
+    const originalLen = coords.length;
+    coords = removeBacktracking(coords);
+    const backtrackRemoved = coords.length < originalLen;
+
     drawRoute(coords);
 
-    const distKm = metersToKm(best.distance);
-    const cal = calcCalorie(weightKg, best.time/60000);
-    const steps = calcSteps(best.distance);
-    const actualMin = Math.round(best.time/60000);
+    // 折り返し除去後は距離・時間を再計算
+    let routeDistance = best.distance;
+    let routeTime = best.time;
+    if (backtrackRemoved){
+      routeDistance = 0;
+      for (let i = 0; i < coords.length - 1; i++){
+        routeDistance += computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
+      }
+      // 元のペース(1mあたりの時間)を維持して時間を再計算
+      const paceMs = best.time / best.distance;
+      routeTime = routeDistance * paceMs;
+    }
+
+    const distKm = metersToKm(routeDistance);
+    const cal = calcCalorie(weightKg, routeTime/60000);
+    const steps = calcSteps(routeDistance);
+    const actualMin = Math.round(routeTime/60000);
     lastRouteDurationMin = actualMin;
-    lastRouteDistanceMeters = best.distance;
-    routePaceMsPerMeter = best.time / best.distance; // 1mあたりの所要時間(終了予定のリアルタイム再計算に使う)
+    lastRouteDistanceMeters = routeDistance;
+    routePaceMsPerMeter = routeTime / routeDistance; // 1mあたりの所要時間(終了予定のリアルタイム再計算に使う)
 
     document.getElementById('resDistance').textContent = distKm.toFixed(2);
     document.getElementById('resCalorie').textContent = Math.round(cal);
@@ -2660,7 +2740,7 @@ async function generateRoute(){
     document.getElementById('timeCompare').textContent =
       '目標: ' + targetMinutes + '分 / 実際のルート: ' + actualMin + '分' + (mode==='loop' ? '(' + attempts.length + '回調整して算出)' : '');
 
-    const finishDate = new Date(Date.now() + best.time);
+    const finishDate = new Date(Date.now() + routeTime);
     const hh = String(finishDate.getHours()).padStart(2, '0');
     const mm = String(finishDate.getMinutes()).padStart(2, '0');
     document.getElementById('finishTime').textContent = hh + ':' + mm;
