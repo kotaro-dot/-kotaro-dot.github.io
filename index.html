@@ -959,35 +959,116 @@ map.on("dragstart", function(){ pauseAutoFollow(); manualRotationActive = true; 
 map.on("drag", pauseAutoFollow);
 map.on("dragend", function(){ manualRotationActive = false; });
 
-// ドラッグ補正パッチ(CSS rotate使用時のLeaflet座標ズレ補正)
-(function patchLeafletDraggable(){
-  const origMove = L.Draggable.prototype._onMove;
-  const origDown = L.Draggable.prototype._onDown;
-  // ドラッグ開始時の回転角度を記録(ドラッグ中に角度が変わらないように)
-  L.Draggable.prototype._onDown = function(e){
-    this._dragRotationDeg = mapUserRotation;
-    return origDown.call(this, e);
-  };
-  L.Draggable.prototype._onMove = function(e){
-    const deg = this._dragRotationDeg || 0;
-    if (!deg){ origMove.call(this, e); return; }
-    const first = (e.touches && e.touches.length === 1 ? e.touches[0] : e);
-    const dx = first.clientX - this._startPoint.x;
-    const dy = first.clientY - this._startPoint.y;
+// CSS rotate使用時のドラッグ補正
+// Leaflet内部のドラッグは_parentScaleがCSS回転に対応していないため、
+// Leafletのドラッグを無効化し、タッチ/マウスイベントで直接map.panBy()を呼ぶ
+(function setupRotationAwareDrag(){
+  // 地図が回転している時だけLeafletのドラッグを無効化
+  let customDragActive = false;
+  let dragLastX = 0, dragLastY = 0;
+  let dragTouchId = null;
+
+  const clip = document.querySelector('.mapview-clip');
+  if (!clip) return;
+
+  function getRotatedDelta(screenDx, screenDy){
+    const deg = mapUserRotation;
+    if (!deg) return {dx: screenDx, dy: screenDy};
     const rad = deg * Math.PI / 180;
     const cos = Math.cos(rad), sin = Math.sin(rad);
-    const synthetic = {
-      type:e.type, target:e.target, srcElement:e.srcElement,
-      pointerId:e.pointerId, pointerType:e.pointerType, button:e.button,
-      clientX: this._startPoint.x + dx*cos - dy*sin,
-      clientY: this._startPoint.y + dx*sin + dy*cos,
-      preventDefault:()=>e.preventDefault(),
-      stopPropagation:()=>e.stopPropagation(),
-      stopImmediatePropagation:()=>e.stopImmediatePropagation&&e.stopImmediatePropagation()
+    // 画面座標→地図座標の変換 R(+deg): CSSのrotate(-deg)の逆変換
+    return {
+      dx: screenDx * cos - screenDy * sin,
+      dy: screenDx * sin + screenDy * cos
     };
-    if(e.touches) synthetic.touches=[{clientX:synthetic.clientX,clientY:synthetic.clientY}];
-    origMove.call(this, synthetic);
+  }
+
+  // --- タッチイベント(1本指ドラッグ) ---
+  clip.addEventListener('touchstart', function(e){
+    if (e.touches.length !== 1 || !mapUserRotation) return;
+    // 地図が回転中 → Leafletのドラッグを止めて自前で処理
+    map.dragging.disable();
+    customDragActive = true;
+    const t = e.touches[0];
+    dragLastX = t.clientX;
+    dragLastY = t.clientY;
+    dragTouchId = t.identifier;
+  }, {passive: true});
+
+  clip.addEventListener('touchmove', function(e){
+    if (!customDragActive) return;
+    // 2本指に変わったら自前ドラッグ終了(ピンチズームやmapRotationに任せる)
+    if (e.touches.length !== 1){
+      customDragActive = false;
+      return;
+    }
+    const t = e.touches[0];
+    const screenDx = t.clientX - dragLastX;
+    const screenDy = t.clientY - dragLastY;
+    dragLastX = t.clientX;
+    dragLastY = t.clientY;
+
+    const d = getRotatedDelta(screenDx, screenDy);
+    // panByは「地図をどれだけピクセル移動するか」ではなく
+    // 「ビューポートをどの方向に動かすか」なので符号を反転
+    map.panBy([-d.dx, -d.dy], {animate: false});
+  }, {passive: true});
+
+  clip.addEventListener('touchend', function(e){
+    if (!customDragActive) return;
+    if (e.touches.length === 0){
+      customDragActive = false;
+      // 回転が残っていればドラッグは無効のまま(次のtouchstartで再度処理)
+      // 回転が0に戻っていればLeafletのドラッグを有効に戻す
+      if (!mapUserRotation) map.dragging.enable();
+    }
+  }, {passive: true});
+
+  // --- マウスイベント(PC用) ---
+  let mouseDragActive = false;
+  clip.addEventListener('mousedown', function(e){
+    if (!mapUserRotation || e.button !== 0) return;
+    map.dragging.disable();
+    mouseDragActive = true;
+    dragLastX = e.clientX;
+    dragLastY = e.clientY;
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', function(e){
+    if (!mouseDragActive) return;
+    const screenDx = e.clientX - dragLastX;
+    const screenDy = e.clientY - dragLastY;
+    dragLastX = e.clientX;
+    dragLastY = e.clientY;
+
+    const d = getRotatedDelta(screenDx, screenDy);
+    map.panBy([-d.dx, -d.dy], {animate: false});
+  });
+
+  window.addEventListener('mouseup', function(e){
+    if (!mouseDragActive) return;
+    mouseDragActive = false;
+    if (!mapUserRotation) map.dragging.enable();
+  });
+
+  // 回転が0に戻った時にLeafletのドラッグを有効に戻す
+  const origApplyRotation = window.applyMapRotation;
+  // applyMapRotation内でドラッグの有効/無効を切り替え
+  const _checkDragState = function(){
+    if (!customDragActive && !mouseDragActive){
+      if (mapUserRotation === 0) map.dragging.enable();
+      else map.dragging.disable();
+    }
   };
+  // applyMapRotationの後にフックを入れるため、MutationObserverで監視
+  let lastRotation = 0;
+  setInterval(function(){
+    if (mapUserRotation !== lastRotation){
+      lastRotation = mapUserRotation;
+      _checkDragState();
+    }
+  }, 200);
 })();
 
 // 古いサービスワーカーを全て削除する(キャッシュ問題を完全解消)
@@ -1514,28 +1595,22 @@ function smoothAngle(prevDeg, nextDeg, factor){
 function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   const latlng = [lat, lng];
 
-  // ① GPS組み込みのheadingを取得(移動中に端末が直接提供する方向)
-  if (gpsHeading !== null && gpsHeading !== undefined && !isNaN(gpsHeading)){
-    gpsMovementHeading = smoothAngle(gpsMovementHeading, gpsHeading, 0.5);
-  }
-
-  // ② 連続するGPS座標から移動方向を計算
+  // GPS移動方向の計算: 連続するGPS座標からbearingを算出(最も信頼性が高い)
+  // pos.coords.headingはデバイスによりコンパス方位を返す場合があるため使わない
   if (lastLiveLatLng){
     const moved = computeDistanceMeters(lastLiveLatLng[0], lastLiveLatLng[1], lat, lng);
-    const moveThreshold = Math.max(5, (accuracy || 10) * 1.2);
+    const moveThreshold = Math.max(3, (accuracy || 10) * 0.8);
     if (moved > moveThreshold){
       const rawBearing = computeBearing(lastLiveLatLng[0], lastLiveLatLng[1], lat, lng);
-      gpsMovementHeading = smoothAngle(gpsMovementHeading, rawBearing, 0.4);
+      if (currentHeading === null){
+        currentHeading = rawBearing; // 初回は即座に設定
+      } else {
+        currentHeading = smoothAngle(currentHeading, rawBearing, 0.7); // 高めの追従係数
+      }
       lastLiveLatLng = latlng;
     }
   } else {
     lastLiveLatLng = latlng;
-  }
-
-  // ③ 表示する方角の決定:
-  // GPS移動方向のみを使用する。静止時は最後の方向を維持(コンパスは使わない)
-  if (gpsMovementHeading !== null){
-    currentHeading = smoothAngle(currentHeading, gpsMovementHeading, 0.6);
   }
   // currentHeadingがnullのままの場合(まだ動いていない)はビームなし
 
