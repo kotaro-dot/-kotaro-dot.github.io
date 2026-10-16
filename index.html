@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>散歩ルートメーカー</title>
+<title>謨｣豁ｩ繝ｫ繝ｼ繝医Γ繝ｼ繧ｫ繝ｼ</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#1f6fe5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="散歩ルート">
+<meta name="apple-mobile-web-app-title" content="謨｣豁ｩ繝ｫ繝ｼ繝・>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@ a{color:var(--accent)} a:hover{color:var(--accent-2)}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input[type=number]{-moz-appearance:textfield}
 
-/* ---------- レイアウト ---------- */
+/* ---------- 繝ｬ繧､繧｢繧ｦ繝・---------- */
 .app{max-width:430px;min-height:100dvh;margin:0 auto;display:flex;flex-direction:column}
 .appbar{display:flex;align-items:center;gap:9px;padding:14px 22px 6px}
 .appbar .logo{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 32% 28%,var(--accent-2),var(--accent));box-shadow:0 0 14px var(--glow)}
@@ -49,14 +49,14 @@ main{flex:1;overflow-y:auto;padding:14px 22px 40px}
 .screen.is-active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-/* ---------- 文字 ---------- */
+/* ---------- 譁・ｭ・---------- */
 .label{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
 .title{margin:0;font-weight:700;font-size:29px;line-height:1.15;letter-spacing:-.01em}
 .lead{margin:8px 0 0;font-size:13px;line-height:1.6;color:var(--ink-soft)}
 .note{margin:10px 0 0;font-size:12px;line-height:1.6;color:var(--ink-soft)}
 .num{font-family:var(--f-num);font-style:italic;font-weight:800;line-height:.9}
 
-/* ---------- 進捗 ---------- */
+/* ---------- 騾ｲ謐・---------- */
 .progress{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .progress .step{display:flex;align-items:baseline;gap:6px;font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--ink-soft)}
 .progress .step .num{font-size:46px;line-height:.8;color:var(--accent)}
@@ -64,13 +64,13 @@ main{flex:1;overflow-y:auto;padding:14px 22px 40px}
 .progress .bars span{flex:1;height:4px;border-radius:2px;background:var(--line)}
 .progress .bars span.on{background:var(--accent)}
 
-/* ---------- セクション見出し ---------- */
+/* ---------- 繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ隕句・縺・---------- */
 .section{margin-top:26px}
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
 .section-head h3{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;font-weight:700}
 .section-head h3::before{content:"";width:13px;height:16px;background:var(--accent);transform:skewX(-20deg)}
 
-/* ---------- ボタン ---------- */
+/* ---------- 繝懊ち繝ｳ ---------- */
 .btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:30px;padding:17px;border:none;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;letter-spacing:.04em;clip-path:var(--cut);box-shadow:0 12px 26px var(--glow)}
 .btn-primary .arrow{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:20px}
 .btn{flex:1;min-height:50px;padding:12px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:15px}
@@ -78,21 +78,21 @@ main{flex:1;overflow-y:auto;padding:14px 22px 40px}
 .btn-row{display:flex;gap:8px;margin-top:10px}
 .btn-pill{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-weight:700;font-size:13px}
 .btn-back{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 18px 0 7px;margin-bottom:16px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-weight:700;font-size:15px}
-.btn-back::before{content:"‹";width:34px;height:34px;padding-bottom:2px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
+.btn-back::before{content:"窶ｹ";width:34px;height:34px;padding-bottom:2px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
 
-/* ---------- 2択 ---------- */
+/* ---------- 2謚・---------- */
 .segment{display:flex;gap:6px;padding:6px;border-radius:var(--r);background:var(--surface-2)}
 .segment button{flex:1;padding:13px 8px;border:none;background:transparent;font-weight:700;font-size:13px;color:var(--ink-soft)}
 .segment button.is-on{background:var(--accent);color:var(--accent-ink);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);box-shadow:0 6px 16px var(--glow)}
 
-/* ---------- カード・入力 ---------- */
+/* ---------- 繧ｫ繝ｼ繝峨・蜈･蜉・---------- */
 .card{padding:16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
 .card + .card{margin-top:10px}
 .card .tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 .input{width:100%;margin-top:10px;padding:13px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);color:var(--ink);font:15px var(--f-jp);outline:none}
 .input:focus{border-color:var(--accent)}
 
-/* ---------- 地図（仮置き） ---------- */
+/* ---------- 蝨ｰ蝗ｳ・井ｻｮ鄂ｮ縺搾ｼ・---------- */
 .map{position:relative;height:190px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background-color:var(--surface-2);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
 .map--lg{height:270px}
 .map--md{height:200px}
@@ -103,7 +103,7 @@ main{flex:1;overflow-y:auto;padding:14px 22px 40px}
 .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2s ease-out infinite}
 @keyframes pulse{0%{transform:scale(1);opacity:.55}70%{transform:scale(2.6);opacity:0}100%{opacity:0}}
 
-/* ---------- コース確認 ---------- */
+/* ---------- 繧ｳ繝ｼ繧ｹ遒ｺ隱・---------- */
 .course{display:flex;align-items:center;gap:12px;margin-top:22px;padding:12px 12px 12px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface)}
 .course .ico{flex:none;width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center}
 .course .txt{flex:1;min-width:0}
@@ -111,7 +111,7 @@ main{flex:1;overflow-y:auto;padding:14px 22px 40px}
 .course .txt strong{display:block;margin-top:2px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .course .btn-pill{height:42px;background:transparent;color:var(--accent);font-size:14px}
 
-/* ---------- 数値ステッパー ---------- */
+/* ---------- 謨ｰ蛟､繧ｹ繝・ャ繝代・ ---------- */
 .stepper{display:flex;align-items:center;gap:10px}
 .stepper--boxed{padding:10px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface)}
 .stepper button{flex:none;width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;line-height:1}
@@ -121,14 +121,14 @@ main{flex:1;overflow-y:auto;padding:14px 22px 40px}
 .stepper--boxed input{width:96px;height:48px;font-size:40px;line-height:48px;color:var(--ink)}
 .stepper--boxed .value span{font-size:14px}
 
-/* ---------- 予想の帯 ---------- */
+/* ---------- 莠域Φ縺ｮ蟶ｯ ---------- */
 .estimate{display:flex;margin-top:14px;padding:16px 4px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);box-shadow:0 12px 26px var(--glow)}
 .estimate div{flex:1;text-align:center}
 .estimate small{display:block;font-size:11px;font-weight:700}
 .estimate .num{display:block;margin-top:5px;font-size:30px;line-height:1}
 .estimate .num i{font-style:normal;font-size:13px;margin-left:2px}
 
-/* ---------- 結果 ---------- */
+/* ---------- 邨先棡 ---------- */
 .stats{display:flex;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
 .stats > div{flex:1;padding:18px 14px;text-align:center}
 .stats > div + div{border-left:1px solid var(--line)}
@@ -141,7 +141,7 @@ main{flex:1;overflow-y:auto;padding:14px 22px 40px}
 .goal strong{display:block;font:italic 800 22px var(--f-num)}
 .goal span{font-size:12px}
 
-/* ---------- 記録 ---------- */
+/* ---------- 險倬鹸 ---------- */
 .summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .summary .card{margin:0;padding:15px}
 .summary .num{font-size:32px}
@@ -168,17 +168,17 @@ main{flex:1;overflow-y:auto;padding:14px 22px 40px}
 .record .km{display:flex;align-items:baseline;gap:3px}
 .record .km .num{font-size:26px;line-height:1}
 .record .km small{font:10px var(--f-mono);color:var(--ink-soft)}
-.record .km::after{content:"›";margin-left:8px;color:var(--accent);font-size:16px}
+.record .km::after{content:"窶ｺ";margin-left:8px;color:var(--accent);font-size:16px}
 
-/* ---------- タブバー ---------- */
+/* ---------- 繧ｿ繝悶ヰ繝ｼ ---------- */
 .tabbar{position:sticky;bottom:0;display:flex;gap:8px;padding:8px 14px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--surface)}
 .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;padding:7px 0;border:none;border-radius:14px;background:transparent;color:var(--ink-soft);font-weight:700;font-size:12px}
 .tabbar button svg{stroke:currentColor}
 .tabbar button.is-on{background:var(--surface-2);color:var(--accent)}
 
 
-/* ===== アプリ固有スタイル ===== */
-/* 互換変数 */
+/* ===== 繧｢繝励Μ蝗ｺ譛峨せ繧ｿ繧､繝ｫ ===== */
+/* 莠呈鋤螟画焚 */
 :root{
   --card:var(--surface); --muted:var(--ink-soft);
   --accent-deep:#0040cc; --accent-2:#0b9fd4;
@@ -200,20 +200,20 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .screen.active{display:block!important;animation:fade .3s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .content{padding:0 16px}
-/* ステッパー互換 */
+/* 繧ｹ繝・ャ繝代・莠呈鋤 */
 .num-stepper,.time-stepper{display:flex;align-items:center;gap:10px;padding:10px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:10px}
 .num-stepper button,.time-stepper button{flex:none;width:56px;height:56px;border:none;border-radius:var(--r-s);background:var(--surface-2);font-size:28px;font-weight:700;line-height:1}
-/* step2の大きい入力 */
+/* step2縺ｮ螟ｧ縺阪＞蜈･蜉・*/
 #timeMin{display:block;width:80px;padding:8px 4px;border:none;border-bottom:2px dashed var(--accent);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:42px;color:var(--accent);-moz-appearance:textfield;-webkit-appearance:none}
 #weightKg{display:block;width:70px;padding:8px 4px;border:none;border-bottom:2px dashed var(--line);background:transparent;outline:none;text-align:center;font-family:var(--f-num);font-style:italic;font-weight:800;font-size:36px;color:var(--ink);-moz-appearance:textfield;-webkit-appearance:none}
-/* 地図クリップ */
+/* 蝨ｰ蝗ｳ繧ｯ繝ｪ繝・・ */
 .leaflet-map-pane{will-change:transform;}
 .mapview-clip{position:relative;width:100%;height:270px;overflow:hidden;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px;-webkit-transform:translateZ(0);transform:translateZ(0)}
 #mapConfirm{width:100%;height:190px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);margin-top:2px;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
 #map{position:absolute;top:50%;left:50%;width:200%;height:200%;transform:translate(-50%,-50%);transform-origin:center center;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden;image-rendering:-webkit-optimize-contrast}
 #dayDetailMap{width:100%;height:100%}
 .live-badge{position:absolute;left:12px;top:12px;z-index:500;font-family:var(--f-mono);font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--accent-ink);background:var(--accent);padding:4px 8px;border-radius:var(--r-s)}
-/* 全画面マップ - CSS方式(DOM移動なし) */
+/* 蜈ｨ逕ｻ髱｢繝槭ャ繝・- CSS譁ｹ蠑・DOM遘ｻ蜍輔↑縺・ */
 .compass-btn{
   position:absolute;right:10px;bottom:50px;z-index:500;
   width:44px;height:44px;border-radius:50%;
@@ -229,33 +229,33 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .mapview-clip.fullscreen #map{width:200%!important;height:200%!important}
 #mapFullscreenOverlay{display:none}
 
-/* 結果数字 */
+/* 邨先棡謨ｰ蟄・*/
 .result-num{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:44px;line-height:.9;color:var(--accent)}
 .result-unit{font:10px var(--f-mono);letter-spacing:.1em;color:var(--ink-soft);display:block;margin-top:6px}
-/* ステータス */
+/* 繧ｹ繝・・繧ｿ繧ｹ */
 .status{padding:12px 14px;border-radius:var(--r);font-size:13px;margin:10px 0}
 .status.info{background:var(--surface-2);color:var(--ink-soft)}
 .status.error{background:#fde8e8;color:#c0392b}
 .status.ok{background:#e8f5e9;color:#2e7d32}
 .status:empty{display:none}
-/* 検索結果 */
+/* 讀懃ｴ｢邨先棡 */
 .resultitem{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px}
 .resultitem:last-child{border-bottom:none}
 .resultitem:hover{background:var(--surface-2)}
 .resultitem .name{font-weight:700;display:block;margin-bottom:2px}
 #geoLoopResults,#geoStartResults,#geoGoalResults{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:8px}
-/* ポイントチップ */
+/* 繝昴う繝ｳ繝医メ繝・・ */
 .pointchip{display:inline-block;font-size:11px;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);margin:3px}
-/* チップチェック */
+/* 繝√ャ繝励メ繧ｧ繝・け */
 .toggle-chip{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;font-family:var(--f-jp);font-weight:600;font-size:12px;color:var(--ink)}
 .toggle-chip-row{display:flex;gap:8px;margin-top:10px}
 .chip-check{width:14px;height:14px;border:1.5px solid var(--line);border-radius:3px;flex-shrink:0}
 .chip-check.on{background:var(--accent);border-color:var(--accent)}
-/* ルート矢印 */
+/* 繝ｫ繝ｼ繝育泙蜊ｰ */
 .route-arrow-wrap{width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3)}
 .route-arrow{font-size:14px;color:#fff;font-weight:900;line-height:1;transform-origin:center;display:block}
 .route-arrow-icon{background:none!important;border:none!important}
-/* カレンダー */
+/* 繧ｫ繝ｬ繝ｳ繝繝ｼ */
 .cal-weekday-row,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .cal-weekday-row{font:10px var(--f-mono);color:var(--ink-soft);margin-bottom:2px;text-align:center}
 .cal-cell{cursor:pointer}
@@ -263,7 +263,7 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .cal-ring-inner{font-family:var(--f-num);font-weight:700;font-size:14px;color:var(--ink);position:relative}
 .cal-day-dot{position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
 .cal-cell.today .cal-ring{box-shadow:inset 0 0 0 1.5px var(--accent);border-radius:var(--r)}
-/* 歩行記録行 */
+/* 豁ｩ陦瑚ｨ倬鹸陦・*/
 .hist-row{display:flex;align-items:center;justify-content:space-between;width:100%;box-sizing:border-box;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;text-align:left;margin-bottom:8px;font-family:inherit}
 .hist-row-date{font-family:var(--f-jp);font-weight:700;font-size:14px;color:var(--ink)}
 .hist-row-date .wday{font-size:11px;color:var(--ink-soft);margin-left:5px;font-weight:400}
@@ -272,7 +272,7 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .hist-row-km .num{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:24px;line-height:1;color:var(--ink)}
 .hist-row-km .u{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft)}
 .hist-row-km .chev{color:var(--accent);font-size:16px;margin-left:6px}
-/* 集計グリッド */
+/* 髮・ｨ医げ繝ｪ繝・ラ */
 .hist-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
 .hist-stat-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px}
 .hist-stat-card.invert{background:var(--ink);border-color:var(--ink)}
@@ -285,36 +285,92 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .hist-stat-main .u{font-family:var(--f-mono);font-size:11px;color:var(--ink-soft)}
 .hist-stat-sub{font-family:var(--f-jp);font-size:11px;color:var(--ink-soft);margin-top:4px}
 .mono-label{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
-/* ボトムナビ */
+/* 繝懊ヨ繝繝翫ン */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:1000;display:flex;gap:8px;padding:8px 14px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface);box-shadow:0 -2px 12px rgba(11,92,255,.06)}
 .bottom-nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;padding:7px 0;border:none;border-radius:14px;background:transparent;color:var(--ink-soft);font-weight:700;font-size:12px;font-family:var(--f-jp);cursor:pointer}
 .bottom-nav-tab svg{stroke:currentColor}
 .bottom-nav-tab.active{background:var(--surface-2);color:var(--accent)}
-/* ゴールオーバーレイ */
+/* 繝ｫ繝ｼ繝亥ｾｩ蜈・ム繧､繧｢繝ｭ繧ｰ */
+.restore-overlay{
+  position:fixed; inset:0; z-index:9000;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px; box-sizing:border-box;
+  background:rgba(17,32,56,.55);
+  -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  animation:restoreFade .2s ease-out;
+}
+.restore-overlay[hidden]{display:none}
+.restore-dialog{
+  width:100%; max-width:380px; box-sizing:border-box;
+  padding:26px 22px 22px;
+  background:var(--surface); border-radius:var(--r);
+  box-shadow:0 30px 60px -20px rgba(17,32,56,.45);
+  animation:restorePop .28s cubic-bezier(.2,1.2,.4,1);
+}
+.restore-head{display:flex; align-items:center; gap:14px}
+.restore-icon{
+  flex:none; width:56px; height:56px; border-radius:50%;
+  background:var(--surface-2); display:flex; align-items:center; justify-content:center;
+}
+.restore-label{
+  font-family:var(--f-mono); font-size:11px; font-weight:700;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--accent);
+}
+.restore-title{margin:4px 0 0; font-size:20px; font-weight:700; line-height:1.3}
+.restore-info{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  margin-top:20px; padding:14px 16px;
+  border:1px solid var(--line); border-radius:var(--r); background:var(--surface-2);
+}
+.restore-info small{font-size:13px; font-weight:500; color:var(--ink-soft)}
+.restore-km{display:flex; align-items:baseline; gap:4px}
+.restore-km b{
+  font-family:var(--f-num); font-style:italic; font-weight:800;
+  font-size:44px; line-height:.9; color:var(--accent);
+}
+.restore-km span{font-family:var(--f-mono); font-size:12px; font-weight:700; color:var(--ink-soft)}
+.restore-actions{display:flex; flex-direction:column; gap:10px; margin-top:22px}
+.restore-primary{
+  min-height:54px; padding:15px; border:none; cursor:pointer;
+  background:var(--accent); color:var(--accent-ink);
+  font:700 16px var(--f-jp); letter-spacing:.04em;
+  clip-path:var(--cut); box-shadow:0 12px 26px var(--glow);
+}
+.restore-primary:active{transform:translateY(1px)}
+.restore-secondary{
+  min-height:50px; padding:12px; cursor:pointer;
+  border:1.5px solid var(--line); border-radius:var(--r);
+  background:var(--surface); color:var(--ink-soft);
+  font:700 15px var(--f-jp);
+}
+.restore-secondary:hover{border-color:#c5d2e4; color:var(--ink)}
+@keyframes restoreFade{from{opacity:0}to{opacity:1}}
+@keyframes restorePop{from{opacity:0; transform:translateY(12px) scale(.96)}to{opacity:1; transform:none}}
+/* 繧ｴ繝ｼ繝ｫ繧ｪ繝ｼ繝舌・繝ｬ繧､ */
 #goalOverlay{flex-direction:column;align-items:center;justify-content:center;font-family:var(--f-jp)}
-/* スプラッシュ */
+/* 繧ｹ繝励Λ繝・す繝･ */
 #splashOverlay{transition:opacity .6s ease}
-/* エントリーボタン(非表示) */
+/* 繧ｨ繝ｳ繝医Μ繝ｼ繝懊ち繝ｳ(髱櫁｡ｨ遉ｺ) */
 .entry-btn-row{display:none}
 /* hint */
 .hint{font-size:12px;color:var(--ink-soft);line-height:1.6;margin-top:8px}
 /* stat-num */
 .stat-num{font-family:var(--f-num);font-style:italic;font-weight:800;color:var(--accent)}
-/* 互換 */
+/* 莠呈鋤 */
 .display{font-family:var(--f-jp);font-weight:700;letter-spacing:-.01em}
 .stepsub,.lead{margin:8px 0 0;font-size:13px;line-height:1.6;color:var(--ink-soft)}
 .note{margin:10px 0 0;font-size:12px;line-height:1.6;color:var(--ink-soft)}
 
-/* 検索ボタン */
+/* 讀懃ｴ｢繝懊ち繝ｳ */
 .btn--accent{border:1.5px solid var(--accent)!important;color:var(--accent)!important;background:transparent!important;border-radius:var(--r)!important;padding:12px 14px!important;font-weight:700!important;font-size:14px!important;cursor:pointer!important;font-family:var(--f-jp)!important;white-space:nowrap!important}
 .btn--accent:active{background:rgba(11,92,255,.08)!important}
-/* 検索ボタン行 */
+/* 讀懃ｴ｢繝懊ち繝ｳ陦・*/
 .btn-row-search{display:flex;gap:8px;margin-top:10px}
 .btn-row-search button{flex:1;min-height:50px;padding:12px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer}
 .btn-row-search button.accent{border-color:var(--accent);color:var(--accent);background:transparent}
-/* backlink - デザイン準拠 */
+/* backlink - 繝・じ繧､繝ｳ貅匁侠 */
 .backlink{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 18px 0 7px;margin-bottom:16px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-weight:700;font-size:15px;color:var(--ink);cursor:pointer}
-.backlink::before{content:"‹";width:34px;height:34px;padding-bottom:2px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
+.backlink::before{content:"窶ｹ";width:34px;height:34px;padding-bottom:2px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
 /* secondary */
 button.secondary{flex:1;min-height:50px;padding:12px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--f-jp)}
 .resultactions{display:flex;gap:8px;margin-top:10px}
@@ -342,7 +398,7 @@ button.secondary{flex:1;min-height:50px;padding:12px;border:1.5px solid var(--li
 .result-head-bar b{color:var(--accent);font-weight:400}
 /* goal banner */
 #goalBanner{margin-top:14px;padding:16px;background:var(--accent);color:var(--accent-ink);clip-path:polygon(13px 0,100% 0,100% calc(100% - 13px),calc(100% - 13px) 100%,0 100%,0 13px)}
-/* section互換 */
+/* section莠呈鋤 */
 .section{margin-top:22px}
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
 .section-head h3,.card h2{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;font-weight:700;font-family:var(--f-jp)}
@@ -357,7 +413,7 @@ input[type=number]{width:100%;padding:12px;border:1px solid var(--line);border-r
 .mode-selector{display:flex;gap:6px;padding:6px;border-radius:var(--r);background:var(--surface-2)}
 .mode-selector button{flex:1;padding:13px 8px;border:none;background:transparent;font-weight:700;font-size:13px;color:var(--ink-soft);border-radius:2px;cursor:pointer}
 .mode-selector button.active{background:var(--accent);color:var(--accent-ink);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);box-shadow:0 6px 16px var(--glow)}
-/* 進捗 */
+/* 騾ｲ謐・*/
 .stepheader{margin-bottom:18px}
 .stepheader .stepno-row{display:flex;align-items:flex-end;gap:6px;margin-bottom:10px}
 .stepheader .stepno{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:46px;line-height:.8;color:var(--accent)}
@@ -372,24 +428,24 @@ button.primary:active{transform:scale(.98)}
 button.primary.tracking{background:#1a7a3f}
 /* ghost */
 button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-weight:700;font-size:13px;color:var(--ink);padding:8px 14px;cursor:pointer;font-family:var(--f-jp)}
-/* 日陰優先トグル */
-/* 日陰ルートトグル */
+/* 譌･髯ｰ蜆ｪ蜈医ヨ繧ｰ繝ｫ */
+/* 譌･髯ｰ繝ｫ繝ｼ繝医ヨ繧ｰ繝ｫ */
 .shade-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:15px 16px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;text-align:left;font-family:var(--f-jp);transition:border-color .2s,background .2s}
 .shade-toggle[aria-pressed="true"]{border-color:var(--accent);background:rgba(11,92,255,.06)}
 .shade-switch{flex-shrink:0;width:48px;height:26px;border-radius:13px;background:var(--line);position:relative;transition:background .2s}
 .shade-switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s}
 .shade-toggle[aria-pressed="true"] .shade-switch{background:var(--accent)}
 .shade-toggle[aria-pressed="true"] .shade-switch::after{transform:translateX(22px)}
-/* お気に入りリスト */
+/* 縺頑ｰ励↓蜈･繧翫Μ繧ｹ繝・*/
 .fav-list .hist-row{border-radius:var(--r)}
-/* 日付詳細 */
+/* 譌･莉倩ｩｳ邏ｰ */
 .day-detail-title{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:42px;color:var(--ink);line-height:1}
 
 </style>
 </head>
 <body>
 
-<!-- ===== スプラッシュ画面 ===== -->
+<!-- ===== 繧ｹ繝励Λ繝・す繝･逕ｻ髱｢ ===== -->
 <div id="splashOverlay" style="
   position:fixed; inset:0; z-index:9999;
   background:radial-gradient(120% 90% at 50% 0%, #141d33 0%, #0b1120 60%);
@@ -408,17 +464,17 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
     @keyframes spGlow { 0%,100%{opacity:.5;} 50%{opacity:.9;} }
   </style>
 
-  <!-- 背景装飾 -->
+  <!-- 閭梧勹陬・｣ｾ -->
   <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:46px 46px;pointer-events:none;"></div>
   <div style="position:absolute;top:-20%;right:-20%;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(circle,rgba(70,216,255,.45),transparent 62%);animation:spGlow 3.4s ease-in-out infinite;pointer-events:none;"></div>
   <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,transparent 32%);pointer-events:none;"></div>
 
-  <!-- センターコンテンツ -->
+  <!-- 繧ｻ繝ｳ繧ｿ繝ｼ繧ｳ繝ｳ繝・Φ繝・-->
   <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:32px;">
 
-    <!-- アイコン -->
+    <!-- 繧｢繧､繧ｳ繝ｳ -->
     <div style="position:relative;width:172px;height:172px;">
-      <!-- リップル -->
+      <!-- 繝ｪ繝・・繝ｫ -->
       <span style="position:absolute;left:26px;bottom:26px;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,255,255,.5);transform-origin:center;animation:spRipple 1.8s ease-out .3s infinite;"></span>
       <svg viewBox="0 0 172 172" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;">
         <defs>
@@ -430,7 +486,7 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
             <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#04102e" flood-opacity="0.4"/>
           </filter>
         </defs>
-        <!-- ルート線 -->
+        <!-- 繝ｫ繝ｼ繝育ｷ・-->
         <polyline
           points="34,150 60,104 50,64 96,50 118,84 138,44"
           fill="none" stroke="url(#sp_g)" stroke-width="13"
@@ -439,13 +495,13 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           stroke-dasharray="330" stroke-dashoffset="330"
           style="animation:spDraw 1.3s cubic-bezier(.6,.05,.25,1) .25s forwards;"
         />
-        <!-- スタートノード -->
+        <!-- 繧ｹ繧ｿ繝ｼ繝医ヮ繝ｼ繝・-->
         <g style="transform-origin:34px 150px;animation:spPop .4s ease-out .15s both;">
           <circle cx="34" cy="150" r="11" fill="#06122a"/>
           <circle cx="34" cy="150" r="11" fill="none" stroke="#fff" stroke-width="5"/>
         </g>
       </svg>
-      <!-- ピン -->
+      <!-- 繝斐Φ -->
       <div style="position:absolute;left:114px;top:8px;width:52px;height:64px;animation:spDrop 1.5s cubic-bezier(.3,1.3,.5,1) 1.35s both;">
         <svg viewBox="0 0 52 64" style="width:100%;height:100%;overflow:visible;">
           <g filter="url(#sp_s)">
@@ -456,16 +512,16 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
       </div>
     </div>
 
-    <!-- ワードマーク -->
+    <!-- 繝ｯ繝ｼ繝峨・繝ｼ繧ｯ -->
     <div style="text-align:center;animation:spRise .7s ease-out 1.7s both;">
       <div style="font-family:'Noto Sans JP';font-weight:700;font-size:27px;letter-spacing:-.01em;color:#fff;">
-        散歩ルート<span style="font-family:'Saira Condensed','Noto Sans JP',sans-serif;font-style:italic;font-weight:800;color:#bfe0ff;">MAKER</span>
+        謨｣豁ｩ繝ｫ繝ｼ繝・span style="font-family:'Saira Condensed','Noto Sans JP',sans-serif;font-style:italic;font-weight:800;color:#bfe0ff;">MAKER</span>
       </div>
       <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:9px;">Walk your route</div>
     </div>
   </div>
 
-  <!-- ローディングバー -->
+  <!-- 繝ｭ繝ｼ繝・ぅ繝ｳ繧ｰ繝舌・ -->
   <div style="position:absolute;bottom:15%;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:14px;animation:spRise .6s ease-out 2s both;">
     <div style="width:150px;height:4px;border-radius:3px;background:rgba(255,255,255,.16);overflow:hidden;">
       <div style="width:100%;height:100%;border-radius:3px;background:linear-gradient(90deg,#bfe0ff,#fff);animation:spBar 2s cubic-bezier(.4,0,.2,1) 2.1s both;"></div>
@@ -476,23 +532,22 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
         <span style="width:5px;height:5px;border-radius:50%;background:#fff;animation:spBlink 1.2s ease-in-out .2s infinite;"></span>
         <span style="width:5px;height:5px;border-radius:50%;background:#fff;animation:spBlink 1.2s ease-in-out .4s infinite;"></span>
       </span>
-      ルートを準備しています
-    </div>
+      繝ｫ繝ｼ繝医ｒ貅門ｙ縺励※縺・∪縺・    </div>
   </div>
 
 </div>
-<!-- ===== /スプラッシュ画面 ===== -->
+<!-- ===== /繧ｹ繝励Λ繝・す繝･逕ｻ髱｢ ===== -->
 <div class="wrap">
 
   <div class="appbar">
     <div class="appbar-brand">
       <span class="appbar-dot"></span>
-      <span class="appbar-title">散歩ルート<span class="accent-italic">MK</span></span>
+      <span class="appbar-title">謨｣豁ｩ繝ｫ繝ｼ繝・span class="accent-italic">MK</span></span>
     </div>
 
   </div>
 
-  <!-- ============ SCREEN 1: コースと地点 ============ -->
+  <!-- ============ SCREEN 1: 繧ｳ繝ｼ繧ｹ縺ｨ蝨ｰ轤ｹ ============ -->
   <div class="screen active" id="screenCourse">
     <div class="content">
       <div class="stepheader">
@@ -501,45 +556,45 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           <span class="stepno-total">/ 03</span>
           <div class="stepno-bars"><span class="on"></span><span></span><span></span></div>
         </div>
-        <h1 class="display">コースと地点</h1>
-        <div class="stepsub">地図で、実際の地点が正しく反映されているか確認できます</div>
+        <h1 class="display">繧ｳ繝ｼ繧ｹ縺ｨ蝨ｰ轤ｹ</h1>
+        <div class="stepsub">蝨ｰ蝗ｳ縺ｧ縲∝ｮ滄圀縺ｮ蝨ｰ轤ｹ縺梧ｭ｣縺励￥蜿肴丐縺輔ｌ縺ｦ縺・ｋ縺狗｢ｺ隱阪〒縺阪∪縺・/div>
       </div>
 
       <div class="card">
-        <h2><span class="dot"></span>コースの種類</h2>
+        <h2><span class="dot"></span>繧ｳ繝ｼ繧ｹ縺ｮ遞ｮ鬘・/h2>
         <div class="mode-selector">
-          <button type="button" id="modeLoop" class="active">往復（発着同じ）</button>
-          <button type="button" id="modeTwoPoint">2点指定</button>
+          <button type="button" id="modeLoop" class="active">蠕蠕ｩ・育匱逹蜷後§・・/button>
+          <button type="button" id="modeTwoPoint">2轤ｹ謖・ｮ・/button>
         </div>
-        <div class="hint" id="modeHint">スタート地点(=ゴール地点)を検索するか、現在地を使ってください。</div>
+        <div class="hint" id="modeHint">繧ｹ繧ｿ繝ｼ繝亥慍轤ｹ(=繧ｴ繝ｼ繝ｫ蝨ｰ轤ｹ)繧呈､懃ｴ｢縺吶ｋ縺九∫樟蝨ｨ蝨ｰ繧剃ｽｿ縺｣縺ｦ縺上□縺輔＞縲・/div>
       </div>
 
       <div class="card">
-        <h2><span class="dot"></span>地点を決める</h2>
+        <h2><span class="dot"></span>蝨ｰ轤ｹ繧呈ｱｺ繧√ｋ</h2>
 
         <div id="geoLoopBlock" class="geoblock">
-          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">スタート/ゴール(同じ場所)</div>
+          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">繧ｹ繧ｿ繝ｼ繝・繧ｴ繝ｼ繝ｫ(蜷後§蝣ｴ謇)</div>
           <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-            <input type="text" id="geoLoopInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇大学、〇〇駅">
-            <button id="geoLoopBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
+            <input type="text" id="geoLoopInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="萓・ 縲・・､ｧ蟄ｦ縲√・・ｧ・>
+            <button id="geoLoopBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">讀懃ｴ｢</button>
           </div>
-          <button id="useCurrentLocLoop" style="width:100%;margin-top:8px;padding:13px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--f-jp)" type="button">現在地を使用</button>
+          <button id="useCurrentLocLoop" style="width:100%;margin-top:8px;padding:13px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--f-jp)" type="button">迴ｾ蝨ｨ蝨ｰ繧剃ｽｿ逕ｨ</button>
           <div id="geoLoopResults"></div>
         </div>
 
         <div id="geoTwoBlock" class="geoblock" style="display:none;">
-          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">スタート地点</div>
+          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">繧ｹ繧ｿ繝ｼ繝亥慍轤ｹ</div>
           <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-            <input type="text" id="geoStartInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇大学">
-            <button id="geoStartBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
+            <input type="text" id="geoStartInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="萓・ 縲・・､ｧ蟄ｦ">
+            <button id="geoStartBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">讀懃ｴ｢</button>
           </div>
-          <button id="useCurrentLocStart" style="width:100%;margin-top:8px;padding:13px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--f-jp)" type="button">現在地を使用</button>
+          <button id="useCurrentLocStart" style="width:100%;margin-top:8px;padding:13px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--f-jp)" type="button">迴ｾ蝨ｨ蝨ｰ繧剃ｽｿ逕ｨ</button>
           <div id="geoStartResults"></div>
 
-          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)" style="margin-top:12px;">ゴール地点</div>
+          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)" style="margin-top:12px;">繧ｴ繝ｼ繝ｫ蝨ｰ轤ｹ</div>
           <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-            <input type="text" id="geoGoalInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇公園">
-            <button id="geoGoalBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
+            <input type="text" id="geoGoalInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="萓・ 縲・・・蝨・>
+            <button id="geoGoalBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">讀懃ｴ｢</button>
           </div>
           <div id="geoGoalResults"></div>
         </div>
@@ -547,20 +602,20 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
 
       <div class="card">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-          <h2 style="margin:0;"><span class="dot"></span>地図で確認</h2>
-          <button class="ghost" id="resetPoints" type="button" style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.08em; padding:0;">RESET ↺</button>
+          <h2 style="margin:0;"><span class="dot"></span>蝨ｰ蝗ｳ縺ｧ遒ｺ隱・/h2>
+          <button class="ghost" id="resetPoints" type="button" style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.08em; padding:0;">RESET 竊ｺ</button>
         </div>
         <div id="mapConfirm"></div>
-        <div class="hint">検索や現在地ボタンで決めた地点がここにピンで表示されます。ズレていれば地図を直接タップして修正できます。</div>
+        <div class="hint">讀懃ｴ｢繧・樟蝨ｨ蝨ｰ繝懊ち繝ｳ縺ｧ豎ｺ繧√◆蝨ｰ轤ｹ縺後％縺薙↓繝斐Φ縺ｧ陦ｨ遉ｺ縺輔ｌ縺ｾ縺吶ゅぜ繝ｬ縺ｦ縺・ｌ縺ｰ蝨ｰ蝗ｳ繧堤峩謗･繧ｿ繝・・縺励※菫ｮ豁｣縺ｧ縺阪∪縺吶・/div>
         <div id="pointChips"></div>
       </div>
 
-      <button class="primary" id="toSettingsBtn">次へ</button>
+      <button class="primary" id="toSettingsBtn">谺｡縺ｸ</button>
       <div id="statusBoxCourse" class="status info" style="display:none;"></div>
     </div>
   </div>
 
-  <!-- ============ SCREEN 3: 時間・体重・気温 ============ -->
+  <!-- ============ SCREEN 3: 譎る俣繝ｻ菴馴㍾繝ｻ豌玲ｸｩ ============ -->
   <div class="screen" id="screenSettings">
     <div class="content">
       <div class="stepheader">
@@ -569,79 +624,79 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           <span class="stepno-total">/ 03</span>
           <div class="stepno-bars"><span class="on"></span><span class="on"></span><span></span></div>
         </div>
-        <h1 class="display">歩く前の確認</h1>
-        <div class="stepsub">歩行時間と体重を設定します</div>
+        <h1 class="display">豁ｩ縺丞燕縺ｮ遒ｺ隱・/h1>
+        <div class="stepsub">豁ｩ陦梧凾髢薙→菴馴㍾繧定ｨｭ螳壹＠縺ｾ縺・/div>
       </div>
-      <button class="backlink" id="toCourseBackBtn" type="button"><span class="backlink-icon">‹</span>地点設定に戻る</button>
+      <button class="backlink" id="toCourseBackBtn" type="button"><span class="backlink-icon">窶ｹ</span>蝨ｰ轤ｹ險ｭ螳壹↓謌ｻ繧・/button>
 
-      <!-- 現在の地点サマリー -->
+      <!-- 迴ｾ蝨ｨ縺ｮ蝨ｰ轤ｹ繧ｵ繝槭Μ繝ｼ -->
       <div class="course-summary" id="locationSummaryCard" style="display:none;">
         <div style="display:flex; align-items:center; gap:12px;">
           <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,19 8,12 6,7 13,5 16,10 20,4"/></svg></div>
           <div class="txt">
-            <div class="tag" id="locationSummaryLabel">往復コース</div>
+            <div class="tag" id="locationSummaryLabel">蠕蠕ｩ繧ｳ繝ｼ繧ｹ</div>
             <div id="locationSummaryText" style="display:block;margin-top:2px;font-size:15px;font-weight:700">-</div>
           </div>
-          <button type="button" class="secondary" id="changeLocationBtn" style="white-space:nowrap; padding:7px 14px; font-size:12px;">変更</button>
+          <button type="button" class="secondary" id="changeLocationBtn" style="white-space:nowrap; padding:7px 14px; font-size:12px;">螟画峩</button>
         </div>
       </div>
 
-      <!-- どのくらい歩く？ -->
+      <!-- 縺ｩ縺ｮ縺上ｉ縺・ｭｩ縺擾ｼ・-->
       <div class="section">
-        <div class="section-head"><h3>どのくらい歩く？</h3></div>
+        <div class="section-head"><h3>縺ｩ縺ｮ縺上ｉ縺・ｭｩ縺擾ｼ・/h3></div>
         <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:18px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:10px">
-          <button type="button" id="timeMinusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">−</button>
+          <button type="button" id="timeMinusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">竏・/button>
           <div style="flex:1;text-align:center">
             <span id="timeDisplay" style="font-family:var(--f-num);font-style:italic;font-weight:800;font-size:48px;color:var(--accent);line-height:1">0</span>
-            <span style="font-size:16px;font-weight:700;color:var(--ink-soft);margin-left:4px">分</span>
+            <span style="font-size:16px;font-weight:700;color:var(--ink-soft);margin-left:4px">蛻・/span>
             <input type="hidden" id="timeMin" value="0">
           </div>
-          <button type="button" id="timePlusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">＋</button>
+          <button type="button" id="timePlusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">・・/button>
         </div>
         
 
-        <!-- 予想値プレビューカード -->
+        <!-- 莠域Φ蛟､繝励Ξ繝薙Η繝ｼ繧ｫ繝ｼ繝・-->
         <div class="estimate">
-          <div><small>予想距離</small><span class="num"><span id="previewDistance">--</span><i>km</i></span></div>
-          <div><small>予想歩数</small><span class="num"><span id="previewSteps">--</span><i>歩</i></span></div>
-          <div><small>消費カロリー</small><span class="num"><span id="previewCalorie">--</span><i>kcal</i></span></div>
+          <div><small>莠域Φ霍晞屬</small><span class="num"><span id="previewDistance">--</span><i>km</i></span></div>
+          <div><small>莠域Φ豁ｩ謨ｰ</small><span class="num"><span id="previewSteps">--</span><i>豁ｩ</i></span></div>
+          <div><small>豸郁ｲｻ繧ｫ繝ｭ繝ｪ繝ｼ</small><span class="num"><span id="previewCalorie">--</span><i>kcal</i></span></div>
         </div>
-        <div class="hint">「−」「＋」で5分ずつ調整できます。数字の欄をタップすれば直接入力もできます。距離などは時速4.8kmで計算した目安です。</div>
+        <div class="hint">縲娯・縲阪鯉ｼ九阪〒5蛻・★縺､隱ｿ謨ｴ縺ｧ縺阪∪縺吶よ焚蟄励・谺・ｒ繧ｿ繝・・縺吶ｌ縺ｰ逶ｴ謗･蜈･蜉帙ｂ縺ｧ縺阪∪縺吶りｷ晞屬縺ｪ縺ｩ縺ｯ譎る・.8km縺ｧ險育ｮ励＠縺溽岼螳峨〒縺吶・/div>
       </div>
 
-      <!-- 体重(任意) -->
+      <!-- 菴馴㍾(莉ｻ諢・ -->
       <div class="section">
-        <div class="section-head"><h3>体重（任意）</h3></div>
+        <div class="section-head"><h3>菴馴㍾・井ｻｻ諢擾ｼ・/h3></div>
         <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:18px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:10px">
-          <button type="button" id="weightMinusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">−</button>
+          <button type="button" id="weightMinusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">竏・/button>
           <div style="flex:1;text-align:center">
             <span id="weightDisplay" style="font-family:var(--f-num);font-style:italic;font-weight:800;font-size:42px;color:var(--ink);line-height:1">60</span>
             <span style="font-size:16px;font-weight:700;color:var(--ink-soft);margin-left:4px">kg</span>
             <input type="hidden" id="weightKg" value="60">
           </div>
-          <button type="button" id="weightPlusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">＋</button>
+          <button type="button" id="weightPlusBtn" style="width:56px;height:56px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font-size:26px;font-weight:700;cursor:pointer;flex-shrink:0">・・/button>
         </div>
-        <div class="hint">数字の欄をタップして入力できます。カロリー計算にだけ使い、未入力の場合は60kgで計算します。</div>
+        <div class="hint">謨ｰ蟄励・谺・ｒ繧ｿ繝・・縺励※蜈･蜉帙〒縺阪∪縺吶ゅき繝ｭ繝ｪ繝ｼ險育ｮ励↓縺縺台ｽｿ縺・∵悴蜈･蜉帙・蝣ｴ蜷医・60kg縺ｧ險育ｮ励＠縺ｾ縺吶・/div>
       </div>
 
-      <!-- 日陰優先モード -->
+      <!-- 譌･髯ｰ蜆ｪ蜈医Δ繝ｼ繝・-->
       <div class="section">
-        <div class="section-head"><h3>日陰を優先する（任意）</h3></div>
+        <div class="section-head"><h3>譌･髯ｰ繧貞━蜈医☆繧具ｼ井ｻｻ諢擾ｼ・/h3></div>
         <button class="shade-toggle" id="shadePreferenceBtn" type="button" aria-pressed="false">
           <div>
-            <div style="font-weight:700;font-size:14px;">☀️ 日陰ルート優先</div>
-            <div style="font-size:12px;color:var(--ink-soft);margin-top:3px;">建物の影を計算し、日陰の多い道を優先します</div>
+            <div style="font-weight:700;font-size:14px;">笘・・譌･髯ｰ繝ｫ繝ｼ繝亥━蜈・/div>
+            <div style="font-size:12px;color:var(--ink-soft);margin-top:3px;">蟒ｺ迚ｩ縺ｮ蠖ｱ繧定ｨ育ｮ励＠縲∵律髯ｰ縺ｮ螟壹＞驕薙ｒ蜆ｪ蜈医＠縺ｾ縺・/div>
           </div>
           <div class="shade-switch"></div>
         </button>
       </div>
 
-      <button class="primary" id="toResultBtn" style="margin-bottom:16px;">ルートを作成する ›</button>
+      <button class="primary" id="toResultBtn" style="margin-bottom:16px;">繝ｫ繝ｼ繝医ｒ菴懈・縺吶ｋ 窶ｺ</button>
       <div id="statusBoxSettings" class="status info" style="display:none;margin-bottom:16px;"></div>
     </div>
   </div>
 
-  <!-- ============ SCREEN 4: 結果 ============ -->
+  <!-- ============ SCREEN 4: 邨先棡 ============ -->
   <div class="screen" id="screenResult">
     <div class="content">
       <div class="stepheader">
@@ -650,53 +705,52 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           <span class="stepno-total">/ 03</span>
           <div class="stepno-bars"><span class="on"></span><span class="on"></span><span class="on"></span></div>
         </div>
-        <h1 class="display">生成されたルート</h1>
-        <div class="stepsub">そのまま地図を見ながら歩き始められます</div>
+        <h1 class="display">逕滓・縺輔ｌ縺溘Ν繝ｼ繝・/h1>
+        <div class="stepsub">縺昴・縺ｾ縺ｾ蝨ｰ蝗ｳ繧定ｦ九↑縺後ｉ豁ｩ縺榊ｧ九ａ繧峨ｌ縺ｾ縺・/div>
       </div>
-      <button class="backlink" id="toSettingsBackBtn" type="button"><span class="backlink-icon">‹</span>設定に戻る</button>
+      <button class="backlink" id="toSettingsBackBtn" type="button"><span class="backlink-icon">窶ｹ</span>險ｭ螳壹↓謌ｻ繧・/button>
 
       <div id="goalBanner" class="notch" style="display:none; margin-bottom:14px; padding:18px; background:var(--accent); color:var(--accent-ink); text-align:left;">
-        <div style="font-family:'Saira Condensed',sans-serif; font-style:italic; font-weight:800; font-size:22px; letter-spacing:0.02em;">GOAL — ゴールしました</div>
-        <div style="font-family:'Noto Sans JP',sans-serif; font-size:12px; opacity:0.92; margin-top:4px;">今回の歩行記録を保存しました(「RECORDS」から確認できます)</div>
+        <div style="font-family:'Saira Condensed',sans-serif; font-style:italic; font-weight:800; font-size:22px; letter-spacing:0.02em;">GOAL 窶・繧ｴ繝ｼ繝ｫ縺励∪縺励◆</div>
+        <div style="font-family:'Noto Sans JP',sans-serif; font-size:12px; opacity:0.92; margin-top:4px;">莉雁屓縺ｮ豁ｩ陦瑚ｨ倬鹸繧剃ｿ晏ｭ倥＠縺ｾ縺励◆(縲軍ECORDS縲阪°繧臥｢ｺ隱阪〒縺阪∪縺・</div>
       </div>
 
       <div class="card">
-        <!-- 地図 -->
+        <!-- 蝨ｰ蝗ｳ -->
         <div class="mapview-clip">
           <div id="map"></div>
           <span class="live-badge" id="liveBadge" style="display:none;">LIVE</span>
-          <button class="map-fullscreen-btn" id="mapFullscreenBtn" type="button" title="全画面表示">⛶</button>
-          <button class="compass-btn" id="compassBtn" type="button" title="北向きにリセット">
+          <button class="map-fullscreen-btn" id="mapFullscreenBtn" type="button" title="蜈ｨ逕ｻ髱｢陦ｨ遉ｺ">笵ｶ</button>
+          <button class="compass-btn" id="compassBtn" type="button" title="蛹怜髄縺阪↓繝ｪ繧ｻ繝・ヨ">
             <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- 外周の円 -->
+              <!-- 螟門捉縺ｮ蜀・-->
               <circle cx="19" cy="19" r="17" fill="white" stroke="#ccc" stroke-width="1.5"/>
-              <!-- 北の針(赤・細長い菱形の上半分) -->
+              <!-- 蛹励・驥・襍､繝ｻ邏ｰ髟ｷ縺・廠蠖｢縺ｮ荳雁濠蛻・ -->
               <polygon points="19,4 22,19 19,16 16,19" fill="#d42b2b"/>
-              <!-- 南の針(グレー・細長い菱形の下半分) -->
+              <!-- 蜊励・驥・繧ｰ繝ｬ繝ｼ繝ｻ邏ｰ髟ｷ縺・廠蠖｢縺ｮ荳句濠蛻・ -->
               <polygon points="19,34 16,19 19,22 22,19" fill="#aaa"/>
-              <!-- 中心の白丸 -->
+              <!-- 荳ｭ蠢・・逋ｽ荳ｸ -->
               <circle cx="19" cy="19" r="2.5" fill="white" stroke="#999" stroke-width="1"/>
             </svg>
           </button>
         </div>
-        <!-- 日陰マップ -->
+        <!-- 譌･髯ｰ繝槭ャ繝・-->
         <div class="toggle-chip-row" style="margin-top:10px;">
           <button class="toggle-chip" id="shadowToggleBtn" type="button" aria-pressed="false">
-            <span class="chip-check" id="shadowChipCheck"></span>日陰マップ
-          </button>
+            <span class="chip-check" id="shadowChipCheck"></span>譌･髯ｰ繝槭ャ繝・          </button>
           <div class="hint" id="shadowStatus" style="flex:1; margin:0; padding-left:8px;"></div>
         </div>
-        <!-- お気に入り登録・散歩終了 -->
+        <!-- 縺頑ｰ励↓蜈･繧顔匳骭ｲ繝ｻ謨｣豁ｩ邨ゆｺ・-->
         <div class="resultactions" style="margin-top:8px;">
-          <button class="secondary" id="saveFavoriteBtn" type="button">お気に入りに登録</button>
-          <button class="secondary" id="finishHereBtn" type="button">ここで散歩を終了する</button>
+          <button class="secondary" id="saveFavoriteBtn" type="button">縺頑ｰ励↓蜈･繧翫↓逋ｻ骭ｲ</button>
+          <button class="secondary" id="finishHereBtn" type="button">縺薙％縺ｧ謨｣豁ｩ繧堤ｵゆｺ・☆繧・/button>
         </div>
-        <!-- 追跡ボタン -->
-        <button class="primary" id="liveTrackBtn" type="button" style="margin-top:10px;">追跡を開始</button>
+        <!-- 霑ｽ霍｡繝懊ち繝ｳ -->
+        <button class="primary" id="liveTrackBtn" type="button" style="margin-top:10px;">霑ｽ霍｡繧帝幕蟋・/button>
         <div class="hint" id="liveStatus"></div>
       </div>
 
-      <div id="statusBox" class="status info">ここに結果やエラーメッセージが表示されます。</div>
+      <div id="statusBox" class="status info">縺薙％縺ｫ邨先棡繧・お繝ｩ繝ｼ繝｡繝・そ繝ｼ繧ｸ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺吶・/div>
 
       <div id="resultCard" style="display:none; margin-top:22px;">
         <div class="result-head-bar">
@@ -706,79 +760,106 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
         <div class="result-stats">
           <div><span class="num" id="resDistance">-</span><small>KM</small></div>
           <div><span class="num" id="resCalorie">-</span><small>KCAL</small></div>
-          <div><span class="num" id="resSteps">-</span><small>歩</small></div>
+          <div><span class="num" id="resSteps">-</span><small>豁ｩ</small></div>
         </div>
         <div class="hint" id="timeCompare" style="margin-top:8px"></div>
         <div class="hint" id="weatherInfo"></div>
         <div style="margin-top:12px;margin-bottom:16px;">
-          <button class="btn" id="regenerateBtn" type="button" style="width:100%">↺ 再生成</button>
+          <button class="btn" id="regenerateBtn" type="button" style="width:100%">竊ｺ 蜀咲函謌・/button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ============ SCREEN: 歩行記録 ============ -->
+  <!-- ============ SCREEN: 豁ｩ陦瑚ｨ倬鹸 ============ -->
   <div class="screen" id="screenHistory">
     <div class="content">
-      <button class="backlink" id="closeHistoryBtn" type="button">戻る</button>
+      <button class="backlink" id="closeHistoryBtn" type="button">謌ｻ繧・/button>
       <span class="label">History</span>
-      <h2 class="title" style="margin-top:8px;">これまでの記録</h2>
-      <p class="lead">ゴールするたびに、自動でその日の記録が積み重なります。</p>
+      <h2 class="title" style="margin-top:8px;">縺薙ｌ縺ｾ縺ｧ縺ｮ險倬鹸</h2>
+      <p class="lead">繧ｴ繝ｼ繝ｫ縺吶ｋ縺溘・縺ｫ縲∬・蜍輔〒縺昴・譌･縺ｮ險倬鹸縺檎ｩ阪∩驥阪↑繧翫∪縺吶・/p>
 
-      <div class="section"><div class="section-head"><h3>集計</h3></div>
+      <div class="section"><div class="section-head"><h3>髮・ｨ・/h3></div>
       <div class="summary">
         <div class="card">
           <div class="mono-label" style="font-size:10px;">THIS WEEK</div>
           <div style="margin-top:4px"><span class="num" id="histWeekDistance">-</span><span class="u">km</span></div>
-          <div class="hist-stat-sub"><span id="histWeekCalorie">-</span> kcal · <span id="histWeekSteps">-</span> 歩</div>
+          <div class="hist-stat-sub"><span id="histWeekCalorie">-</span> kcal ﾂｷ <span id="histWeekSteps">-</span> 豁ｩ</div>
         </div>
         <div class="card">
           <div class="mono-label" style="font-size:10px;">THIS MONTH</div>
           <div style="margin-top:4px"><span class="num" id="histMonthDistance">-</span><span class="u">km</span></div>
-          <div class="hist-stat-sub"><span id="histMonthCalorie">-</span> kcal · <span id="histMonthSteps">-</span> 歩</div>
+          <div class="hist-stat-sub"><span id="histMonthCalorie">-</span> kcal ﾂｷ <span id="histMonthSteps">-</span> 豁ｩ</div>
         </div>
         <div class="card">
           <div class="mono-label" style="font-size:10px;">THIS YEAR</div>
           <div style="margin-top:4px"><span class="num" id="histYearDistance">-</span><span class="u">km</span></div>
-          <div class="hist-stat-sub"><span id="histYearCalorie">-</span> kcal · <span id="histYearSteps">-</span> 歩</div>
+          <div class="hist-stat-sub"><span id="histYearCalorie">-</span> kcal ﾂｷ <span id="histYearSteps">-</span> 豁ｩ</div>
         </div>
         <div class="card card--invert">
           <div class="mono-label" style="font-size:10px; color:var(--accent-2);">ALL TIME</div>
           <div style="margin-top:4px"><span class="num" id="histAllDistance">-</span><span class="u" style="color:var(--accent-2);">km</span></div>
-          <div class="hist-stat-sub"><span id="histAllCalorie">-</span> kcal · <span id="histAllSteps">-</span> 歩</div>
+          <div class="hist-stat-sub"><span id="histAllCalorie">-</span> kcal ﾂｷ <span id="histAllSteps">-</span> 豁ｩ</div>
         </div>
       </div></div>
 
       <div class="section">
         <div class="section-head">
-          <h3>カレンダー</h3>
+          <h3>繧ｫ繝ｬ繝ｳ繝繝ｼ</h3>
           <div style="display:flex;align-items:center;gap:8px">
-            <button class="btn-pill" id="calPrevBtn" type="button" style="width:44px;height:44px;justify-content:center;border-radius:50%;font-size:18px">‹</button>
+            <button class="btn-pill" id="calPrevBtn" type="button" style="width:44px;height:44px;justify-content:center;border-radius:50%;font-size:18px">窶ｹ</button>
             <span class="num" style="font-size:18px" id="calMonthLabel"></span>
-            <button class="btn-pill" id="calNextBtn" type="button" style="width:44px;height:44px;justify-content:center;border-radius:50%;font-size:18px">›</button>
+            <button class="btn-pill" id="calNextBtn" type="button" style="width:44px;height:44px;justify-content:center;border-radius:50%;font-size:18px">窶ｺ</button>
           </div>
         </div>
         <div class="card">
         <div class="cal-weekday-row">
-          <div class="sun">日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div class="sat">土</div>
+          <div class="sun">譌･</div><div>譛・/div><div>轣ｫ</div><div>豌ｴ</div><div>譛ｨ</div><div>驥・/div><div class="sat">蝨・/div>
         </div>
         <div class="cal-grid" id="calGrid"></div>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-head"><h3>お気に入り</h3></div>
-        <button class="btn btn--accent" id="openFavoritesBtn2" type="button" style="width:100%">お気に入りのルートを見る ›</button>
+        <div class="section-head"><h3>縺頑ｰ励↓蜈･繧・/h3></div>
+        <button class="btn btn--accent" id="openFavoritesBtn2" type="button" style="width:100%">縺頑ｰ励↓蜈･繧翫・繝ｫ繝ｼ繝医ｒ隕九ｋ 窶ｺ</button>
       </div>
 
       <div class="section">
-        <div class="section-head"><h3>記録一覧</h3></div>
+        <div class="section-head"><h3>險倬鹸荳隕ｧ</h3></div>
         <div id="histList"></div>
       </div>
     </div>
   </div>
 
-  <!-- ============ ゴールハイライトオーバーレイ ============ -->
+  <!-- ============ 繝ｫ繝ｼ繝亥ｾｩ蜈・｢ｺ隱阪ム繧､繧｢繝ｭ繧ｰ ============ -->
+  <div class="restore-overlay" id="restoreOverlay" hidden>
+    <div class="restore-dialog" role="dialog" aria-modal="true" aria-labelledby="restoreTitle">
+      <div class="restore-head">
+        <span class="restore-icon" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3,20 7,13 5,8 11,6 14,11"></polyline>
+            <path d="M18 3.5a3.5 3.5 0 0 0-3.5 3.5c0 2.6 3.5 6 3.5 6s3.5-3.4 3.5-6A3.5 3.5 0 0 0 18 3.5z" fill="var(--accent)" stroke="none"></path>
+            <circle cx="18" cy="7" r="1.3" fill="#fff" stroke="none"></circle>
+          </svg>
+        </span>
+        <div>
+          <div class="restore-label">Resume Route</div>
+          <h2 class="restore-title" id="restoreTitle">蜑榊屓縺ｮ繝ｫ繝ｼ繝医′縺ゅｊ縺ｾ縺・/h2>
+        </div>
+      </div>
+      <div class="restore-info">
+        <small>繝ｫ繝ｼ繝医・霍晞屬</small>
+        <div class="restore-km"><b id="restoreKm">-</b><span>km</span></div>
+      </div>
+      <div class="restore-actions">
+        <button class="restore-primary" id="restoreResume" type="button">邯壹″縺九ｉ蜀埼幕</button>
+        <button class="restore-secondary" id="restoreDiscard" type="button">遐ｴ譽・☆繧・/button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 繧ｴ繝ｼ繝ｫ繝上う繝ｩ繧､繝医が繝ｼ繝舌・繝ｬ繧､ ============ -->
   <div id="goalOverlay" style="display:none; position:fixed; inset:0; z-index:8000;
     background:linear-gradient(158deg, #0a1c46 0%, #123a8f 44%, #1f6fe5 100%);
     flex-direction:column; align-items:center; justify-content:center;
@@ -787,18 +868,18 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
       @keyframes goalPop { 0%{transform:scale(0.7);opacity:0;} 80%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }
       @keyframes goalRise { 0%{transform:translateY(20px);opacity:0;} 100%{transform:translateY(0);opacity:1;} }
     </style>
-    <!-- 背景グリッド -->
+    <!-- 閭梧勹繧ｰ繝ｪ繝・ラ -->
     <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:46px 46px;pointer-events:none;"></div>
 
     <div style="position:relative; display:flex; flex-direction:column; align-items:center; gap:28px; padding:0 32px; width:100%; max-width:400px; box-sizing:border-box;">
 
-      <!-- GOAL テキスト -->
+      <!-- GOAL 繝・く繧ｹ繝・-->
       <div style="animation:goalPop .6s cubic-bezier(.3,1.3,.5,1) .1s both; text-align:center;">
         <div style="font-family:'Saira Condensed',sans-serif; font-style:italic; font-weight:800; font-size:64px; color:#fff; line-height:1; letter-spacing:0.02em;">GOAL</div>
-        <div style="font-size:13px; color:rgba(255,255,255,.7); margin-top:6px; letter-spacing:.1em;">お疲れさまでした</div>
+        <div style="font-size:13px; color:rgba(255,255,255,.7); margin-top:6px; letter-spacing:.1em;">縺顔夢繧後＆縺ｾ縺ｧ縺励◆</div>
       </div>
 
-      <!-- 数字 -->
+      <!-- 謨ｰ蟄・-->
       <div style="animation:goalRise .5s ease .5s both; width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div style="background:rgba(255,255,255,.12); border-radius:14px; padding:16px 12px; text-align:center;">
           <div style="font-family:'Saira Condensed',sans-serif; font-style:italic; font-weight:800; font-size:38px; color:#fff; line-height:1;" id="hlDistance">-</div>
@@ -810,15 +891,15 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
         </div>
         <div style="background:rgba(255,255,255,.12); border-radius:14px; padding:16px 12px; text-align:center;">
           <div style="font-family:'Saira Condensed',sans-serif; font-style:italic; font-weight:800; font-size:38px; color:#fff; line-height:1;" id="hlSteps">-</div>
-          <div style="font-size:11px; color:rgba(255,255,255,.6); margin-top:4px; font-family:'Space Mono',monospace; letter-spacing:.1em;">歩</div>
+          <div style="font-size:11px; color:rgba(255,255,255,.6); margin-top:4px; font-family:'Space Mono',monospace; letter-spacing:.1em;">豁ｩ</div>
         </div>
         <div style="background:rgba(255,255,255,.12); border-radius:14px; padding:16px 12px; text-align:center;">
           <div style="font-family:'Saira Condensed',sans-serif; font-style:italic; font-weight:800; font-size:38px; color:#fff; line-height:1;" id="hlTime">-</div>
-          <div style="font-size:11px; color:rgba(255,255,255,.6); margin-top:4px; font-family:'Space Mono',monospace; letter-spacing:.1em;">分</div>
+          <div style="font-size:11px; color:rgba(255,255,255,.6); margin-top:4px; font-family:'Space Mono',monospace; letter-spacing:.1em;">蛻・/div>
         </div>
       </div>
 
-      <!-- ボタン群 -->
+      <!-- 繝懊ち繝ｳ鄒､ -->
       <div style="animation:goalRise .5s ease .8s both; width:100%; display:flex; flex-direction:column; gap:10px;">
         <button id="goalOverlayClose" type="button" style="
           width:100%; padding:16px;
@@ -826,36 +907,36 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           border:none; border-radius:0;
           clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);
           font-size:15px; font-weight:700; cursor:pointer;
-          font-family:'Noto Sans JP',sans-serif;">記録を確認する</button>
+          font-family:'Noto Sans JP',sans-serif;">險倬鹸繧堤｢ｺ隱阪☆繧・/button>
         <button id="goalOverlayFav" type="button" style="
           width:100%; padding:14px;
           background:rgba(255,255,255,0.15); color:#fff;
           border:1.5px solid rgba(255,255,255,0.5); border-radius:0;
           clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);
           font-size:14px; font-weight:700; cursor:pointer;
-          font-family:'Noto Sans JP',sans-serif;">★ このルートをお気に入りに登録</button>
+          font-family:'Noto Sans JP',sans-serif;">笘・縺薙・繝ｫ繝ｼ繝医ｒ縺頑ｰ励↓蜈･繧翫↓逋ｻ骭ｲ</button>
       </div>
     </div>
   </div>
 
-  <!-- ============ SCREEN: お気に入り ============ -->
+  <!-- ============ SCREEN: 縺頑ｰ励↓蜈･繧・============ -->
   <div class="screen" id="screenFavorites">
     <div class="content">
       <div class="stepheader">
         <span class="mono-label">FAVORITES</span>
-        <h1 class="display" style="margin-top:8px;">お気に入りのルート</h1>
-        <div class="stepsub">登録したルートをそのまま呼び出せます(再生成はされません)</div>
+        <h1 class="display" style="margin-top:8px;">縺頑ｰ励↓蜈･繧翫・繝ｫ繝ｼ繝・/h1>
+        <div class="stepsub">逋ｻ骭ｲ縺励◆繝ｫ繝ｼ繝医ｒ縺昴・縺ｾ縺ｾ蜻ｼ縺ｳ蜃ｺ縺帙∪縺・蜀咲函謌舌・縺輔ｌ縺ｾ縺帙ｓ)</div>
       </div>
-      <button class="backlink" id="closeFavoritesBtn" type="button"><span class="backlink-icon">‹</span>戻る</button>
+      <button class="backlink" id="closeFavoritesBtn" type="button"><span class="backlink-icon">窶ｹ</span>謌ｻ繧・/button>
 
       <div class="card">
-        <h2><span class="dot"></span>登録済みルート</h2>
+        <h2><span class="dot"></span>逋ｻ骭ｲ貂医∩繝ｫ繝ｼ繝・/h2>
         <div id="favList"></div>
       </div>
     </div>
   </div>
 
-  <!-- ============ SCREEN: 日付ごとの詳細 ============ -->
+  <!-- ============ SCREEN: 譌･莉倥＃縺ｨ縺ｮ隧ｳ邏ｰ ============ -->
   <div class="screen" id="screenDayDetail">
     <div class="content">
       <div class="stepheader">
@@ -866,29 +947,29 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
         </div>
         <div class="stepsub" id="dayDetailSub"></div>
       </div>
-      <button class="backlink" id="closeDayDetailBtn" type="button"><span class="backlink-icon">‹</span>カレンダーに戻る</button>
+      <button class="backlink" id="closeDayDetailBtn" type="button"><span class="backlink-icon">窶ｹ</span>繧ｫ繝ｬ繝ｳ繝繝ｼ縺ｫ謌ｻ繧・/button>
 
       <div class="card">
-        <h2><span class="dot"></span>この日の記録</h2>
+        <h2><span class="dot"></span>縺薙・譌･縺ｮ險倬鹸</h2>
         <div class="results">
           <div class="result-box"><div class="num" id="dayDetailDistance">-</div><div class="unit">KM</div></div>
           <div class="result-box"><div class="num" id="dayDetailCalorie">-</div><div class="unit">KCAL</div></div>
-          <div class="result-box"><div class="num" id="dayDetailSteps">-</div><div class="unit">歩</div></div>
+          <div class="result-box"><div class="num" id="dayDetailSteps">-</div><div class="unit">豁ｩ</div></div>
         </div>
       </div>
 
       <div class="card" id="dayDetailMapCard" style="display:none;">
-        <h2><span class="dot"></span>歩いたコース</h2>
+        <h2><span class="dot"></span>豁ｩ縺・◆繧ｳ繝ｼ繧ｹ</h2>
         <div class="mapview-clip" style="height:240px;"><div id="dayDetailMap"></div></div>
       </div>
 
-      <button class="secondary" id="saveFavFromHistoryBtn" type="button" style="width:100%; margin-top:4px;">このルートをお気に入りに登録</button>
+      <button class="secondary" id="saveFavFromHistoryBtn" type="button" style="width:100%; margin-top:4px;">縺薙・繝ｫ繝ｼ繝医ｒ縺頑ｰ励↓蜈･繧翫↓逋ｻ骭ｲ</button>
     </div>
   </div>
 
 </div>
 
-<!-- 全画面終了ボタン: body直下・最高z-index -->
+<!-- 蜈ｨ逕ｻ髱｢邨ゆｺ・・繧ｿ繝ｳ: body逶ｴ荳九・譛鬮・-index -->
 <button id="mapExitFullscreenBtn" type="button" style="
   display:none;position:fixed;
   top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;
@@ -896,9 +977,9 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
   border-radius:12px;background:rgba(0,0,0,.7);border:none;
   color:#fff;font-size:20px;cursor:pointer;
   align-items:center;justify-content:center;
-">✕</button>
+">笨・/button>
 
-<!-- ボトムナビゲーション -->
+<!-- 繝懊ヨ繝繝翫ン繧ｲ繝ｼ繧ｷ繝ｧ繝ｳ -->
 <nav class="bottom-nav" id="bottomNav">
   <button class="bottom-nav-tab active" id="navTabRoute" type="button">
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -906,7 +987,7 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
       <circle cx="18" cy="6" r="2.5" stroke="currentColor" stroke-width="1.8"/>
       <polyline points="4,13.5 9,9 13,12 18,8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
     </svg>
-    <span>ルート作成</span>
+    <span>繝ｫ繝ｼ繝井ｽ懈・</span>
   </button>
   <button class="bottom-nav-tab" id="navTabHistory" type="button">
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -918,18 +999,18 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
       <circle cx="11" cy="14" r="1.2" fill="currentColor"/>
       <circle cx="15" cy="14" r="1.2" fill="currentColor"/>
     </svg>
-    <span>記録</span>
+    <span>險倬鹸</span>
   </button>
 </nav>
 
 <script>
 
-// 安全なイベントリスナー追加(要素がなくてもクラッシュしない)
+// 螳牙・縺ｪ繧､繝吶Φ繝医Μ繧ｹ繝翫・霑ｽ蜉(隕∫ｴ縺後↑縺上※繧ゅけ繝ｩ繝・す繝･縺励↑縺・
 function on(id, evt, fn){ const el=document.getElementById(id); if(el) el.addEventListener(evt,fn); }
 
-// 地図回転関連変数(ドラッグ補正パッチより前に宣言必須)
-let mapUserRotation = 0;     // 現在の地図回転角度(度)
-let manualRotationActive = false; // trueの間はヘッドアップ自動回転を停止
+// 蝨ｰ蝗ｳ蝗櫁ｻ｢髢｢騾｣螟画焚(繝峨Λ繝・げ陬懈ｭ｣繝代ャ繝√ｈ繧雁燕縺ｫ螳｣險蠢・・
+let mapUserRotation = 0;     // 迴ｾ蝨ｨ縺ｮ蝨ｰ蝗ｳ蝗櫁ｻ｢隗貞ｺｦ(蠎ｦ)
+let manualRotationActive = false; // true縺ｮ髢薙・繝倥ャ繝峨い繝・・閾ｪ蜍募屓霆｢繧貞●豁｢
 
 let mode = 'loop';
 let startPoint = null;
@@ -938,14 +1019,14 @@ let startMarker = null;
 let goalMarker = null;
 let routeLine = null;
 
-/* ---- 地点確認用マップ(STEP2) ---- */
+/* ---- 蝨ｰ轤ｹ遒ｺ隱咲畑繝槭ャ繝・STEP2) ---- */
 const mapConfirm = L.map('mapConfirm').setView([35.681236, 139.767125], 14);
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
   maxZoom: 19,
   attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a> | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(mapConfirm);
 
-/* ---- 結果表示用マップ(STEP4) ---- */
+/* ---- 邨先棡陦ｨ遉ｺ逕ｨ繝槭ャ繝・STEP4) ---- */
 const map = L.map('map', {zoomControl:false, preferCanvas:true, zoomAnimation:true, fadeAnimation:false, markerZoomAnimation:false}).setView([35.681236, 139.767125], 14);
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
   maxZoom: 19,
@@ -959,12 +1040,10 @@ map.on("dragstart", function(){ pauseAutoFollow(); manualRotationActive = true; 
 map.on("drag", pauseAutoFollow);
 map.on("dragend", function(){ manualRotationActive = false; });
 
-// CSS rotate使用時のドラッグ補正
-// Leaflet内部のドラッグは_parentScaleがCSS回転に対応していないため、
-// Leafletのドラッグを無効化し、タッチ/マウスイベントで直接map.panBy()を呼ぶ
+// CSS rotate菴ｿ逕ｨ譎ゅ・繝峨Λ繝・げ陬懈ｭ｣
+// Leaflet蜀・Κ縺ｮ繝峨Λ繝・げ縺ｯ_parentScale縺靴SS蝗櫁ｻ｢縺ｫ蟇ｾ蠢懊＠縺ｦ縺・↑縺・◆繧√・// Leaflet縺ｮ繝峨Λ繝・げ繧堤┌蜉ｹ蛹悶＠縲√ち繝・メ/繝槭え繧ｹ繧､繝吶Φ繝医〒逶ｴ謗･map.panBy()繧貞他縺ｶ
 (function setupRotationAwareDrag(){
-  // 地図が回転している時だけLeafletのドラッグを無効化
-  let customDragActive = false;
+  // 蝨ｰ蝗ｳ縺悟屓霆｢縺励※縺・ｋ譎ゅ□縺銑eaflet縺ｮ繝峨Λ繝・げ繧堤┌蜉ｹ蛹・  let customDragActive = false;
   let dragLastX = 0, dragLastY = 0;
   let dragTouchId = null;
 
@@ -976,20 +1055,19 @@ map.on("dragend", function(){ manualRotationActive = false; });
     if (!deg) return {dx: screenDx, dy: screenDy};
     const rad = deg * Math.PI / 180;
     const cos = Math.cos(rad), sin = Math.sin(rad);
-    // 画面座標→地図座標の変換 R(+deg): CSSのrotate(-deg)の逆変換
+    // 逕ｻ髱｢蠎ｧ讓吮・蝨ｰ蝗ｳ蠎ｧ讓吶・螟画鋤 R(+deg): CSS縺ｮrotate(-deg)縺ｮ騾・､画鋤
     return {
       dx: screenDx * cos - screenDy * sin,
       dy: screenDx * sin + screenDy * cos
     };
   }
 
-  // --- タッチイベント(1本指ドラッグ) ---
+  // --- 繧ｿ繝・メ繧､繝吶Φ繝・1譛ｬ謖・ラ繝ｩ繝・げ) ---
   clip.addEventListener('touchstart', function(e){
     if (e.touches.length !== 1 || !mapUserRotation) return;
-    // 地図が回転中 → Leafletのドラッグを止めて自前で処理
-    map.dragging.disable();
+    // 蝨ｰ蝗ｳ縺悟屓霆｢荳ｭ 竊・Leaflet縺ｮ繝峨Λ繝・げ繧呈ｭ｢繧√※閾ｪ蜑阪〒蜃ｦ逅・    map.dragging.disable();
     customDragActive = true;
-    pauseAutoFollow(); // 自動追従を一時停止(Leafletのdragstartが発火しないため手動で呼ぶ)
+    pauseAutoFollow(); // 閾ｪ蜍戊ｿｽ蠕薙ｒ荳譎ょ●豁｢(Leaflet縺ｮdragstart縺檎匱轣ｫ縺励↑縺・◆繧∵焔蜍輔〒蜻ｼ縺ｶ)
     const t = e.touches[0];
     dragLastX = t.clientX;
     dragLastY = t.clientY;
@@ -998,7 +1076,7 @@ map.on("dragend", function(){ manualRotationActive = false; });
 
   clip.addEventListener('touchmove', function(e){
     if (!customDragActive) return;
-    // 2本指に変わったら自前ドラッグ終了(ピンチズームやmapRotationに任せる)
+    // 2譛ｬ謖・↓螟峨ｏ縺｣縺溘ｉ閾ｪ蜑阪ラ繝ｩ繝・げ邨ゆｺ・繝斐Φ繝√ぜ繝ｼ繝繧・apRotation縺ｫ莉ｻ縺帙ｋ)
     if (e.touches.length !== 1){
       customDragActive = false;
       return;
@@ -1017,13 +1095,12 @@ map.on("dragend", function(){ manualRotationActive = false; });
     if (!customDragActive) return;
     if (e.touches.length === 0){
       customDragActive = false;
-      // 回転が残っていればドラッグは無効のまま(次のtouchstartで再度処理)
-      // 回転が0に戻っていればLeafletのドラッグを有効に戻す
-      if (!mapUserRotation) map.dragging.enable();
+      // 蝗櫁ｻ｢縺梧ｮ九▲縺ｦ縺・ｌ縺ｰ繝峨Λ繝・げ縺ｯ辟｡蜉ｹ縺ｮ縺ｾ縺ｾ(谺｡縺ｮtouchstart縺ｧ蜀榊ｺｦ蜃ｦ逅・
+      // 蝗櫁ｻ｢縺・縺ｫ謌ｻ縺｣縺ｦ縺・ｌ縺ｰLeaflet縺ｮ繝峨Λ繝・げ繧呈怏蜉ｹ縺ｫ謌ｻ縺・      if (!mapUserRotation) map.dragging.enable();
     }
   }, {passive: true});
 
-  // --- マウスイベント(PC用) ---
+  // --- 繝槭え繧ｹ繧､繝吶Φ繝・PC逕ｨ) ---
   let mouseDragActive = false;
   clip.addEventListener('mousedown', function(e){
     if (!mapUserRotation || e.button !== 0) return;
@@ -1052,17 +1129,14 @@ map.on("dragend", function(){ manualRotationActive = false; });
     if (!mapUserRotation) map.dragging.enable();
   });
 
-  // 回転が0に戻った時にLeafletのドラッグを有効に戻す
-  const origApplyRotation = window.applyMapRotation;
-  // applyMapRotation内でドラッグの有効/無効を切り替え
-  const _checkDragState = function(){
+  // 蝗櫁ｻ｢縺・縺ｫ謌ｻ縺｣縺滓凾縺ｫLeaflet縺ｮ繝峨Λ繝・げ繧呈怏蜉ｹ縺ｫ謌ｻ縺・  const origApplyRotation = window.applyMapRotation;
+  // applyMapRotation蜀・〒繝峨Λ繝・げ縺ｮ譛牙柑/辟｡蜉ｹ繧貞・繧頑崛縺・  const _checkDragState = function(){
     if (!customDragActive && !mouseDragActive){
       if (mapUserRotation === 0) map.dragging.enable();
       else map.dragging.disable();
     }
   };
-  // applyMapRotationの後にフックを入れるため、MutationObserverで監視
-  let lastRotation = 0;
+  // applyMapRotation縺ｮ蠕後↓繝輔ャ繧ｯ繧貞・繧後ｋ縺溘ａ縲｀utationObserver縺ｧ逶｣隕・  let lastRotation = 0;
   setInterval(function(){
     if (mapUserRotation !== lastRotation){
       lastRotation = mapUserRotation;
@@ -1071,7 +1145,7 @@ map.on("dragend", function(){ manualRotationActive = false; });
   }, 200);
 })();
 
-// 古いサービスワーカーを全て削除する(キャッシュ問題を完全解消)
+// 蜿､縺・し繝ｼ繝薙せ繝ｯ繝ｼ繧ｫ繝ｼ繧貞・縺ｦ蜑企勁縺吶ｋ(繧ｭ繝｣繝・す繝･蝠城｡後ｒ螳悟・隗｣豸・
 if ('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then((registrations) => {
     registrations.forEach((reg) => reg.unregister());
@@ -1081,7 +1155,7 @@ if ('serviceWorker' in navigator){
   });
 }
 
-// スプラッシュ画面: 確実に消えるよう複数の方法で制御する
+// 繧ｹ繝励Λ繝・す繝･逕ｻ髱｢: 遒ｺ螳溘↓豸医∴繧九ｈ縺・､・焚縺ｮ譁ｹ豕輔〒蛻ｶ蠕｡縺吶ｋ
 (function(){
   const splash = document.getElementById('splashOverlay');
   if (!splash) return;
@@ -1090,11 +1164,11 @@ if ('serviceWorker' in navigator){
     splash.style.opacity = '0';
     setTimeout(() => { splash.style.display = 'none'; splash.style.visibility = 'hidden'; }, 550);
   }
-  // 4.4秒後にフェードアウト(アニメーション完了に合わせる)
+  // 4.4遘貞ｾ後↓繝輔ぉ繝ｼ繝峨い繧ｦ繝・繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ螳御ｺ・↓蜷医ｏ縺帙ｋ)
   setTimeout(hideSplash, 4400);
-  // 保険1: 5秒後に強制非表示
+  // 菫晞匱1: 5遘貞ｾ後↓蠑ｷ蛻ｶ髱櫁｡ｨ遉ｺ
   setTimeout(() => { splash.style.display = 'none'; splash.style.visibility = 'hidden'; }, 5000);
-  // 保険2: 8秒後に確実に非表示(pointer-eventsも無効化)
+  // 菫晞匱2: 8遘貞ｾ後↓遒ｺ螳溘↓髱櫁｡ｨ遉ｺ(pointer-events繧ら┌蜉ｹ蛹・
   setTimeout(() => {
     splash.style.display = 'none';
     splash.style.visibility = 'hidden';
@@ -1103,7 +1177,7 @@ if ('serviceWorker' in navigator){
   }, 8000);
 })();
 
-/* ---------------- 画面切り替え ---------------- */
+/* ---------------- 逕ｻ髱｢蛻・ｊ譖ｿ縺・---------------- */
 const screenOrder = ['course', 'settings', 'result'];
 function showScreen(name){
   screenOrder.forEach((s) => {
@@ -1114,22 +1188,21 @@ function showScreen(name){
   if (name === 'result') setTimeout(() => map.invalidateSize(), 50);
 }
 
-const FIXED_API_KEY = 'eb8fc5cd-4666-402f-a9d0-6942178495ac'; // 個人専用ページのため埋め込み
+const FIXED_API_KEY = 'eb8fc5cd-4666-402f-a9d0-6942178495ac'; // 蛟倶ｺｺ蟆ら畑繝壹・繧ｸ縺ｮ縺溘ａ蝓九ａ霎ｼ縺ｿ
 
-/* ---- ライト/ダークモード切替 ---- */
-// ライトモード固定
-document.documentElement.removeAttribute('data-theme');
+/* ---- 繝ｩ繧､繝・繝繝ｼ繧ｯ繝｢繝ｼ繝牙・譖ｿ ---- */
+// 繝ｩ繧､繝医Δ繝ｼ繝牙崋螳・document.documentElement.removeAttribute('data-theme');
 
 document.getElementById('toCourseBackBtn').addEventListener('click', () => showScreen('course'));
 document.getElementById('toSettingsBackBtn').addEventListener('click', () => showScreen('settings'));
 
 document.getElementById('toSettingsBtn').addEventListener('click', () => {
   if (mode==='loop' && !startPoint){
-    setStatusBox('statusBoxCourse', 'スタート/ゴール地点を検索か現在地ボタンで決めてください。', 'error');
+    setStatusBox('statusBoxCourse', '繧ｹ繧ｿ繝ｼ繝・繧ｴ繝ｼ繝ｫ蝨ｰ轤ｹ繧呈､懃ｴ｢縺狗樟蝨ｨ蝨ｰ繝懊ち繝ｳ縺ｧ豎ｺ繧√※縺上□縺輔＞縲・, 'error');
     return;
   }
   if (mode==='twopoint' && (!startPoint || !goalPoint)){
-    setStatusBox('statusBoxCourse', 'スタート地点とゴール地点の両方を決めてください。', 'error');
+    setStatusBox('statusBoxCourse', '繧ｹ繧ｿ繝ｼ繝亥慍轤ｹ縺ｨ繧ｴ繝ｼ繝ｫ蝨ｰ轤ｹ縺ｮ荳｡譁ｹ繧呈ｱｺ繧√※縺上□縺輔＞縲・, 'error');
     return;
   }
   setStatusBox('statusBoxCourse', '', 'info');
@@ -1139,7 +1212,7 @@ document.getElementById('toSettingsBtn').addEventListener('click', () => {
 document.getElementById('toResultBtn').addEventListener('click', async () => {
   const timeMin = parseFloat(document.getElementById('timeMin').value);
   if (!timeMin || timeMin <= 0){
-    setStatusBox('statusBoxSettings', '歩行予定時間を正しく入力してください。', 'error');
+    setStatusBox('statusBoxSettings', '豁ｩ陦御ｺ亥ｮ壽凾髢薙ｒ豁｣縺励￥蜈･蜉帙＠縺ｦ縺上□縺輔＞縲・, 'error');
     return;
   }
   setStatusBox('statusBoxSettings', '', 'info');
@@ -1154,7 +1227,7 @@ document.getElementById('regenerateBtn').addEventListener('click', () => {
   const now = Date.now();
   const elapsed = Math.ceil((60000 - (now - lastGenerateTime)) / 1000);
   if (now - lastGenerateTime < 60000){
-    setStatus('再生成は前回から1分後に行えます(あと約' + elapsed + '秒)', 'error');
+    setStatus('蜀咲函謌舌・蜑榊屓縺九ｉ1蛻・ｾ後↓陦後∴縺ｾ縺・縺ゅ→邏・ + elapsed + '遘・', 'error');
     return;
   }
   lastGenerateTime = now;
@@ -1174,13 +1247,13 @@ function updateChips(){
   if (startPoint){
     const c = document.createElement('span');
     c.className = 'pointchip';
-    c.textContent = (mode==='loop' ? 'スタート/ゴール: ' : 'スタート: ') + startPoint.lat.toFixed(5) + ', ' + startPoint.lng.toFixed(5);
+    c.textContent = (mode==='loop' ? '繧ｹ繧ｿ繝ｼ繝・繧ｴ繝ｼ繝ｫ: ' : '繧ｹ繧ｿ繝ｼ繝・ ') + startPoint.lat.toFixed(5) + ', ' + startPoint.lng.toFixed(5);
     box.appendChild(c);
   }
   if (mode==='twopoint' && goalPoint){
     const c = document.createElement('span');
     c.className = 'pointchip';
-    c.textContent = 'ゴール: ' + goalPoint.lat.toFixed(5) + ', ' + goalPoint.lng.toFixed(5);
+    c.textContent = '繧ｴ繝ｼ繝ｫ: ' + goalPoint.lat.toFixed(5) + ', ' + goalPoint.lng.toFixed(5);
     box.appendChild(c);
   }
 }
@@ -1196,7 +1269,7 @@ function resetPoints(){
   document.getElementById('geoStartResults').innerHTML = '';
   document.getElementById('geoGoalResults').innerHTML = '';
   updateChips();
-  setStatusBox('statusBoxCourse', '地点をリセットしました。地図をタップして地点を決めてください。', 'info');
+  setStatusBox('statusBoxCourse', '蝨ｰ轤ｹ繧偵Μ繧ｻ繝・ヨ縺励∪縺励◆縲ょ慍蝗ｳ繧偵ち繝・・縺励※蝨ｰ轤ｹ繧呈ｱｺ繧√※縺上□縺輔＞縲・, 'info');
 }
 on('resetPoints','click',resetPoints);
 
@@ -1205,30 +1278,29 @@ mapConfirm.on('click', function(e){
   if (mode === 'loop'){
     startPoint = latlng;
     if (startMarker) mapConfirm.removeLayer(startMarker);
-    startMarker = L.marker(latlng, {title:'スタート/ゴール'}).addTo(mapConfirm);
+    startMarker = L.marker(latlng, {title:'繧ｹ繧ｿ繝ｼ繝・繧ｴ繝ｼ繝ｫ'}).addTo(mapConfirm);
   } else {
     if (!startPoint){
       startPoint = latlng;
       if (startMarker) mapConfirm.removeLayer(startMarker);
-      startMarker = L.marker(latlng, {title:'スタート'}).addTo(mapConfirm);
+      startMarker = L.marker(latlng, {title:'繧ｹ繧ｿ繝ｼ繝・}).addTo(mapConfirm);
     } else if (!goalPoint){
       goalPoint = latlng;
       if (goalMarker) mapConfirm.removeLayer(goalMarker);
-      goalMarker = L.marker(latlng, {title:'ゴール'}).addTo(mapConfirm);
+      goalMarker = L.marker(latlng, {title:'繧ｴ繝ｼ繝ｫ'}).addTo(mapConfirm);
     } else {
       resetPoints();
       startPoint = latlng;
-      startMarker = L.marker(latlng, {title:'スタート'}).addTo(mapConfirm);
+      startMarker = L.marker(latlng, {title:'繧ｹ繧ｿ繝ｼ繝・}).addTo(mapConfirm);
     }
   }
   updateChips();
 });
 
-// 検索の中心座標(位置バイアス用・東京デフォルト)
+// 讀懃ｴ｢縺ｮ荳ｭ蠢・ｺｧ讓・菴咲ｽｮ繝舌う繧｢繧ｹ逕ｨ繝ｻ譚ｱ莠ｬ繝・ヵ繧ｩ繝ｫ繝・
 let searchBiasLat = 35.6762, searchBiasLon = 139.6503;
 
-// スコア計算
-function calcSearchScore(name, query){
+// 繧ｹ繧ｳ繧｢險育ｮ・function calcSearchScore(name, query){
   if (!name) return 0;
   const n = name.toLowerCase(), q = query.toLowerCase();
   if (n === q) return 100;
@@ -1239,7 +1311,7 @@ function calcSearchScore(name, query){
   return Math.round((matched / chars.length) * 40);
 }
 
-// ① 国土地理院: 住所・地名検索(日本のみ・精度高)
+// 竭 蝗ｽ蝨溷慍逅・劼: 菴乗園繝ｻ蝨ｰ蜷肴､懃ｴ｢(譌･譛ｬ縺ｮ縺ｿ繝ｻ邊ｾ蠎ｦ鬮・
 async function geocodeGSI(query){
   try {
     const url = 'https://msearch.gsi.go.jp/address-search/AddressSearch?q=' + encodeURIComponent(query);
@@ -1250,14 +1322,13 @@ async function geocodeGSI(query){
       lat: d.geometry.coordinates[1],
       lon: d.geometry.coordinates[0],
       display_name: d.properties.title,
-      category: '住所',
+      category: '菴乗園',
       _score: calcSearchScore(d.properties.title, query) + 15
     }));
   } catch(e){ return []; }
 }
 
-// Nominatim単一クエリ実行
-async function nominatimQuery(params){
+// Nominatim蜊倅ｸ繧ｯ繧ｨ繝ｪ螳溯｡・async function nominatimQuery(params){
   try {
     const base = 'https://nominatim.openstreetmap.org/search?format=json&countrycodes=jp&accept-language=ja&addressdetails=1&namedetails=1&limit=5';
     const res = await fetch(base + '&' + params, {headers:{'User-Agent':'WalkRouteMaker/1.0'}});
@@ -1272,16 +1343,16 @@ function parseNominatimResult(d, query){
   const addr = d.address || {};
   const sub = [addr.city || addr.town || addr.village, addr.suburb || addr.neighbourhood]
     .filter(Boolean).slice(0,2).join(' ');
-  const display = name + (sub ? '（' + sub + '）' : '');
-  let cat = '場所';
+  const display = name + (sub ? '・・ + sub + '・・ : '');
+  let cat = '蝣ｴ謇';
   const type = d.type || '';
   const cls  = d.class || '';
-  if (type === 'station' || cls === 'railway') cat = '駅';
-  else if (['university','school','college'].includes(type)) cat = '学校';
-  else if (type === 'park' || cls === 'leisure') cat = '公園';
-  else if (cls === 'amenity') cat = '施設';
-  else if (cls === 'shop') cat = '店舗';
-  else if (cls === 'highway') cat = '道路';
+  if (type === 'station' || cls === 'railway') cat = '鬧・;
+  else if (['university','school','college'].includes(type)) cat = '蟄ｦ譬｡';
+  else if (type === 'park' || cls === 'leisure') cat = '蜈ｬ蝨・;
+  else if (cls === 'amenity') cat = '譁ｽ險ｭ';
+  else if (cls === 'shop') cat = '蠎苓・';
+  else if (cls === 'highway') cat = '驕楢ｷｯ';
   return {
     lat: parseFloat(d.lat), lon: parseFloat(d.lon),
     display_name: display, category: cat,
@@ -1289,14 +1360,14 @@ function parseNominatimResult(d, query){
   };
 }
 
-// ② Nominatim複数戦略検索
+// 竭｡ Nominatim隍・焚謌ｦ逡･讀懃ｴ｢
 async function geocodeNominatimDetailed(query){
   const vb = `${searchBiasLon-1.0},${searchBiasLat+0.6},${searchBiasLon+1.0},${searchBiasLat-0.6}`;
-  // 戦略1: 現在地周辺を優先(viewbox)
-  // 戦略2: 日本全体(bounded=0)
+  // 謌ｦ逡･1: 迴ｾ蝨ｨ蝨ｰ蜻ｨ霎ｺ繧貞━蜈・viewbox)
+  // 謌ｦ逡･2: 譌･譛ｬ蜈ｨ菴・bounded=0)
   const [r1, r2] = await Promise.all([
     nominatimQuery(`q=${encodeURIComponent(query)}&viewbox=${vb}&bounded=0`),
-    nominatimQuery(`q=${encodeURIComponent(query + ' 日本')}`),
+    nominatimQuery(`q=${encodeURIComponent(query + ' 譌･譛ｬ')}`),
   ]);
   const seen = new Set();
   const results = [];
@@ -1308,10 +1379,10 @@ async function geocodeNominatimDetailed(query){
   return results;
 }
 
-// Overpassは廃止(精度が悪いため)
+// Overpass縺ｯ蟒・ｭ｢(邊ｾ蠎ｦ縺梧が縺・◆繧・
 async function geocodeOverpass(){ return []; }
 
-// ③ Nominatim: 補完用(住所・地名の細かい表記に対応)
+// 竭｢ Nominatim: 陬懷ｮ檎畑(菴乗園繝ｻ蝨ｰ蜷阪・邏ｰ縺九＞陦ｨ險倥↓蟇ｾ蠢・
 async function geocodeNominatim(query){
   try {
     const url = 'https://nominatim.openstreetmap.org/search?q='
@@ -1332,14 +1403,14 @@ async function geocodeNominatim(query){
         lat: parseFloat(d.lat),
         lon: parseFloat(d.lon),
         display_name: display || name,
-        category: '場所',
+        category: '蝣ｴ謇',
         _score: calcSearchScore(name, query) + Math.round((d.importance || 0) * 20)
       };
     });
   } catch(e){ return []; }
 }
 
-// タイムアウト付きfetch wrapper
+// 繧ｿ繧､繝繧｢繧ｦ繝井ｻ倥″fetch wrapper
 function withTimeout(promise, ms){
   return Promise.race([
     promise,
@@ -1348,8 +1419,7 @@ function withTimeout(promise, ms){
 }
 
 async function geocodeSearch(query){
-  // GSI(住所) + Nominatim詳細 + Nominatim標準 を並行実行
-  const [gsiRes, nominatimDetailRes, nominatimRes] = await Promise.allSettled([
+  // GSI(菴乗園) + Nominatim隧ｳ邏ｰ + Nominatim讓呎ｺ・繧剃ｸｦ陦悟ｮ溯｡・  const [gsiRes, nominatimDetailRes, nominatimRes] = await Promise.allSettled([
     withTimeout(geocodeGSI(query), 4000),
     withTimeout(geocodeNominatimDetailed(query), 6000),
     withTimeout(geocodeNominatim(query), 5000)
@@ -1359,10 +1429,9 @@ async function geocodeSearch(query){
   const nominatimDetailResults = nominatimDetailRes.status === 'fulfilled' ? nominatimDetailRes.value : [];
   const nominatimResults  = nominatimRes.status        === 'fulfilled' ? nominatimRes.value        : [];
 
-  // Nominatim詳細を優先、次にGSI住所、最後にNominatim標準
-  const combined = [...nominatimDetailResults, ...gsiResults, ...nominatimResults];
+  // Nominatim隧ｳ邏ｰ繧貞━蜈医∵ｬ｡縺ｫGSI菴乗園縲∵怙蠕後↓Nominatim讓呎ｺ・  const combined = [...nominatimDetailResults, ...gsiResults, ...nominatimResults];
 
-  // 150m以内の重複を除去
+  // 150m莉･蜀・・驥崎､・ｒ髯､蜴ｻ
   const deduped = [];
   for (const r of combined){
     const isDup = deduped.some(d => computeDistanceMeters(r.lat, r.lon, d.lat, d.lon) < 150);
@@ -1370,7 +1439,7 @@ async function geocodeSearch(query){
   }
 
   deduped.sort((a, b) => (b._score||0) - (a._score||0));
-  if (deduped.length === 0) throw new Error('候補が見つかりませんでした。別のキーワードで試してください。');
+  if (deduped.length === 0) throw new Error('蛟呵｣懊′隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆縲ょ挨縺ｮ繧ｭ繝ｼ繝ｯ繝ｼ繝峨〒隧ｦ縺励※縺上□縺輔＞縲・);
   return deduped.slice(0, 8);
 }
 
@@ -1378,7 +1447,7 @@ function renderResults(containerId, results, onPick){
   const box = document.getElementById(containerId);
   box.innerHTML = '';
   if (!results || results.length === 0){
-    box.innerHTML = '<div class="hint">候補が見つかりませんでした。別のキーワードで試してください。</div>';
+    box.innerHTML = '<div class="hint">蛟呵｣懊′隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆縲ょ挨縺ｮ繧ｭ繝ｼ繝ｯ繝ｼ繝峨〒隧ｦ縺励※縺上□縺輔＞縲・/div>';
     return;
   }
   results.forEach(r => {
@@ -1404,19 +1473,19 @@ async function runSearch(inputId, btnId, resultsId, onPick){
   if (!query) return;
   btn.disabled = true;
   const prevLabel = btn.textContent;
-  btn.textContent = '検索中...';
+  btn.textContent = '讀懃ｴ｢荳ｭ...';
   try {
     const results = await geocodeSearch(query);
     renderResults(resultsId, results, onPick);
   } catch (err){
-    document.getElementById(resultsId).innerHTML = '<div class="hint">検索エラー: ' + err.message + '</div>';
+    document.getElementById(resultsId).innerHTML = '<div class="hint">讀懃ｴ｢繧ｨ繝ｩ繝ｼ: ' + err.message + '</div>';
   } finally {
     btn.disabled = false;
     btn.textContent = prevLabel;
   }
 }
 
-// ===== ステッパー(歩行時間・体重) =====
+// ===== 繧ｹ繝・ャ繝代・(豁ｩ陦梧凾髢薙・菴馴㍾) =====
 (function(){
   let timeVal = 0;
   let weightVal = 60;
@@ -1424,7 +1493,7 @@ async function runSearch(inputId, btnId, resultsId, onPick){
   function updateTimeDisplay(){
     document.getElementById('timeDisplay').textContent = timeVal;
     document.getElementById('timeMin').value = timeVal;
-    // 予想値も更新
+    // 莠域Φ蛟､繧よ峩譁ｰ
     const weightKg = weightVal || 60;
     if (timeVal > 0){
       const dist = ((timeVal/60)*4.8).toFixed(2);
@@ -1467,7 +1536,7 @@ document.getElementById('geoLoopBtn').addEventListener('click', () => {
     const latlng = {lat: parseFloat(r.lat), lng: parseFloat(r.lon)};
     startPoint = latlng;
     if (startMarker) mapConfirm.removeLayer(startMarker);
-    startMarker = L.marker(latlng, {title:'スタート/ゴール'}).addTo(mapConfirm);
+    startMarker = L.marker(latlng, {title:'繧ｹ繧ｿ繝ｼ繝・繧ｴ繝ｼ繝ｫ'}).addTo(mapConfirm);
     mapConfirm.setView(latlng, 16);
     updateChips();
   });
@@ -1478,7 +1547,7 @@ document.getElementById('geoStartBtn').addEventListener('click', () => {
     const latlng = {lat: parseFloat(r.lat), lng: parseFloat(r.lon)};
     startPoint = latlng;
     if (startMarker) mapConfirm.removeLayer(startMarker);
-    startMarker = L.marker(latlng, {title:'スタート'}).addTo(mapConfirm);
+    startMarker = L.marker(latlng, {title:'繧ｹ繧ｿ繝ｼ繝・}).addTo(mapConfirm);
     mapConfirm.setView(latlng, 16);
     updateChips();
   });
@@ -1489,7 +1558,7 @@ document.getElementById('geoGoalBtn').addEventListener('click', () => {
     const latlng = {lat: parseFloat(r.lat), lng: parseFloat(r.lon)};
     goalPoint = latlng;
     if (goalMarker) mapConfirm.removeLayer(goalMarker);
-    goalMarker = L.marker(latlng, {title:'ゴール'}).addTo(mapConfirm);
+    goalMarker = L.marker(latlng, {title:'繧ｴ繝ｼ繝ｫ'}).addTo(mapConfirm);
     mapConfirm.setView(latlng, 16);
     updateChips();
   });
@@ -1501,28 +1570,27 @@ function localDateStr(d){
 }
 
 function computeBearing(lat1, lng1, lat2, lng2){
-  const φ1 = lat1*Math.PI/180, φ2 = lat2*Math.PI/180;
-  const Δλ = (lng2-lng1)*Math.PI/180;
-  const y = Math.sin(Δλ)*Math.cos(φ2);
-  const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
-  const θ = Math.atan2(y, x);
-  return (θ*180/Math.PI + 360) % 360;
+  const ﾏ・ = lat1*Math.PI/180, ﾏ・ = lat2*Math.PI/180;
+  const ﾎ釆ｻ = (lng2-lng1)*Math.PI/180;
+  const y = Math.sin(ﾎ釆ｻ)*Math.cos(ﾏ・);
+  const x = Math.cos(ﾏ・)*Math.sin(ﾏ・) - Math.sin(ﾏ・)*Math.cos(ﾏ・)*Math.cos(ﾎ釆ｻ);
+  const ﾎｸ = Math.atan2(y, x);
+  return (ﾎｸ*180/Math.PI + 360) % 360;
 }
 
 function computeDistanceMeters(lat1, lng1, lat2, lng2){
   const R = 6371000;
-  const φ1 = lat1*Math.PI/180, φ2 = lat2*Math.PI/180;
-  const Δφ = (lat2-lat1)*Math.PI/180, Δλ = (lng2-lng1)*Math.PI/180;
-  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  const ﾏ・ = lat1*Math.PI/180, ﾏ・ = lat2*Math.PI/180;
+  const ﾎ煩・= (lat2-lat1)*Math.PI/180, ﾎ釆ｻ = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(ﾎ煩・2)**2 + Math.cos(ﾏ・)*Math.cos(ﾏ・)*Math.sin(ﾎ釆ｻ/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// 点Pから線分ABへの最短距離(メートル)
+// 轤ｹP縺九ｉ邱壼・AB縺ｸ縺ｮ譛遏ｭ霍晞屬(繝｡繝ｼ繝医Ν)
 function distPointToSegment(pLat, pLng, aLat, aLng, bLat, bLng){
   const dAB = computeDistanceMeters(aLat, aLng, bLat, bLng);
   if (dAB < 0.1) return computeDistanceMeters(pLat, pLng, aLat, aLng);
-  // 線分上の最近接点をパラメータtで求める
-  const dAP = computeDistanceMeters(aLat, aLng, pLat, pLng);
+  // 邱壼・荳翫・譛霑第磁轤ｹ繧偵ヱ繝ｩ繝｡繝ｼ繧ｿt縺ｧ豎ゅａ繧・  const dAP = computeDistanceMeters(aLat, aLng, pLat, pLng);
   const dBP = computeDistanceMeters(bLat, bLng, pLat, pLng);
   const dAB2 = dAB * dAB, dAP2 = dAP * dAP, dBP2 = dBP * dBP;
   let t = (dAP2 - dBP2 + dAB2) / (2 * dAB2);
@@ -1539,7 +1607,7 @@ let lastLiveLatLng = null;
 let lastCompassUpdate = 0;
 let compassIsActive = false;
 let mapRotationDeg = 0;
-let gpsMovementHeading = null; // GPS移動方向(最も信頼できる方角)
+let gpsMovementHeading = null; // GPS遘ｻ蜍墓婿蜷・譛繧ゆｿ｡鬆ｼ縺ｧ縺阪ｋ譁ｹ隗・
 let lastHeadingApplyTime = 0;
 let lastDisplayedHeading = null;
 let lastDisplayedLatLng = null;
@@ -1548,10 +1616,9 @@ let pendingIconUpdate = null;
 
 function createLiveIcon(headingDeg){
   const hasHeading = (typeof headingDeg === 'number');
-  // ビームはCSSのclip-pathで描画(SVGのグラデーションID競合を完全に回避)
-  // 地図がrotate(-heading)されているので、ビームをrotate(heading)すると
-  // 画面上では常に上方向(=進行方向)を指す
-  const beamHtml = hasHeading ? `
+  // 繝薙・繝縺ｯCSS縺ｮclip-path縺ｧ謠冗判(SVG縺ｮ繧ｰ繝ｩ繝・・繧ｷ繝ｧ繝ｳID遶ｶ蜷医ｒ螳悟・縺ｫ蝗樣∩)
+  // 蝨ｰ蝗ｳ縺罫otate(-heading)縺輔ｌ縺ｦ縺・ｋ縺ｮ縺ｧ縲√ン繝ｼ繝繧池otate(heading)縺吶ｋ縺ｨ
+  // 逕ｻ髱｢荳翫〒縺ｯ蟶ｸ縺ｫ荳頑婿蜷・=騾ｲ陦梧婿蜷・繧呈欠縺・  const beamHtml = hasHeading ? `
     <div style="
       position:absolute;
       left:50%; bottom:50%;
@@ -1581,40 +1648,35 @@ function createLiveIcon(headingDeg){
 }
 
 function handleOrientation(e){
-  // コンパス(デバイスの向き)は使用しない。
-  // ビームアイコンはGPS移動方向のみで制御する。
-  // (handleOrientationは登録されるが何もしない)
+  // 繧ｳ繝ｳ繝代せ(繝・ヰ繧､繧ｹ縺ｮ蜷代″)縺ｯ菴ｿ逕ｨ縺励↑縺・・  // 繝薙・繝繧｢繧､繧ｳ繝ｳ縺ｯGPS遘ｻ蜍墓婿蜷代・縺ｿ縺ｧ蛻ｶ蠕｡縺吶ｋ縲・  // (handleOrientation縺ｯ逋ｻ骭ｲ縺輔ｌ繧九′菴輔ｂ縺励↑縺・
 }
 
 function smoothAngle(prevDeg, nextDeg, factor){
   if (prevDeg === null) return nextDeg;
-  let diff = ((nextDeg - prevDeg + 540) % 360) - 180; // 最短の角度差(-180〜180)
+  let diff = ((nextDeg - prevDeg + 540) % 360) - 180; // 譛遏ｭ縺ｮ隗貞ｺｦ蟾ｮ(-180縲・80)
   return (prevDeg + diff * factor + 360) % 360;
 }
 
 function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   const latlng = [lat, lng];
 
-  // GPS移動方向の計算: 連続するGPS座標からbearingを算出(最も信頼性が高い)
-  // pos.coords.headingはデバイスによりコンパス方位を返す場合があるため使わない
-  if (lastLiveLatLng){
+  // GPS遘ｻ蜍墓婿蜷代・險育ｮ・ 騾｣邯壹☆繧季PS蠎ｧ讓吶°繧叡earing繧堤ｮ怜・(譛繧ゆｿ｡鬆ｼ諤ｧ縺碁ｫ倥＞)
+  // pos.coords.heading縺ｯ繝・ヰ繧､繧ｹ縺ｫ繧医ｊ繧ｳ繝ｳ繝代せ譁ｹ菴阪ｒ霑斐☆蝣ｴ蜷医′縺ゅｋ縺溘ａ菴ｿ繧上↑縺・  if (lastLiveLatLng){
     const moved = computeDistanceMeters(lastLiveLatLng[0], lastLiveLatLng[1], lat, lng);
     const moveThreshold = Math.max(2, (accuracy || 10) * 0.5);
     if (moved > moveThreshold){
       const rawBearing = computeBearing(lastLiveLatLng[0], lastLiveLatLng[1], lat, lng);
       if (currentHeading === null){
-        currentHeading = rawBearing; // 初回は即座に設定
-      } else {
-        currentHeading = smoothAngle(currentHeading, rawBearing, 0.7); // 高めの追従係数
+        currentHeading = rawBearing; // 蛻晏屓縺ｯ蜊ｳ蠎ｧ縺ｫ險ｭ螳・      } else {
+        currentHeading = smoothAngle(currentHeading, rawBearing, 0.7); // 鬮倥ａ縺ｮ霑ｽ蠕謎ｿよ焚
       }
       lastLiveLatLng = latlng;
     }
   } else {
     lastLiveLatLng = latlng;
   }
-  // currentHeadingがnullのままの場合(まだ動いていない)はビームなし
-
-  const rotating = false; // 常にNorth-up
+  // currentHeading縺系ull縺ｮ縺ｾ縺ｾ縺ｮ蝣ｴ蜷・縺ｾ縺蜍輔＞縺ｦ縺・↑縺・縺ｯ繝薙・繝縺ｪ縺・
+  const rotating = false; // 蟶ｸ縺ｫNorth-up
 
   const now = Date.now();
   let headingUpdateDue = false;
@@ -1623,7 +1685,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
       headingUpdateDue = true;
     } else {
       const diff = Math.abs(((currentHeading - lastDisplayedHeading + 540) % 360) - 180);
-      headingUpdateDue = diff >= 5; // 5度以上変わった時だけアイコンを更新する
+      headingUpdateDue = diff >= 5; // 5蠎ｦ莉･荳雁､峨ｏ縺｣縺滓凾縺縺代い繧､繧ｳ繝ｳ繧呈峩譁ｰ縺吶ｋ
     }
   }
 
@@ -1640,8 +1702,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
       if (!pendingMarkerUpdate){
         const targetLL = L.latLng(latlng[0], latlng[1]);
         pendingMarkerUpdate = requestAnimationFrame(() => {
-          // 滑らかにマーカーを移動（線形補間アニメーション）
-          const startLL = liveMarker.getLatLng();
+          // 貊代ｉ縺九↓繝槭・繧ｫ繝ｼ繧堤ｧｻ蜍包ｼ育ｷ壼ｽ｢陬憺俣繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ・・          const startLL = liveMarker.getLatLng();
           const steps = 8;
           let step = 0;
           function animateStep(){
@@ -1662,8 +1723,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
       if (!pendingIconUpdate){
         const headingSnap = currentHeading;
         pendingIconUpdate = requestAnimationFrame(() => {
-          // ビームアイコン: GPS進行方向をそのまま渡す
-          // (地図がCSS rotateで回転→マーカーも一緒に回転するため、補正不要)
+          // 繝薙・繝繧｢繧､繧ｳ繝ｳ: GPS騾ｲ陦梧婿蜷代ｒ縺昴・縺ｾ縺ｾ貂｡縺・          // (蝨ｰ蝗ｳ縺靴SS rotate縺ｧ蝗櫁ｻ｢竊偵・繝ｼ繧ｫ繝ｼ繧ゆｸ邱偵↓蝗櫁ｻ｢縺吶ｋ縺溘ａ縲∬｣懈ｭ｣荳崎ｦ・
           liveMarker.setIcon(createLiveIcon(headingSnap));
           pendingIconUpdate = null;
         });
@@ -1673,8 +1733,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
     }
   }
 
-  // スマート自動追従: 地図中心と現在地が20m以上離れた時だけ滑らかに移動
-  if (autoFollowEnabled && lastDisplayedLatLng){
+  // 繧ｹ繝槭・繝郁・蜍戊ｿｽ蠕・ 蝨ｰ蝗ｳ荳ｭ蠢・→迴ｾ蝨ｨ蝨ｰ縺・0m莉･荳企屬繧後◆譎ゅ□縺第ｻ代ｉ縺九↓遘ｻ蜍・  if (autoFollowEnabled && lastDisplayedLatLng){
     const center = map.getCenter();
     const distFromCenter = computeDistanceMeters(
       center.lat, center.lng,
@@ -1688,7 +1747,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   trimRouteToCurrentPosition(lat, lng);
   updateFinishTimeEstimate();
 
-  document.getElementById('liveStatus').textContent = '追跡中(精度:' + Math.round(accuracy) + 'm)' + (currentHeading!==null ? ' 方角:' + Math.round(currentHeading) + '°' : ' 方角:計算中');
+  document.getElementById('liveStatus').textContent = '霑ｽ霍｡荳ｭ(邊ｾ蠎ｦ:' + Math.round(accuracy) + 'm)' + (currentHeading!==null ? ' 譁ｹ隗・' + Math.round(currentHeading) + 'ﾂｰ' : ' 譁ｹ隗・險育ｮ嶺ｸｭ');
 }
 
 function getRemainingMeters(){
@@ -1707,8 +1766,7 @@ function getRemainingMeters(){
 
 function updateFinishTimeEstimate(){
   if (!routeCoords.length || !routePaceMsPerMeter) return;
-  // 現在地から見た「ルートの残り部分」(進んだ分は除く、最終目的地までの全区間)の距離を合計する
-  const remainingMeters = getRemainingMeters();
+  // 迴ｾ蝨ｨ蝨ｰ縺九ｉ隕九◆縲後Ν繝ｼ繝医・谿九ｊ驛ｨ蛻・・騾ｲ繧薙□蛻・・髯､縺上∵怙邨ら岼逧・慍縺ｾ縺ｧ縺ｮ蜈ｨ蛹ｺ髢・縺ｮ霍晞屬繧貞粋險医☆繧・  const remainingMeters = getRemainingMeters();
   const remainingMs = remainingMeters * routePaceMsPerMeter;
 
   const finishDate = new Date(Date.now() + remainingMs);
@@ -1722,15 +1780,15 @@ let lastTickTime = 0;
 
 function startLiveTracking(){
   if (!navigator.geolocation){
-    document.getElementById('liveStatus').textContent = 'このブラウザは位置情報取得に対応していません。';
+    document.getElementById('liveStatus').textContent = '縺薙・繝悶Λ繧ｦ繧ｶ縺ｯ菴咲ｽｮ諠・ｱ蜿門ｾ励↓蟇ｾ蠢懊＠縺ｦ縺・∪縺帙ｓ縲・;
     return;
   }
-  document.getElementById('liveTrackBtn').textContent = '追跡を停止';
+  document.getElementById('liveTrackBtn').textContent = '霑ｽ霍｡繧貞●豁｢';
   document.getElementById('liveTrackBtn').classList.add('tracking');
   document.getElementById('liveBadge').style.display = 'inline-block';
-  document.getElementById('liveStatus').textContent = '位置情報を取得中...(初回はブラウザの許可が必要です)';
+  document.getElementById('liveStatus').textContent = '菴咲ｽｮ諠・ｱ繧貞叙蠕嶺ｸｭ...(蛻晏屓縺ｯ繝悶Λ繧ｦ繧ｶ縺ｮ險ｱ蜿ｯ縺悟ｿ・ｦ√〒縺・';
 
-  // 追跡開始時にセグメント表示に切り替える(お気に入り読み込み後など全体表示だった場合)
+  // 霑ｽ霍｡髢句ｧ区凾縺ｫ繧ｻ繧ｰ繝｡繝ｳ繝郁｡ｨ遉ｺ縺ｫ蛻・ｊ譖ｿ縺医ｋ(縺頑ｰ励↓蜈･繧願ｪｭ縺ｿ霎ｼ縺ｿ蠕後↑縺ｩ蜈ｨ菴楢｡ｨ遉ｺ縺縺｣縺溷ｴ蜷・
   if (routeCoords.length >= 2 && routeSegments.length > 0){
     redrawActiveSegment();
   }
@@ -1743,7 +1801,7 @@ function startLiveTracking(){
       handlePositionUpdate(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.heading);
     },
     (err) => {
-      document.getElementById('liveStatus').textContent = '位置情報の取得に失敗しました: ' + err.message + '(このプレビュー環境では制限されている場合があります)';
+      document.getElementById('liveStatus').textContent = '菴咲ｽｮ諠・ｱ縺ｮ蜿門ｾ励↓螟ｱ謨励＠縺ｾ縺励◆: ' + err.message + '(縺薙・繝励Ξ繝薙Η繝ｼ迺ｰ蠅・〒縺ｯ蛻ｶ髯舌＆繧後※縺・ｋ蝣ｴ蜷医′縺ゅｊ縺ｾ縺・';
     },
     { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
   );
@@ -1771,10 +1829,10 @@ function stopLiveTracking(){
   lastDisplayedLatLng = null;
   mapRotationDeg = 0;
   document.getElementById('map').style.transform = 'translate(-50%,-50%)';
-  document.getElementById('liveTrackBtn').textContent = '追跡を開始';
+  document.getElementById('liveTrackBtn').textContent = '霑ｽ霍｡繧帝幕蟋・;
   document.getElementById('liveTrackBtn').classList.remove('tracking');
   document.getElementById('liveBadge').style.display = 'none';
-  document.getElementById('liveStatus').textContent = '追跡を停止しました。';
+  document.getElementById('liveStatus').textContent = '霑ｽ霍｡繧貞●豁｢縺励∪縺励◆縲・;
 }
 document.getElementById('liveTrackBtn').addEventListener('click', () => {
   if (watchId === null) startLiveTracking(); else stopLiveTracking();
@@ -1790,10 +1848,9 @@ function setupToggleChip(id){
 }
 
 
-/* ===================== 全画面マップ ===================== */
-// CSS方式: DOM移動なし、CSSクラスだけで全画面切替
-// LeafletはDOMの場所を認識し続けるので地図が消えない
-
+/* ===================== 蜈ｨ逕ｻ髱｢繝槭ャ繝・===================== */
+// CSS譁ｹ蠑・ DOM遘ｻ蜍輔↑縺励，SS繧ｯ繝ｩ繧ｹ縺縺代〒蜈ｨ逕ｻ髱｢蛻・崛
+// Leaflet縺ｯDOM縺ｮ蝣ｴ謇繧定ｪ崎ｭ倥＠邯壹￠繧九・縺ｧ蝨ｰ蝗ｳ縺梧ｶ医∴縺ｪ縺・
 function openFullscreenMap(){
   const mapClip = document.querySelector('.mapview-clip');
   if (!mapClip) return;
@@ -1813,7 +1870,7 @@ function closeFullscreenMap(){
 }
 
 on('mapFullscreenBtn','click', openFullscreenMap);
-// 終了ボタンはcapture:trueで最優先でイベントを受け取る
+// 邨ゆｺ・・繧ｿ繝ｳ縺ｯcapture:true縺ｧ譛蜆ｪ蜈医〒繧､繝吶Φ繝医ｒ蜿励￠蜿悶ｋ
 (function(){
   const btn = document.getElementById('mapExitFullscreenBtn');
   if (!btn) return;
@@ -1827,7 +1884,7 @@ on('mapFullscreenBtn','click', openFullscreenMap);
 })();
 
 
-// スマート自動追従: 手動でパンしたら一時停止し、5秒後に再開
+// 繧ｹ繝槭・繝郁・蜍戊ｿｽ蠕・ 謇句虚縺ｧ繝代Φ縺励◆繧我ｸ譎ょ●豁｢縺励・遘貞ｾ後↓蜀埼幕
 let autoFollowEnabled = true;
 let autoFollowTimer = null;
 function pauseAutoFollow(){
@@ -1838,7 +1895,7 @@ function pauseAutoFollow(){
   }, 5000);
 }
 
-/* ===== 2本指による地図回転 ===== */
+/* ===== 2譛ｬ謖・↓繧医ｋ蝨ｰ蝗ｳ蝗櫁ｻ｢ ===== */
 let twoFingerStartAngle = null;
 let twoFingerStartRotation = 0;
 
@@ -1850,10 +1907,10 @@ function getTouchAngle(e){
 function applyMapRotation(deg){
   mapUserRotation = ((deg % 360) + 360) % 360;
   mapRotationDeg = mapUserRotation;
-  // CSSで地図を回転
+  // CSS縺ｧ蝨ｰ蝗ｳ繧貞屓霆｢
   const mapEl = document.getElementById('map');
   if (mapEl) mapEl.style.transform = mapUserRotation !== 0 ? 'translate(-50%,-50%) rotate(' + (-mapUserRotation) + 'deg)' : 'translate(-50%,-50%)';
-  // コンパスボタンの向きを更新
+  // 繧ｳ繝ｳ繝代せ繝懊ち繝ｳ縺ｮ蜷代″繧呈峩譁ｰ
   const btn = document.getElementById('compassBtn');
   if (btn){
     btn.style.transform = 'rotate(' + mapUserRotation + 'deg)';
@@ -1884,8 +1941,7 @@ function applyMapRotation(deg){
   }, {passive: true});
 })();
 
-// コンパスボタン: タップでノースアップ⇔ヘディングアップ切り替え + 現在地に戻る
-let headingUpMode = false;
+// 繧ｳ繝ｳ繝代せ繝懊ち繝ｳ: 繧ｿ繝・・縺ｧ繝弱・繧ｹ繧｢繝・・竍斐・繝・ぅ繝ｳ繧ｰ繧｢繝・・蛻・ｊ譖ｿ縺・+ 迴ｾ蝨ｨ蝨ｰ縺ｫ謌ｻ繧・let headingUpMode = false;
 on('compassBtn', 'click', () => {
   if (lastDisplayedLatLng){
     map.panTo(lastDisplayedLatLng, {animate:true, duration:0.5});
@@ -1894,17 +1950,16 @@ on('compassBtn', 'click', () => {
   if (autoFollowTimer) clearTimeout(autoFollowTimer);
 
   if (!headingUpMode && currentHeading !== null){
-    // ヘディングアップ: 進行方向が画面上方向になるよう地図を回転
+    // 繝倥ョ繧｣繝ｳ繧ｰ繧｢繝・・: 騾ｲ陦梧婿蜷代′逕ｻ髱｢荳頑婿蜷代↓縺ｪ繧九ｈ縺・慍蝗ｳ繧貞屓霆｢
     applyMapRotation(currentHeading);
     headingUpMode = true;
   } else {
-    // ノースアップ: 北が上に戻す
-    applyMapRotation(0);
+    // 繝弱・繧ｹ繧｢繝・・: 蛹励′荳翫↓謌ｻ縺・    applyMapRotation(0);
     headingUpMode = false;
   }
 });
 
-/* ===================== 日陰優先モード ===================== */
+/* ===================== 譌･髯ｰ蜆ｪ蜈医Δ繝ｼ繝・===================== */
 
 let shadePreference = false;
 
@@ -1914,11 +1969,11 @@ on('shadePreferenceBtn','click', () => {
   btn.setAttribute('aria-pressed', shadePreference ? 'true' : 'false');
 });
 
-// 日陰ポリゴンを計算して返す
+// 譌･髯ｰ繝昴Μ繧ｴ繝ｳ繧定ｨ育ｮ励＠縺ｦ霑斐☆
 async function calcShadowPolygonsForRouting(lat, lng){
   if (typeof SunCalc === 'undefined') return [];
   const sunPos = SunCalc.getPosition(new Date(), lat, lng);
-  if (sunPos.altitude <= 0.05) return []; // 夜間・日没
+  if (sunPos.altitude <= 0.05) return []; // 螟憺俣繝ｻ譌･豐｡
 
   const buildings = await fetchBuildingsForShadow(lat, lng);
   const polygons = [];
@@ -1941,7 +1996,7 @@ async function calcShadowPolygonsForRouting(lat, lng){
   return polygons;
 }
 
-// 点がポリゴン内にあるか判定(ray casting)
+// 轤ｹ縺後・繝ｪ繧ｴ繝ｳ蜀・↓縺ゅｋ縺句愛螳・ray casting)
 function pointInPolygon(lat, lng, polygon){
   let inside = false;
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++){
@@ -1955,12 +2010,11 @@ function pointInPolygon(lat, lng, polygon){
   return inside;
 }
 
-// 点が日陰エリアに含まれるか
-function isInShadowArea(lat, lng, polygons){
+// 轤ｹ縺梧律髯ｰ繧ｨ繝ｪ繧｢縺ｫ蜷ｫ縺ｾ繧後ｋ縺・function isInShadowArea(lat, lng, polygons){
   return polygons.some(poly => pointInPolygon(lat, lng, poly));
 }
 
-// 複数の候補点の中で最も日陰率が高い点を選ぶ
+// 隍・焚縺ｮ蛟呵｣懃せ縺ｮ荳ｭ縺ｧ譛繧よ律髯ｰ邇・′鬮倥＞轤ｹ繧帝∈縺ｶ
 function findMostShadedPoint(candidates, polygons){
   if (!polygons.length) return candidates[0];
   const shadedCandidates = candidates.filter(c => isInShadowArea(c.lat, c.lng, polygons));
@@ -1969,7 +2023,7 @@ function findMostShadedPoint(candidates, polygons){
     : candidates[0];
 }
 
-/* ===================== 日陰マップ ===================== */
+/* ===================== 譌･髯ｰ繝槭ャ繝・===================== */
 
 let shadowLayer = null;
 let shadowBuildingCache = null;
@@ -1977,7 +2031,7 @@ let shadowCacheCenter = null;
 let shadowUpdateTimer = null;
 let shadowEnabled = false;
 
-// 建物データをOverpass APIで取得(350m圏内)
+// 蟒ｺ迚ｩ繝・・繧ｿ繧丹verpass API縺ｧ蜿門ｾ・350m蝨丞・)
 async function fetchBuildingsForShadow(lat, lng){
   const query = '[out:json][timeout:20];way["building"](around:350,' + lat + ',' + lng + ');out geom;';
   try {
@@ -1987,15 +2041,14 @@ async function fetchBuildingsForShadow(lat, lng){
   } catch(e){ return []; }
 }
 
-// 現在時刻・位置から建物の影ポリゴンを計算してLeafletで描画する
+// 迴ｾ蝨ｨ譎ょ綾繝ｻ菴咲ｽｮ縺九ｉ蟒ｺ迚ｩ縺ｮ蠖ｱ繝昴Μ繧ｴ繝ｳ繧定ｨ育ｮ励＠縺ｦLeaflet縺ｧ謠冗判縺吶ｋ
 function setShadowStatus(msg){ document.getElementById('shadowStatus').textContent = msg; }
 
 async function updateShadowMap(){
   if (!shadowEnabled) return;
 
-  // SunCalcが読み込まれているか確認
-  if (typeof SunCalc === 'undefined'){
-    setShadowStatus('エラー: SunCalcが読み込まれていません');
+  // SunCalc縺瑚ｪｭ縺ｿ霎ｼ縺ｾ繧後※縺・ｋ縺狗｢ｺ隱・  if (typeof SunCalc === 'undefined'){
+    setShadowStatus('繧ｨ繝ｩ繝ｼ: SunCalc縺瑚ｪｭ縺ｿ霎ｼ縺ｾ繧後※縺・∪縺帙ｓ');
     return;
   }
 
@@ -2003,20 +2056,18 @@ async function updateShadowMap(){
     const center = map.getCenter();
     const lat = center.lat, lng = center.lng;
 
-    // 太陽位置を計算
-    const sunPos = SunCalc.getPosition(new Date(), lat, lng);
+    // 螟ｪ髯ｽ菴咲ｽｮ繧定ｨ育ｮ・    const sunPos = SunCalc.getPosition(new Date(), lat, lng);
     const altDeg = Math.round(sunPos.altitude * 180 / Math.PI);
 
     if (sunPos.altitude <= 0.05){
       if (shadowLayer){ map.removeLayer(shadowLayer); shadowLayer = null; }
-      setShadowStatus('夜間のため日陰なし (高度: ' + altDeg + '°)');
+      setShadowStatus('螟憺俣縺ｮ縺溘ａ譌･髯ｰ縺ｪ縺・(鬮伜ｺｦ: ' + altDeg + 'ﾂｰ)');
       return;
     }
 
-    setShadowStatus('建物データを取得中... (太陽高度: ' + altDeg + '°)');
+    setShadowStatus('蟒ｺ迚ｩ繝・・繧ｿ繧貞叙蠕嶺ｸｭ... (螟ｪ髯ｽ鬮伜ｺｦ: ' + altDeg + 'ﾂｰ)');
 
-    // 建物データ取得
-    const moved = shadowCacheCenter
+    // 蟒ｺ迚ｩ繝・・繧ｿ蜿門ｾ・    const moved = shadowCacheCenter
       ? computeDistanceMeters(lat, lng, shadowCacheCenter.lat, shadowCacheCenter.lng) > 100
       : true;
     if (!shadowBuildingCache || moved){
@@ -2024,7 +2075,7 @@ async function updateShadowMap(){
       shadowCacheCenter = {lat, lng};
     }
 
-    setShadowStatus('建物: ' + shadowBuildingCache.length + '件取得。描画中...');
+    setShadowStatus('蟒ｺ迚ｩ: ' + shadowBuildingCache.length + '莉ｶ蜿門ｾ励よ緒逕ｻ荳ｭ...');
 
     const shadowPolygons = [];
     for (const bld of shadowBuildingCache){
@@ -2060,12 +2111,12 @@ async function updateShadowMap(){
       });
       shadowLayer.addTo(map);
       const d = new Date();
-      setShadowStatus('表示中 / 太陽高度: ' + altDeg + '° / ポリゴン: ' + shadowPolygons.length + '件');
+      setShadowStatus('陦ｨ遉ｺ荳ｭ / 螟ｪ髯ｽ鬮伜ｺｦ: ' + altDeg + 'ﾂｰ / 繝昴Μ繧ｴ繝ｳ: ' + shadowPolygons.length + '莉ｶ');
     } else {
-      setShadowStatus('建物データがありません (エリアによって表示されない場合があります)');
+      setShadowStatus('蟒ｺ迚ｩ繝・・繧ｿ縺後≠繧翫∪縺帙ｓ (繧ｨ繝ｪ繧｢縺ｫ繧医▲縺ｦ陦ｨ遉ｺ縺輔ｌ縺ｪ縺・ｴ蜷医′縺ゅｊ縺ｾ縺・');
     }
   } catch(e) {
-    setShadowStatus('エラー: ' + e.message);
+    setShadowStatus('繧ｨ繝ｩ繝ｼ: ' + e.message);
   }
 }
 
@@ -2078,9 +2129,9 @@ document.getElementById('shadowToggleBtn').addEventListener('click', () => {
 
   if (shadowEnabled){
     updateShadowMap();
-    // 5分ごとに自動更新(太陽が動くため)
+    // 5蛻・＃縺ｨ縺ｫ閾ｪ蜍墓峩譁ｰ(螟ｪ髯ｽ縺悟虚縺上◆繧・
     shadowUpdateTimer = setInterval(updateShadowMap, 5 * 60 * 1000);
-    // 地図をパンしたら日陰を更新
+    // 蝨ｰ蝗ｳ繧偵ヱ繝ｳ縺励◆繧画律髯ｰ繧呈峩譁ｰ
     map.on('moveend', updateShadowMap);
   } else {
     if (shadowLayer){ map.removeLayer(shadowLayer); shadowLayer = null; }
@@ -2094,40 +2145,40 @@ document.getElementById('shadowToggleBtn').addEventListener('click', () => {
 
 function useCurrentLocation(markerTitle, onSuccess){
   if (!navigator.geolocation){
-    setStatusBox('statusBoxCourse', 'このブラウザは位置情報取得に対応していません。', 'error');
+    setStatusBox('statusBoxCourse', '縺薙・繝悶Λ繧ｦ繧ｶ縺ｯ菴咲ｽｮ諠・ｱ蜿門ｾ励↓蟇ｾ蠢懊＠縺ｦ縺・∪縺帙ｓ縲・, 'error');
     return;
   }
-  setStatusBox('statusBoxCourse', '現在地を取得しています(ブラウザの許可が必要です)...', 'info');
+  setStatusBox('statusBoxCourse', '迴ｾ蝨ｨ蝨ｰ繧貞叙蠕励＠縺ｦ縺・∪縺・繝悶Λ繧ｦ繧ｶ縺ｮ險ｱ蜿ｯ縺悟ｿ・ｦ√〒縺・...', 'info');
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const latlng = {lat: pos.coords.latitude, lng: pos.coords.longitude};
-      // 検索バイアスを現在地に更新
+      // 讀懃ｴ｢繝舌う繧｢繧ｹ繧堤樟蝨ｨ蝨ｰ縺ｫ譖ｴ譁ｰ
       searchBiasLat = latlng.lat;
       searchBiasLon = latlng.lng;
       onSuccess(latlng, markerTitle);
-      setStatusBox('statusBoxCourse', '現在地を取得しました。地図のピンの位置を確認してください。', 'ok');
+      setStatusBox('statusBoxCourse', '迴ｾ蝨ｨ蝨ｰ繧貞叙蠕励＠縺ｾ縺励◆縲ょ慍蝗ｳ縺ｮ繝斐Φ縺ｮ菴咲ｽｮ繧堤｢ｺ隱阪＠縺ｦ縺上□縺輔＞縲・, 'ok');
     },
     (err) => {
-      setStatusBox('statusBoxCourse', '現在地を取得できませんでした(' + err.message + ')。地図タップか施設名検索で地点を指定してください。', 'error');
+      setStatusBox('statusBoxCourse', '迴ｾ蝨ｨ蝨ｰ繧貞叙蠕励〒縺阪∪縺帙ｓ縺ｧ縺励◆(' + err.message + ')縲ょ慍蝗ｳ繧ｿ繝・・縺区命險ｭ蜷肴､懃ｴ｢縺ｧ蝨ｰ轤ｹ繧呈欠螳壹＠縺ｦ縺上□縺輔＞縲・, 'error');
     }
   );
 }
 
 document.getElementById('useCurrentLocLoop').addEventListener('click', () => {
-  useCurrentLocation('スタート/ゴール', (latlng) => {
+  useCurrentLocation('繧ｹ繧ｿ繝ｼ繝・繧ｴ繝ｼ繝ｫ', (latlng) => {
     startPoint = latlng;
     if (startMarker) mapConfirm.removeLayer(startMarker);
-    startMarker = L.marker(latlng, {title:'スタート/ゴール'}).addTo(mapConfirm);
+    startMarker = L.marker(latlng, {title:'繧ｹ繧ｿ繝ｼ繝・繧ｴ繝ｼ繝ｫ'}).addTo(mapConfirm);
     mapConfirm.setView(latlng, 16);
     updateChips();
   });
 });
 
 document.getElementById('useCurrentLocStart').addEventListener('click', () => {
-  useCurrentLocation('スタート', (latlng) => {
+  useCurrentLocation('繧ｹ繧ｿ繝ｼ繝・, (latlng) => {
     startPoint = latlng;
     if (startMarker) mapConfirm.removeLayer(startMarker);
-    startMarker = L.marker(latlng, {title:'スタート'}).addTo(mapConfirm);
+    startMarker = L.marker(latlng, {title:'繧ｹ繧ｿ繝ｼ繝・}).addTo(mapConfirm);
     mapConfirm.setView(latlng, 16);
     updateChips();
   });
@@ -2138,8 +2189,8 @@ function setMode(newMode){
   document.getElementById('modeLoop').classList.toggle('active', mode==='loop');
   document.getElementById('modeTwoPoint').classList.toggle('active', mode==='twopoint');
   document.getElementById('modeHint').textContent = mode==='loop'
-    ? 'スタート地点(=ゴール地点)を検索するか、現在地を使ってください。'
-    : 'スタート地点とゴール地点をそれぞれ検索するか、現在地を使ってください。';
+    ? '繧ｹ繧ｿ繝ｼ繝亥慍轤ｹ(=繧ｴ繝ｼ繝ｫ蝨ｰ轤ｹ)繧呈､懃ｴ｢縺吶ｋ縺九∫樟蝨ｨ蝨ｰ繧剃ｽｿ縺｣縺ｦ縺上□縺輔＞縲・
+    : '繧ｹ繧ｿ繝ｼ繝亥慍轤ｹ縺ｨ繧ｴ繝ｼ繝ｫ蝨ｰ轤ｹ繧偵◎繧後◇繧梧､懃ｴ｢縺吶ｋ縺九∫樟蝨ｨ蝨ｰ繧剃ｽｿ縺｣縺ｦ縺上□縺輔＞縲・;
   document.getElementById('geoLoopBlock').style.display = (mode==='loop') ? 'block' : 'none';
   document.getElementById('geoTwoBlock').style.display = (mode==='twopoint') ? 'block' : 'none';
   resetPoints();
@@ -2158,18 +2209,18 @@ let amedasStationsCache = null;
 async function fetchNearestAmedasTemp(lat, lon){
   if (!amedasStationsCache){
     const tableRes = await fetch('https://www.jma.go.jp/bosai/amedas/const/amedastable.json');
-    if (!tableRes.ok) throw new Error('観測所一覧の取得に失敗しました');
+    if (!tableRes.ok) throw new Error('隕ｳ貂ｬ謇荳隕ｧ縺ｮ蜿門ｾ励↓螟ｱ謨励＠縺ｾ縺励◆');
     const table = await tableRes.json();
     amedasStationsCache = Object.entries(table).map(([id, info]) => ({ id, lat: info.lat[0] + info.lat[1]/60, lon: info.lon[0] + info.lon[1]/60, name: info.kjName }));
   }
   const timeRes = await fetch('https://www.jma.go.jp/bosai/amedas/data/latest_time.txt');
-  if (!timeRes.ok) throw new Error('最新観測時刻の取得に失敗しました');
+  if (!timeRes.ok) throw new Error('譛譁ｰ隕ｳ貂ｬ譎ょ綾縺ｮ蜿門ｾ励↓螟ｱ謨励＠縺ｾ縺励◆');
   const timeText = (await timeRes.text()).trim();
   const m = timeText.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
-  if (!m) throw new Error('観測時刻の形式が想定外でした');
+  if (!m) throw new Error('隕ｳ貂ｬ譎ょ綾縺ｮ蠖｢蠑上′諠ｳ螳壼､悶〒縺励◆');
   const stamp = m[1] + m[2] + m[3] + m[4] + m[5] + '00';
   const mapRes = await fetch('https://www.jma.go.jp/bosai/amedas/data/map/' + stamp + '.json');
-  if (!mapRes.ok) throw new Error('観測データの取得に失敗しました');
+  if (!mapRes.ok) throw new Error('隕ｳ貂ｬ繝・・繧ｿ縺ｮ蜿門ｾ励↓螟ｱ謨励＠縺ｾ縺励◆');
   const mapData = await mapRes.json();
   const sorted = amedasStationsCache.map(s => ({...s, dist: computeDistanceMeters(lat, lon, s.lat, s.lon)})).sort((a,b) => a.dist - b.dist);
   for (const s of sorted){
@@ -2178,23 +2229,23 @@ async function fetchNearestAmedasTemp(lat, lon){
       return { temp: entry.temp[0], stationName: s.name, distanceKm: s.dist/1000 };
     }
   }
-  throw new Error('近隣に気温データのある観測所が見つかりませんでした');
+  throw new Error('霑鷹團縺ｫ豌玲ｸｩ繝・・繧ｿ縺ｮ縺ゅｋ隕ｳ貂ｬ謇縺瑚ｦ九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆');
 }
 
 async function fetchBestTemperature(lat, lon){
   try {
     const r = await fetchNearestAmedasTemp(lat, lon);
-    return { temp: r.temp, source: '気象庁アメダス実測値(' + r.stationName + '観測所、約' + r.distanceKm.toFixed(1) + 'km先)' };
+    return { temp: r.temp, source: '豌苓ｱ｡蠎√い繝｡繝繧ｹ螳滓ｸｬ蛟､(' + r.stationName + '隕ｳ貂ｬ謇縲∫ｴ・ + r.distanceKm.toFixed(1) + 'km蜈・' };
   } catch (e){
     const temp = await fetchTemperature(lat, lon);
-    return { temp, source: 'Open-Meteo予測モデル値(アメダス取得失敗のため代替)' };
+    return { temp, source: 'Open-Meteo莠域ｸｬ繝｢繝・Ν蛟､(繧｢繝｡繝繧ｹ蜿門ｾ怜､ｱ謨励・縺溘ａ莉｣譖ｿ)' };
   }
 }
 
 async function fetchTemperature(lat, lon){
   const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(4) + '&longitude=' + lon.toFixed(4) + '&current=temperature_2m';
   const res = await fetch(url);
-  if (!res.ok) throw new Error('気温の取得に失敗しました');
+  if (!res.ok) throw new Error('豌玲ｸｩ縺ｮ蜿門ｾ励↓螟ｱ謨励＠縺ｾ縺励◆');
   const data = await res.json();
   return data.current.temperature_2m;
 }
@@ -2234,20 +2285,18 @@ function offsetLatLng(lat, lng, distanceMeters, bearingDeg){
   return {lat: lat2*180/Math.PI, lng: lng2*180/Math.PI};
 }
 
-// ① 前半と後半の近接チェック(閾値50m: 平行する隣接道路も検出)
+// 竭 蜑榊濠縺ｨ蠕悟濠縺ｮ霑第磁繝√ぉ繝・け(髢ｾ蛟､50m: 蟷ｳ陦後☆繧矩團謗･驕楢ｷｯ繧よ､懷・)
 function hasBacktracking(coords){
   if (coords.length < 10) return false;
 
-  // ① 局所的なUターン検出
-  // 連続する3点の進行方向が150度以上逆転していればUターンとみなす
-  // そのような箇所がルート全体の5%以上あれば折り返しルートと判定
-  let uTurnCount = 0;
+  // 竭 螻謇逧・↑U繧ｿ繝ｼ繝ｳ讀懷・
+  // 騾｣邯壹☆繧・轤ｹ縺ｮ騾ｲ陦梧婿蜷代′150蠎ｦ莉･荳企・ｻ｢縺励※縺・ｌ縺ｰU繧ｿ繝ｼ繝ｳ縺ｨ縺ｿ縺ｪ縺・  // 縺昴・繧医≧縺ｪ邂・園縺後Ν繝ｼ繝亥・菴薙・5%莉･荳翫≠繧後・謚倥ｊ霑斐＠繝ｫ繝ｼ繝医→蛻､螳・  let uTurnCount = 0;
   const bearings = [];
   for (let i = 0; i < coords.length - 1; i++){
     bearings.push(computeBearing(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]));
   }
   for (let i = 0; i < bearings.length - 1; i++){
-    // 移動距離が短すぎる点はスキップ(GPS誤差の影響を避ける)
+    // 遘ｻ蜍戊ｷ晞屬縺檎洒縺吶℃繧狗せ縺ｯ繧ｹ繧ｭ繝・・(GPS隱､蟾ｮ縺ｮ蠖ｱ髻ｿ繧帝∩縺代ｋ)
     const segDist = computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
     if (segDist < 3) continue;
     const angleDiff = Math.abs(((bearings[i+1] - bearings[i] + 540) % 360) - 180);
@@ -2255,7 +2304,7 @@ function hasBacktracking(coords){
   }
   if (uTurnCount / bearings.length > 0.03) return true;
 
-  // ② 前半と後半の近接チェック(30m以内: 平行道路の往復も検出)
+  // 竭｡ 蜑榊濠縺ｨ蠕悟濠縺ｮ霑第磁繝√ぉ繝・け(30m莉･蜀・ 蟷ｳ陦碁％霍ｯ縺ｮ蠕蠕ｩ繧よ､懷・)
   const half = Math.floor(coords.length / 2);
   const outbound = coords.slice(0, half);
   const inbound  = coords.slice(half);
@@ -2275,7 +2324,7 @@ function hasBacktracking(coords){
   }
   if (overlapCount / totalChecked > 0.25) return true;
 
-  // ③ ルートの「細長さ」チェック
+  // 竭｢ 繝ｫ繝ｼ繝医・縲檎ｴｰ髟ｷ縺輔阪メ繧ｧ繝・け
   const lats = coords.map(c => c[0]);
   const lngs = coords.map(c => c[1]);
   const latSpread = (Math.max(...lats) - Math.min(...lats)) * 111111;
@@ -2292,53 +2341,47 @@ function hasBacktracking(coords){
 
 function hasUTurn(coords){ return hasBacktracking(coords); }
 
-// 折り返し(同じ道の往復)部分を検出し除去する後処理関数
-// 戻り値: 折り返し除去後の座標配列
-function removeBacktracking(coords){
+// 謚倥ｊ霑斐＠(蜷後§驕薙・蠕蠕ｩ)驛ｨ蛻・ｒ讀懷・縺鈴勁蜴ｻ縺吶ｋ蠕悟・逅・未謨ｰ
+// 謌ｻ繧雁､: 謚倥ｊ霑斐＠髯､蜴ｻ蠕後・蠎ｧ讓咎・蛻・function removeBacktracking(coords){
   if (coords.length < 6) return coords;
 
-  const NEAR_THRESHOLD = 25;   // 折り返し地点と戻り地点が25m以内なら同じ場所とみなす
-  const MIN_SKIP = 6;          // 最低6ポイント以上離れている場合のみ折り返しとみなす(小さなカーブを誤検出しない)
-  const BEARING_REVERSE = 120; // 折り返し前後で進行方向が120度以上異なる場合に折り返しと判定
+  const NEAR_THRESHOLD = 25;   // 謚倥ｊ霑斐＠蝨ｰ轤ｹ縺ｨ謌ｻ繧雁慍轤ｹ縺・5m莉･蜀・↑繧牙酔縺伜ｴ謇縺ｨ縺ｿ縺ｪ縺・  const MIN_SKIP = 6;          // 譛菴・繝昴う繝ｳ繝井ｻ･荳企屬繧後※縺・ｋ蝣ｴ蜷医・縺ｿ謚倥ｊ霑斐＠縺ｨ縺ｿ縺ｪ縺・蟆上＆縺ｪ繧ｫ繝ｼ繝悶ｒ隱､讀懷・縺励↑縺・
+  const BEARING_REVERSE = 120; // 謚倥ｊ霑斐＠蜑榊ｾ後〒騾ｲ陦梧婿蜷代′120蠎ｦ莉･荳顔焚縺ｪ繧句ｴ蜷医↓謚倥ｊ霑斐＠縺ｨ蛻､螳・
+  let result = coords.slice(); // 繧ｳ繝斐・縺励※謫堺ｽ・  let changed = true;
 
-  let result = coords.slice(); // コピーして操作
-  let changed = true;
-
-  // 複数箇所の折り返しに対応するため繰り返す(最大5回)
+  // 隍・焚邂・園縺ｮ謚倥ｊ霑斐＠縺ｫ蟇ｾ蠢懊☆繧九◆繧∫ｹｰ繧願ｿ斐☆(譛螟ｧ5蝗・
   for (let pass = 0; pass < 5 && changed; pass++){
     changed = false;
     for (let i = 0; i < result.length - MIN_SKIP; i++){
-      // i地点から先に進んで、i地点の近くに戻ってくる箇所を探す
-      // 折り返しの「行き」の方向を計算
-      const nextIdx = Math.min(i + 2, result.length - 1);
+      // i蝨ｰ轤ｹ縺九ｉ蜈医↓騾ｲ繧薙〒縲（蝨ｰ轤ｹ縺ｮ霑代￥縺ｫ謌ｻ縺｣縺ｦ縺上ｋ邂・園繧呈爾縺・      // 謚倥ｊ霑斐＠縺ｮ縲瑚｡後″縲阪・譁ｹ蜷代ｒ險育ｮ・      const nextIdx = Math.min(i + 2, result.length - 1);
       const outBearing = computeBearing(result[i][0], result[i][1], result[nextIdx][0], result[nextIdx][1]);
 
       for (let j = i + MIN_SKIP; j < result.length; j++){
         const dist = computeDistanceMeters(result[i][0], result[i][1], result[j][0], result[j][1]);
         if (dist < NEAR_THRESHOLD){
-          // 「戻り」の方向を計算(j地点からj+2地点への方向)
+          // 縲梧綾繧翫阪・譁ｹ蜷代ｒ險育ｮ・j蝨ｰ轤ｹ縺九ｉj+2蝨ｰ轤ｹ縺ｸ縺ｮ譁ｹ蜷・
           const afterIdx = Math.min(j + 2, result.length - 1);
           if (afterIdx <= j) continue;
           const inBearing = computeBearing(result[j][0], result[j][1], result[afterIdx][0], result[afterIdx][1]);
 
-          // 折り返し前の方向と折り返し後の方向が概ね同じ方向なら、間が折り返し
-          // (行って戻ってきたので、出発方向と帰還後の方向は似ているはず)
+          // 謚倥ｊ霑斐＠蜑阪・譁ｹ蜷代→謚倥ｊ霑斐＠蠕後・譁ｹ蜷代′讎ゅ・蜷後§譁ｹ蜷代↑繧峨・俣縺梧釜繧願ｿ斐＠
+          // (陦後▲縺ｦ謌ｻ縺｣縺ｦ縺阪◆縺ｮ縺ｧ縲∝・逋ｺ譁ｹ蜷代→蟶ｰ驍・ｾ後・譁ｹ蜷代・莨ｼ縺ｦ縺・ｋ縺ｯ縺・
           const angleDiff = Math.abs(((outBearing - inBearing + 540) % 360) - 180);
           if (angleDiff < 60){
-            // i〜jの間を除去(iとjは近い地点なのでjから続ける)
+            // i縲徊縺ｮ髢薙ｒ髯､蜴ｻ(i縺ｨj縺ｯ霑代＞蝨ｰ轤ｹ縺ｪ縺ｮ縺ｧj縺九ｉ邯壹￠繧・
             result = result.slice(0, i + 1).concat(result.slice(j));
             changed = true;
             break;
           }
 
-          // もう一つの判定: 折り返し直前と直後の方向が大きく逆転している
+          // 繧ゅ≧荳縺､縺ｮ蛻､螳・ 謚倥ｊ霑斐＠逶ｴ蜑阪→逶ｴ蠕後・譁ｹ蜷代′螟ｧ縺阪￥騾・ｻ｢縺励※縺・ｋ
           const beforeIdx = Math.max(0, i - 1);
           const bearingBefore = computeBearing(result[beforeIdx][0], result[beforeIdx][1], result[i][0], result[i][1]);
           const bearingAtI = computeBearing(result[i][0], result[i][1], result[i+1][0], result[i+1][1]);
           const bearingAtJ = (j + 1 < result.length) ?
             computeBearing(result[j][0], result[j][1], result[j+1][0], result[j+1][1]) : bearingBefore;
 
-          // i→i+1の方向とj→j+1の方向が大きく逆転していれば折り返し
+          // i竊段+1縺ｮ譁ｹ蜷代→j竊男+1縺ｮ譁ｹ蜷代′螟ｧ縺阪￥騾・ｻ｢縺励※縺・ｌ縺ｰ謚倥ｊ霑斐＠
           const reverseDiff = Math.abs(((bearingAtI - bearingAtJ + 540) % 360) - 180);
           if (reverseDiff > BEARING_REVERSE){
             result = result.slice(0, i + 1).concat(result.slice(j));
@@ -2347,16 +2390,14 @@ function removeBacktracking(coords){
           }
         }
       }
-      if (changed) break; // 変更があったら最初からやり直す
-    }
+      if (changed) break; // 螟画峩縺後≠縺｣縺溘ｉ譛蛻昴°繧峨ｄ繧顔峩縺・    }
   }
   return result;
 }
 
-// 過去の歩行記録から「各方向にどれだけ歩いたか」を集計し、
-// 最も歩いていない方向を返す(新しい道を優先的に通るため)
+// 驕主悉縺ｮ豁ｩ陦瑚ｨ倬鹸縺九ｉ縲悟推譁ｹ蜷代↓縺ｩ繧後□縺第ｭｩ縺・◆縺九阪ｒ髮・ｨ医＠縲・// 譛繧よｭｩ縺・※縺・↑縺・婿蜷代ｒ霑斐☆(譁ｰ縺励＞驕薙ｒ蜆ｪ蜈育噪縺ｫ騾壹ｋ縺溘ａ)
 function getLeastWalkedAngle(center){
-  const SECTORS = 8; // 360度を8分割(各45度)
+  const SECTORS = 8; // 360蠎ｦ繧・蛻・牡(蜷・5蠎ｦ)
   const counts = new Array(SECTORS).fill(0);
 
   try {
@@ -2372,27 +2413,26 @@ function getLeastWalkedAngle(center){
         counts[sector]++;
       }
     });
-  } catch(e){ /* 記録がない・読めない場合はランダムに */ }
+  } catch(e){ /* 險倬鹸縺後↑縺・・隱ｭ繧√↑縺・ｴ蜷医・繝ｩ繝ｳ繝繝縺ｫ */ }
 
-  // 歩いた回数が最も少ないセクターの中心角度を返す
-  // 全セクターが0(記録なし)の場合はランダム
+  // 豁ｩ縺・◆蝗樊焚縺梧怙繧ょｰ代↑縺・そ繧ｯ繧ｿ繝ｼ縺ｮ荳ｭ蠢・ｧ貞ｺｦ繧定ｿ斐☆
+  // 蜈ｨ繧ｻ繧ｯ繧ｿ繝ｼ縺・(險倬鹸縺ｪ縺・縺ｮ蝣ｴ蜷医・繝ｩ繝ｳ繝繝
   const minCount = Math.min(...counts);
   const minSectors = counts.map((c, i) => c === minCount ? i : -1).filter(i => i >= 0);
   const chosenSector = minSectors[Math.floor(Math.random() * minSectors.length)];
   const sectorWidth = 360 / SECTORS;
-  // セクター内でランダムなオフセットを加えてバリエーションを出す
-  return chosenSector * sectorWidth + Math.random() * sectorWidth;
+  // 繧ｻ繧ｯ繧ｿ繝ｼ蜀・〒繝ｩ繝ｳ繝繝縺ｪ繧ｪ繝輔そ繝・ヨ繧貞刈縺医※繝舌Μ繧ｨ繝ｼ繧ｷ繝ｧ繝ｳ繧貞・縺・  return chosenSector * sectorWidth + Math.random() * sectorWidth;
 }
 
-// 生成されたルートが過去に歩いたルートとどれだけ重なるかを計算する(0〜1)
-// 重複率が高いほど「前に通った道」を多く含むことを意味する
+// 逕滓・縺輔ｌ縺溘Ν繝ｼ繝医′驕主悉縺ｫ豁ｩ縺・◆繝ｫ繝ｼ繝医→縺ｩ繧後□縺鷹㍾縺ｪ繧九°繧定ｨ育ｮ励☆繧・0縲・)
+// 驥崎､・紫縺碁ｫ倥＞縺ｻ縺ｩ縲悟燕縺ｫ騾壹▲縺滄％縲阪ｒ螟壹￥蜷ｫ繧縺薙→繧呈э蜻ｳ縺吶ｋ
 function calcRouteOverlapWithHistory(coords){
   try {
     const history = JSON.parse(localStorage.getItem('walkRouteHistory_v1') || '[]');
     if (!history.length) return 0;
 
-    // 全記録を使う。記録が多いほどサンプリングを粗くして計算量を一定に保つ
-    // 目標: 全体で最大3000点(記録100件なら1件あたり30点、10件なら300点)
+    // 蜈ｨ險倬鹸繧剃ｽｿ縺・りｨ倬鹸縺悟､壹＞縺ｻ縺ｩ繧ｵ繝ｳ繝励Μ繝ｳ繧ｰ繧堤ｲ励￥縺励※險育ｮ鈴㍼繧剃ｸ螳壹↓菫昴▽
+    // 逶ｮ讓・ 蜈ｨ菴薙〒譛螟ｧ3000轤ｹ(險倬鹸100莉ｶ縺ｪ繧・莉ｶ縺ゅ◆繧・0轤ｹ縲・0莉ｶ縺ｪ繧・00轤ｹ)
     const pastCoords = [];
     const targetTotal = 3000;
     const pointsPerRecord = Math.max(10, Math.floor(targetTotal / history.length));
@@ -2405,9 +2445,7 @@ function calcRouteOverlapWithHistory(coords){
     });
     if (!pastCoords.length) return 0;
 
-    // 新しいルートの座標をサンプリングして、過去の座標と近いか判定
-    const THRESHOLD = 20; // 20m以内を「同じ道」とみなす
-    const step = Math.max(1, Math.floor(coords.length / 50));
+    // 譁ｰ縺励＞繝ｫ繝ｼ繝医・蠎ｧ讓吶ｒ繧ｵ繝ｳ繝励Μ繝ｳ繧ｰ縺励※縲・℃蜴ｻ縺ｮ蠎ｧ讓吶→霑代＞縺句愛螳・    const THRESHOLD = 20; // 20m莉･蜀・ｒ縲悟酔縺倬％縲阪→縺ｿ縺ｪ縺・    const step = Math.max(1, Math.floor(coords.length / 50));
     let overlap = 0, total = 0;
     for (let i = 0; i < coords.length; i += step){
       total++;
@@ -2429,7 +2467,7 @@ function buildLoopWaypoints(center, targetDistanceMeters, correctionFactor, park
   const lateralJitter = 60 + Math.random() * 30;
   const sign = Math.random() < 0.5 ? 1 : -1;
 
-  // A: 最も遠い前方の点
+  // A: 譛繧る□縺・燕譁ｹ縺ｮ轤ｹ
   const distA = totalDist * 0.42;
   const aCandidates = [-20,-10,0,10,20].map(offset => {
     const raw = offsetLatLng(center.lat, center.lng, distA, baseAngle + offset);
@@ -2439,7 +2477,7 @@ function buildLoopWaypoints(center, targetDistanceMeters, correctionFactor, park
     ? findMostShadedPoint(aCandidates, shadowPolygons)
     : aCandidates[2];
 
-  // B: Aから横にずれた中間点
+  // B: A縺九ｉ讓ｪ縺ｫ縺壹ｌ縺滉ｸｭ髢鍋せ
   const angleB = baseAngle + lateralJitter * sign;
   const distB = totalDist * 0.30;
   const bCandidates = [-15,0,15].map(offset => {
@@ -2450,7 +2488,7 @@ function buildLoopWaypoints(center, targetDistanceMeters, correctionFactor, park
     ? findMostShadedPoint(bCandidates, shadowPolygons)
     : bCandidates[1];
 
-  // C: 帰り道の中継点
+  // C: 蟶ｰ繧企％縺ｮ荳ｭ邯咏せ
   const angleC = baseAngle - lateralJitter * sign;
   const distC = totalDist * 0.25;
   const cCandidates = [-15,0,15].map(offset => {
@@ -2474,11 +2512,10 @@ let lastWeightKg = 60;
 let lastRouteDurationMin = 0;
 let lastRouteDistanceMeters = 0;
 let routeCoords = [];
-let routeSegments = [];    // ルートを約150mごとに分割した区間リスト
-let activeSegIdx = 0;      // 今歩いている区間のインデックス
-let futureLine = null;     // まだ歩いていない区間(薄い点線)
+let routeSegments = [];    // 繝ｫ繝ｼ繝医ｒ邏・50m縺斐→縺ｫ蛻・牡縺励◆蛹ｺ髢薙Μ繧ｹ繝・let activeSegIdx = 0;      // 莉頑ｭｩ縺・※縺・ｋ蛹ｺ髢薙・繧､繝ｳ繝・ャ繧ｯ繧ｹ
+let futureLine = null;     // 縺ｾ縺豁ｩ縺・※縺・↑縺・玄髢・阮・＞轤ｹ邱・
 
-/* ===== ルート永続化 (localStorage) ===== */
+/* ===== 繝ｫ繝ｼ繝域ｰｸ邯壼喧 (localStorage) ===== */
 const ROUTE_STORAGE_KEY = 'walkRoute_activeRoute';
 
 function saveActiveRoute(){
@@ -2494,7 +2531,7 @@ function saveActiveRoute(){
       savedAt: Date.now()
     };
     localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(data));
-  } catch(e){ /* storage full or unavailable — ignore */ }
+  } catch(e){ /* storage full or unavailable 窶・ignore */ }
 }
 
 function clearSavedRoute(){
@@ -2519,7 +2556,7 @@ function restoreRoute(data){
   lastWeightKg = data.lastWeightKg || 60;
   goalAlreadyHandled = false;
 
-  // 地図にルートを描画
+  // 蝨ｰ蝗ｳ縺ｫ繝ｫ繝ｼ繝医ｒ謠冗判
   if (routeLine) map.removeLayer(routeLine);
   if (futureLine){ map.removeLayer(futureLine); futureLine = null; }
   if (arrowGroup) map.removeLayer(arrowGroup);
@@ -2527,18 +2564,16 @@ function restoreRoute(data){
 
   redrawActiveSegment();
 
-  // マップ画面(screenResult)に切り替え
-  showScreen('result');
+  // 繝槭ャ繝礼判髱｢(screenResult)縺ｫ蛻・ｊ譖ｿ縺・  showScreen('result');
   setTimeout(() => {
     map.invalidateSize();
     map.fitBounds(L.latLngBounds(routeCoords), {padding:[24,24]});
   }, 100);
 
-  // 追跡を開始
-  startLiveTracking();
+  // 霑ｽ霍｡繧帝幕蟋・  startLiveTracking();
 }
 
-// ルートを約150mごとの区間に分割する
+// 繝ｫ繝ｼ繝医ｒ邏・50m縺斐→縺ｮ蛹ｺ髢薙↓蛻・牡縺吶ｋ
 function buildSegments(coords, segLen){
   const segs = [];
   let start = 0, dist = 0;
@@ -2553,7 +2588,7 @@ function buildSegments(coords, segLen){
   return segs;
 }
 
-// 現在地の前方200mだけに矢印を表示する(行き帰りで矢印が逆になる問題を防ぐ)
+// 迴ｾ蝨ｨ蝨ｰ縺ｮ蜑肴婿200m縺縺代↓遏｢蜊ｰ繧定｡ｨ遉ｺ縺吶ｋ(陦後″蟶ｰ繧翫〒遏｢蜊ｰ縺碁・↓縺ｪ繧句撫鬘後ｒ髦ｲ縺・
 function drawArrowsNearPosition(fromIdx){
   if (!arrowGroup) return;
   arrowGroup.clearLayers();
@@ -2571,14 +2606,14 @@ function drawArrowsNearPosition(fromIdx){
     const bearing = computeBearing(near[i][0], near[i][1], near[i+1][0], near[i+1][1]);
     const icon = L.divIcon({
       className: 'route-arrow-icon',
-      html: '<div class="route-arrow-wrap"><div class="route-arrow" style="transform:rotate(' + bearing + 'deg)">↑</div></div>',
+      html: '<div class="route-arrow-wrap"><div class="route-arrow" style="transform:rotate(' + bearing + 'deg)">竊・/div></div>',
       iconSize:[28,28], iconAnchor:[14,14]
     });
     L.marker(near[i], {icon, interactive:false}).addTo(arrowGroup);
   }
 }
 
-// アクティブな区間(濃い実線)と残り区間(薄い点線)を描画する
+// 繧｢繧ｯ繝・ぅ繝悶↑蛹ｺ髢・豼・＞螳溽ｷ・縺ｨ谿九ｊ蛹ｺ髢・阮・＞轤ｹ邱・繧呈緒逕ｻ縺吶ｋ
 function redrawActiveSegment(){
   const seg = routeSegments[activeSegIdx];
   const activeCoords = routeCoords.slice(seg.start, seg.end + 1);
@@ -2602,8 +2637,7 @@ function drawRoute(coordsLatLng){
   routeSegments = buildSegments(coordsLatLng, 150);
   activeSegIdx = 0;
   goalAlreadyHandled = false;
-  saveActiveRoute(); // ルートをlocalStorageに保存
-  const banner = document.getElementById('goalBanner');
+  saveActiveRoute(); // 繝ｫ繝ｼ繝医ｒlocalStorage縺ｫ菫晏ｭ・  const banner = document.getElementById('goalBanner');
   if (banner) banner.style.display = 'none';
 
   if (routeLine) map.removeLayer(routeLine);
@@ -2617,7 +2651,7 @@ function drawRoute(coordsLatLng){
 
 function advanceSegment(lat, lng){
   if (activeSegIdx >= routeSegments.length - 1){
-    // 全区間完了 → ゴール
+    // 蜈ｨ蛹ｺ髢灘ｮ御ｺ・竊・繧ｴ繝ｼ繝ｫ
     if (routeLine){ map.removeLayer(routeLine); routeLine = null; }
     if (futureLine){ map.removeLayer(futureLine); futureLine = null; }
     if (arrowGroup) arrowGroup.clearLayers();
@@ -2626,8 +2660,7 @@ function advanceSegment(lat, lng){
     return;
   }
   activeSegIdx++;
-  saveActiveRoute(); // 進捗を保存
-  redrawActiveSegment();
+  saveActiveRoute(); // 騾ｲ謐励ｒ菫晏ｭ・  redrawActiveSegment();
 }
 
 function trimRouteToCurrentPosition(lat, lng){
@@ -2637,20 +2670,16 @@ function trimRouteToCurrentPosition(lat, lng){
   const endPt = routeCoords[seg.end];
   const distToEnd = computeDistanceMeters(lat, lng, endPt[0], endPt[1]);
 
-  // 現在地が現在区間の終端から15m以内に入ったら、区間完了とみなす
-  if (distToEnd <= 15){
+  // 迴ｾ蝨ｨ蝨ｰ縺檎樟蝨ｨ蛹ｺ髢薙・邨らｫｯ縺九ｉ15m莉･蜀・↓蜈･縺｣縺溘ｉ縲∝玄髢灘ｮ御ｺ・→縺ｿ縺ｪ縺・  if (distToEnd <= 15){
     advanceSegment(lat, lng);
     return;
   }
 
-  // 終端15m判定を逃した場合のフォールバック:
-  // 3条件すべてを満たす場合のみ未来区間にスキップ:
-  //   (1) 現在地が未来区間の線分から10m以内（その道の上にいる）
-  //   (2) GPS進行方向がその線分の方向と角度差30度以内
-  //   (3) 現在地が実線（現在区間）のどの線分からも30m以上離れている
+  // 邨らｫｯ15m蛻､螳壹ｒ騾・＠縺溷ｴ蜷医・繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ:
+  // 3譚｡莉ｶ縺吶∋縺ｦ繧呈ｺ縺溘☆蝣ｴ蜷医・縺ｿ譛ｪ譚･蛹ｺ髢薙↓繧ｹ繧ｭ繝・・:
+  //   (1) 迴ｾ蝨ｨ蝨ｰ縺梧悴譚･蛹ｺ髢薙・邱壼・縺九ｉ10m莉･蜀・ｼ医◎縺ｮ驕薙・荳翫↓縺・ｋ・・  //   (2) GPS騾ｲ陦梧婿蜷代′縺昴・邱壼・縺ｮ譁ｹ蜷代→隗貞ｺｦ蟾ｮ30蠎ｦ莉･蜀・  //   (3) 迴ｾ蝨ｨ蝨ｰ縺悟ｮ溽ｷ夲ｼ育樟蝨ｨ蛹ｺ髢難ｼ峨・縺ｩ縺ｮ邱壼・縺九ｉ繧・0m莉･荳企屬繧後※縺・ｋ
 
-  // 条件(3): 現在区間の最短線分距離を計算
-  let minDistToActiveSeg = Infinity;
+  // 譚｡莉ｶ(3): 迴ｾ蝨ｨ蛹ｺ髢薙・譛遏ｭ邱壼・霍晞屬繧定ｨ育ｮ・  let minDistToActiveSeg = Infinity;
   for (let i = seg.start; i < seg.end; i++){
     const d = distPointToSegment(lat, lng, routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
     if (d < minDistToActiveSeg) minDistToActiveSeg = d;
@@ -2661,11 +2690,9 @@ function trimRouteToCurrentPosition(lat, lng){
     for (let si = activeSegIdx + 1; si < routeSegments.length; si++){
       const fSeg = routeSegments[si];
       for (let i = fSeg.start; i < fSeg.end; i++){
-        // 条件(1): 線分からの距離が10m以内
-        const d = distPointToSegment(lat, lng, routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
+        // 譚｡莉ｶ(1): 邱壼・縺九ｉ縺ｮ霍晞屬縺・0m莉･蜀・        const d = distPointToSegment(lat, lng, routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
         if (d < 10){
-          // 条件(2): 進行方向がその線分の方向と30度以内
-          if (currentHeading !== null){
+          // 譚｡莉ｶ(2): 騾ｲ陦梧婿蜷代′縺昴・邱壼・縺ｮ譁ｹ蜷代→30蠎ｦ莉･蜀・          if (currentHeading !== null){
             const segBearing = computeBearing(routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
             const angleDiff = Math.abs(((currentHeading - segBearing + 540) % 360) - 180);
             if (angleDiff <= 30){
@@ -2686,7 +2713,7 @@ function trimRouteToCurrentPosition(lat, lng){
     }
   }
 
-  // 区間の途中では矢印だけ現在地付近に更新する
+  // 蛹ｺ髢薙・騾比ｸｭ縺ｧ縺ｯ遏｢蜊ｰ縺縺醍樟蝨ｨ蝨ｰ莉倩ｿ代↓譖ｴ譁ｰ縺吶ｋ
   if (arrowGroup){
     let nearestIdx = seg.start, nearestDist = Infinity;
     for (let i = seg.start; i <= seg.end; i++){
@@ -2697,7 +2724,7 @@ function trimRouteToCurrentPosition(lat, lng){
   }
 }
 
-// 旧変数の互換定義
+// 譌ｧ螟画焚縺ｮ莠呈鋤螳夂ｾｩ
 let activeSegmentIdx = 0;
 let segProgressIndex = 0;
 
@@ -2710,13 +2737,13 @@ async function generateRoute(){
 
   const genBtns = [document.getElementById('regenerateBtn')].filter(Boolean);
   genBtns.forEach(b => { b.disabled = true; });
-  setStatus('GraphHopperにリクエストを送っています...', 'info');
+  setStatus('GraphHopper縺ｫ繝ｪ繧ｯ繧ｨ繧ｹ繝医ｒ騾√▲縺ｦ縺・∪縺・..', 'info');
 
   try {
     const walkingSpeedKmh = 4.8;
     const targetMinutes = timeMin;
     let best, attempts = [];
-    let parks = []; // ループ・2点指定両方で共有(気温による公園優先に使う)
+    let parks = []; // 繝ｫ繝ｼ繝励・2轤ｹ謖・ｮ壻ｸ｡譁ｹ縺ｧ蜈ｱ譛・豌玲ｸｩ縺ｫ繧医ｋ蜈ｬ蝨貞━蜈医↓菴ｿ縺・
 
     async function requestRoute(pointsLatLng){
       const pointParams = pointsLatLng.map(p => 'point=' + p.lat.toFixed(6) + ',' + p.lng.toFixed(6)).join('&');
@@ -2725,13 +2752,13 @@ async function generateRoute(){
       const data = await res.json();
       if (!res.ok){
         const msg = (data && data.message) ? data.message : JSON.stringify(data);
-        throw new Error('APIエラー(HTTP ' + res.status + '): ' + msg);
+        throw new Error('API繧ｨ繝ｩ繝ｼ(HTTP ' + res.status + '): ' + msg);
       }
-      if (!data.paths || data.paths.length === 0) throw new Error('ルートが見つかりませんでした。');
+      if (!data.paths || data.paths.length === 0) throw new Error('繝ｫ繝ｼ繝医′隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆縲・);
       return data.paths[0];
     }
 
-    // GraphHopperのround_tripアルゴリズム(折り返しを防ぐ専用ループルート生成)
+    // GraphHopper縺ｮround_trip繧｢繝ｫ繧ｴ繝ｪ繧ｺ繝(謚倥ｊ霑斐＠繧帝亟縺仙ｰら畑繝ｫ繝ｼ繝励Ν繝ｼ繝育函謌・
     async function requestRoundTrip(lat, lng, distMeters, seed, headingDeg){
       try {
         let url = 'https://graphhopper.com/api/1/route'
@@ -2755,34 +2782,32 @@ async function generateRoute(){
       let bestPath = null, bestScore = -1;
       const MAX_TRIES = 5;
 
-      // 日陰優先モードが有効な場合、建物データを取得して日陰ポリゴンを計算
-      let shadowPolygons = [];
+      // 譌･髯ｰ蜆ｪ蜈医Δ繝ｼ繝峨′譛牙柑縺ｪ蝣ｴ蜷医∝ｻｺ迚ｩ繝・・繧ｿ繧貞叙蠕励＠縺ｦ譌･髯ｰ繝昴Μ繧ｴ繝ｳ繧定ｨ育ｮ・      let shadowPolygons = [];
       if (shadePreference){
         try {
-          setStatus('日陰エリアを計算しています...', 'info');
+          setStatus('譌･髯ｰ繧ｨ繝ｪ繧｢繧定ｨ育ｮ励＠縺ｦ縺・∪縺・..', 'info');
           shadowPolygons = await calcShadowPolygonsForRouting(startPoint.lat, startPoint.lng);
           if (shadowPolygons.length === 0){
-            setStatus('現在時刻は日陰が少ないため、通常ルートで生成します。', 'info');
+            setStatus('迴ｾ蝨ｨ譎ょ綾縺ｯ譌･髯ｰ縺悟ｰ代↑縺・◆繧√・壼ｸｸ繝ｫ繝ｼ繝医〒逕滓・縺励∪縺吶・, 'info');
           } else {
-            setStatus('日陰エリアを計算しました。ルートを生成しています...', 'info');
+            setStatus('譌･髯ｰ繧ｨ繝ｪ繧｢繧定ｨ育ｮ励＠縺ｾ縺励◆縲ゅΝ繝ｼ繝医ｒ逕滓・縺励※縺・∪縺・..', 'info');
           }
         } catch(e){
-          setStatus('日陰データの取得に失敗しました。通常ルートで生成します。', 'info');
+          setStatus('譌･髯ｰ繝・・繧ｿ縺ｮ蜿門ｾ励↓螟ｱ謨励＠縺ｾ縺励◆縲る壼ｸｸ繝ｫ繝ｼ繝医〒逕滓・縺励∪縺吶・, 'info');
         }
       }
 
       for (let i = 0; i < MAX_TRIES; i++){
-        setStatus('ルートを生成しています... (' + (i+1) + '/' + MAX_TRIES + ')', 'info');
+        setStatus('繝ｫ繝ｼ繝医ｒ逕滓・縺励※縺・∪縺・.. (' + (i+1) + '/' + MAX_TRIES + ')', 'info');
 
-        // round_tripアルゴリズムを優先(GraphHopper組み込みの折り返し防止ループ生成)
-        // シードを変えるたびに異なるルートが生成される
-        const seed = Date.now() + i * 7919;
-        // 各試行で異なる方角に誘導(過去に歩いていない方角を基準にばらけさせる)
+        // round_trip繧｢繝ｫ繧ｴ繝ｪ繧ｺ繝繧貞━蜈・GraphHopper邨・∩霎ｼ縺ｿ縺ｮ謚倥ｊ霑斐＠髦ｲ豁｢繝ｫ繝ｼ繝礼函謌・
+        // 繧ｷ繝ｼ繝峨ｒ螟峨∴繧九◆縺ｳ縺ｫ逡ｰ縺ｪ繧九Ν繝ｼ繝医′逕滓・縺輔ｌ繧・        const seed = Date.now() + i * 7919;
+        // 蜷・ｩｦ陦後〒逡ｰ縺ｪ繧区婿隗偵↓隱伜ｰ・驕主悉縺ｫ豁ｩ縺・※縺・↑縺・婿隗偵ｒ蝓ｺ貅悶↓縺ｰ繧峨￠縺輔○繧・
         const leastAngle = getLeastWalkedAngle(startPoint);
         const headingVariation = leastAngle + (i * 45) % 360;
         let path = await requestRoundTrip(startPoint.lat, startPoint.lng, distanceMeters, seed, headingVariation);
 
-        // round_tripが失敗した場合のみ手動経由点にフォールバック
+        // round_trip縺悟､ｱ謨励＠縺溷ｴ蜷医・縺ｿ謇句虚邨檎罰轤ｹ縺ｫ繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ
         if (!path){
           const waypoints = buildLoopWaypoints(startPoint, distanceMeters, 1.3, parks, shadowPolygons);
           path = await requestRoute([startPoint, ...waypoints, startPoint]);
@@ -2808,38 +2833,34 @@ async function generateRoute(){
         }
 
         if (i < MAX_TRIES - 1){
-          const reason = backtrack ? '折り返しルートのため別ルートを探しています' : '既に歩いた道が多いため別ルートを探しています';
+          const reason = backtrack ? '謚倥ｊ霑斐＠繝ｫ繝ｼ繝医・縺溘ａ蛻･繝ｫ繝ｼ繝医ｒ謗｢縺励※縺・∪縺・ : '譌｢縺ｫ豁ｩ縺・◆驕薙′螟壹＞縺溘ａ蛻･繝ｫ繝ｼ繝医ｒ謗｢縺励※縺・∪縺・;
           setStatus(reason + '... (' + (i+1) + '/' + MAX_TRIES + ')', 'info');
           const ratio = targetMinutes / (path.time / 60000);
           distanceMeters = Math.round(distanceMeters * Math.min(Math.max(ratio, 0.8), 1.3));
         }
       }
-      // 全試行の中でベストなものを使う
-      if (!best) best = bestPath;
+      // 蜈ｨ隧ｦ陦後・荳ｭ縺ｧ繝吶せ繝医↑繧ゅ・繧剃ｽｿ縺・      if (!best) best = bestPath;
     } else {
-      // 2点指定でも、直行ルートが目標時間より大幅に短い場合は寄り道の経由点を追加する。
-      // 例: 10分で戻れる距離なのに30分歩きたい場合、途中に経由点を置いて遠回りさせる。
-      const directPath = await requestRoute([startPoint, goalPoint]);
+      // 2轤ｹ謖・ｮ壹〒繧ゅ∫峩陦後Ν繝ｼ繝医′逶ｮ讓呎凾髢薙ｈ繧雁､ｧ蟷・↓遏ｭ縺・ｴ蜷医・蟇・ｊ驕薙・邨檎罰轤ｹ繧定ｿｽ蜉縺吶ｋ縲・      // 萓・ 10蛻・〒謌ｻ繧後ｋ霍晞屬縺ｪ縺ｮ縺ｫ30蛻・ｭｩ縺阪◆縺・ｴ蜷医・比ｸｭ縺ｫ邨檎罰轤ｹ繧堤ｽｮ縺・※驕蝗槭ｊ縺輔○繧九・      const directPath = await requestRoute([startPoint, goalPoint]);
       const directMin = directPath.time / 60000;
       const shortage = targetMinutes - directMin;
 
       if (shortage <= directMin * 0.15){
-        // 直行ルートがすでに目標時間の85%以上なら、そのまま採用
+        // 逶ｴ陦後Ν繝ｼ繝医′縺吶〒縺ｫ逶ｮ讓呎凾髢薙・85%莉･荳翫↑繧峨√◎縺ｮ縺ｾ縺ｾ謗｡逕ｨ
         best = directPath;
       } else {
-        // 足りない時間分だけ寄り道する経由点を1〜2個追加する
+        // 雜ｳ繧翫↑縺・凾髢灘・縺縺大ｯ・ｊ驕薙☆繧狗ｵ檎罰轤ｹ繧・縲・蛟玖ｿｽ蜉縺吶ｋ
         const walkingSpeedKmh2 = 4.8;
         const extraMeters = (shortage / 60) * walkingSpeedKmh2 * 1000;
 
-        // スタートとゴールの中間付近から横に経由点を出す
-        const midLat = (startPoint.lat + goalPoint.lat) / 2;
+        // 繧ｹ繧ｿ繝ｼ繝医→繧ｴ繝ｼ繝ｫ縺ｮ荳ｭ髢謎ｻ倩ｿ代°繧画ｨｪ縺ｫ邨檎罰轤ｹ繧貞・縺・        const midLat = (startPoint.lat + goalPoint.lat) / 2;
         const midLng = (startPoint.lng + goalPoint.lng) / 2;
         const bearing = computeBearing(startPoint.lat, startPoint.lng, goalPoint.lat, goalPoint.lng);
-        const perpAngle = bearing + 90 * (Math.random() < 0.5 ? 1 : -1); // 進行方向と垂直
+        const perpAngle = bearing + 90 * (Math.random() < 0.5 ? 1 : -1); // 騾ｲ陦梧婿蜷代→蝙ら峩
         const viaRaw = offsetLatLng(midLat, midLng, extraMeters * 0.5, perpAngle);
         const via = snapToNearestPark(viaRaw, parks, extraMeters * 0.4);
 
-        // 経由点を通るルートを試す(直行 + 1経由点で制限数5以内)
+        // 邨檎罰轤ｹ繧帝壹ｋ繝ｫ繝ｼ繝医ｒ隧ｦ縺・逶ｴ陦・+ 1邨檎罰轤ｹ縺ｧ蛻ｶ髯先焚5莉･蜀・
         let pathWithVia;
         let correctionFactor2 = 1.0;
         for (let i = 0; i < 3; i++){
@@ -2847,15 +2868,14 @@ async function generateRoute(){
           const actualMin2 = pathWithVia.time / 60000;
           const ratio = targetMinutes / actualMin2;
           if (Math.abs(actualMin2 - targetMinutes) / targetMinutes < 0.15 || i === 2) break;
-          // 経由点の距離を調整して再試行
-          const newExtra = extraMeters * ratio * correctionFactor2;
+          // 邨檎罰轤ｹ縺ｮ霍晞屬繧定ｪｿ謨ｴ縺励※蜀崎ｩｦ陦・          const newExtra = extraMeters * ratio * correctionFactor2;
           const viaRaw2 = offsetLatLng(midLat, midLng, newExtra * 0.5, perpAngle);
           via.lat = snapToNearestPark(viaRaw2, parks, newExtra * 0.4).lat;
           via.lng = snapToNearestPark(viaRaw2, parks, newExtra * 0.4).lng;
           correctionFactor2 *= ratio;
         }
 
-        // 直行と経由点ありを比較し、目標に近い方を採用
+        // 逶ｴ陦後→邨檎罰轤ｹ縺ゅｊ繧呈ｯ碑ｼ・＠縲∫岼讓吶↓霑代＞譁ｹ繧呈治逕ｨ
         const diffDirect = Math.abs(directPath.time/60000 - targetMinutes);
         const diffVia = Math.abs(pathWithVia.time/60000 - targetMinutes);
         best = diffVia < diffDirect ? pathWithVia : directPath;
@@ -2864,23 +2884,21 @@ async function generateRoute(){
 
     let coords = best.points.coordinates.map(c => [c[1], c[0]]);
 
-    // 折り返し部分を除去
+    // 謚倥ｊ霑斐＠驛ｨ蛻・ｒ髯､蜴ｻ
     const originalLen = coords.length;
     coords = removeBacktracking(coords);
     const backtrackRemoved = coords.length < originalLen;
 
     drawRoute(coords);
 
-    // 折り返し除去後は距離・時間を再計算
-    let routeDistance = best.distance;
+    // 謚倥ｊ霑斐＠髯､蜴ｻ蠕後・霍晞屬繝ｻ譎る俣繧貞・險育ｮ・    let routeDistance = best.distance;
     let routeTime = best.time;
     if (backtrackRemoved){
       routeDistance = 0;
       for (let i = 0; i < coords.length - 1; i++){
         routeDistance += computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
       }
-      // 元のペース(1mあたりの時間)を維持して時間を再計算
-      const paceMs = best.time / best.distance;
+      // 蜈・・繝壹・繧ｹ(1m縺ゅ◆繧翫・譎る俣)繧堤ｶｭ謖√＠縺ｦ譎る俣繧貞・險育ｮ・      const paceMs = best.time / best.distance;
       routeTime = routeDistance * paceMs;
     }
 
@@ -2890,29 +2908,29 @@ async function generateRoute(){
     const actualMin = Math.round(routeTime/60000);
     lastRouteDurationMin = actualMin;
     lastRouteDistanceMeters = routeDistance;
-    routePaceMsPerMeter = routeTime / routeDistance; // 1mあたりの所要時間(終了予定のリアルタイム再計算に使う)
+    routePaceMsPerMeter = routeTime / routeDistance; // 1m縺ゅ◆繧翫・謇隕∵凾髢・邨ゆｺ・ｺ亥ｮ壹・繝ｪ繧｢繝ｫ繧ｿ繧､繝蜀崎ｨ育ｮ励↓菴ｿ縺・
 
     document.getElementById('resDistance').textContent = distKm.toFixed(2);
     document.getElementById('resCalorie').textContent = Math.round(cal);
     document.getElementById('resSteps').textContent = steps.toLocaleString();
     document.getElementById('resultCard').style.display = 'block';
     document.getElementById('timeCompare').textContent =
-      '目標: ' + targetMinutes + '分 / 実際のルート: ' + actualMin + '分' + (mode==='loop' ? '(' + attempts.length + '回調整して算出)' : '');
+      '逶ｮ讓・ ' + targetMinutes + '蛻・/ 螳滄圀縺ｮ繝ｫ繝ｼ繝・ ' + actualMin + '蛻・ + (mode==='loop' ? '(' + attempts.length + '蝗櫁ｪｿ謨ｴ縺励※邂怜・)' : '');
 
     const finishDate = new Date(Date.now() + routeTime);
     const hh = String(finishDate.getHours()).padStart(2, '0');
     const mm = String(finishDate.getMinutes()).padStart(2, '0');
     document.getElementById('finishTime').textContent = hh + ':' + mm;
 
-    setStatus('ルート生成に成功しました。', 'ok');
+    setStatus('繝ｫ繝ｼ繝育函謌舌↓謌仙粥縺励∪縺励◆縲・, 'ok');
   } catch (err){
-    setStatus(err.message || ('通信エラーが発生しました:\n' + err), 'error');
+    setStatus(err.message || ('騾壻ｿ｡繧ｨ繝ｩ繝ｼ縺檎匱逕溘＠縺ｾ縺励◆:\n' + err), 'error');
   } finally {
     genBtns.forEach(b => { b.disabled = false; });
   }
 }
 
-/* ================= 歩行記録(localStorageに保存) ================= */
+/* ================= 豁ｩ陦瑚ｨ倬鹸(localStorage縺ｫ菫晏ｭ・ ================= */
 
 const HISTORY_KEY = 'walkRouteHistory_v1';
 let goalAlreadyHandled = false;
@@ -2925,7 +2943,7 @@ function loadHistory(){
 }
 
 function saveHistoryList(list){
-  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); } catch (e){ /* 保存できない環境では静かに無視 */ }
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); } catch (e){ /* 菫晏ｭ倥〒縺阪↑縺・腸蠅・〒縺ｯ髱吶°縺ｫ辟｡隕・*/ }
 }
 
 function addWalkRecord(record){
@@ -2935,18 +2953,17 @@ function addWalkRecord(record){
 }
 
 function finishWalk(distanceMeters, durationMin){
-  if (goalAlreadyHandled) return; // 二重に保存しないようにする
+  if (goalAlreadyHandled) return; // 莠碁㍾縺ｫ菫晏ｭ倥＠縺ｪ縺・ｈ縺・↓縺吶ｋ
   goalAlreadyHandled = true;
 
-  clearSavedRoute(); // 保存ルートをクリア
+  clearSavedRoute(); // 菫晏ｭ倥Ν繝ｼ繝医ｒ繧ｯ繝ｪ繧｢
   stopLiveTracking();
 
   const distanceKm = distanceMeters / 1000;
   const calorie = calcCalorie(lastWeightKg, durationMin);
   const steps = calcSteps(distanceMeters);
 
-  // 結果画面の数値もこの時点の実績で上書きする
-  document.getElementById('resDistance').textContent = distanceKm.toFixed(2);
+  // 邨先棡逕ｻ髱｢縺ｮ謨ｰ蛟､繧ゅ％縺ｮ譎らせ縺ｮ螳溽ｸｾ縺ｧ荳頑嶌縺阪☆繧・  document.getElementById('resDistance').textContent = distanceKm.toFixed(2);
   document.getElementById('resCalorie').textContent = Math.round(calorie);
   document.getElementById('resSteps').textContent = Math.round(steps).toLocaleString();
 
@@ -2960,7 +2977,7 @@ function finishWalk(distanceMeters, durationMin){
   };
   addWalkRecord(record);
 
-  // ゴールハイライトオーバーレイを表示する
+  // 繧ｴ繝ｼ繝ｫ繝上う繝ｩ繧､繝医が繝ｼ繝舌・繝ｬ繧､繧定｡ｨ遉ｺ縺吶ｋ
   showGoalOverlay(distanceKm, calorie, steps, durationMin);
 }
 
@@ -2971,7 +2988,7 @@ function handleGoalReached(){
 
 function handleManualFinish(){
   if (!routeCoords.length){
-    setStatus('まだルートが作成されていません。', 'error');
+    setStatus('縺ｾ縺繝ｫ繝ｼ繝医′菴懈・縺輔ｌ縺ｦ縺・∪縺帙ｓ縲・, 'error');
     return;
   }
   const remainingMeters = getRemainingMeters();
@@ -2986,7 +3003,7 @@ function handleManualFinish(){
 }
 
 document.getElementById('finishHereBtn').addEventListener('click', () => {
-  if (confirm('現在地で散歩を終了します。ここまでの距離・カロリーを記録します。よろしいですか?')){
+  if (confirm('迴ｾ蝨ｨ蝨ｰ縺ｧ謨｣豁ｩ繧堤ｵゆｺ・＠縺ｾ縺吶ゅ％縺薙∪縺ｧ縺ｮ霍晞屬繝ｻ繧ｫ繝ｭ繝ｪ繝ｼ繧定ｨ倬鹸縺励∪縺吶ゅｈ繧阪＠縺・〒縺吶°?')){
     handleManualFinish();
   }
 });
@@ -3018,10 +3035,10 @@ document.getElementById('goalOverlayClose').addEventListener('click', () => {
 
 document.getElementById('goalOverlayFav').addEventListener('click', () => {
   if (!routeCoords || routeCoords.length < 2){
-    alert('登録できるルートがありません。');
+    alert('逋ｻ骭ｲ縺ｧ縺阪ｋ繝ｫ繝ｼ繝医′縺ゅｊ縺ｾ縺帙ｓ縲・);
     return;
   }
-  const name = prompt('このルートの名前を入力してください(例: 大学周辺30分コース)');
+  const name = prompt('縺薙・繝ｫ繝ｼ繝医・蜷榊燕繧貞・蜉帙＠縺ｦ縺上□縺輔＞(萓・ 螟ｧ蟄ｦ蜻ｨ霎ｺ30蛻・さ繝ｼ繧ｹ)');
   if (!name) return;
 
   let distMeters = 0;
@@ -3048,9 +3065,9 @@ document.getElementById('goalOverlayFav').addEventListener('click', () => {
   list.push(favorite);
   saveFavoritesList(list);
 
-  // 登録完了メッセージをボタンに表示
+  // 逋ｻ骭ｲ螳御ｺ・Γ繝・そ繝ｼ繧ｸ繧偵・繧ｿ繝ｳ縺ｫ陦ｨ遉ｺ
   const btn = document.getElementById('goalOverlayFav');
-  btn.textContent = '✓ 登録しました';
+  btn.textContent = '笨・逋ｻ骭ｲ縺励∪縺励◆';
   btn.disabled = true;
   btn.style.opacity = '0.6';
 });
@@ -3066,9 +3083,8 @@ function sumRecords(records){
 function startOfWeekMonday(d){
   const date = new Date(d);
   date.setHours(0, 0, 0, 0);
-  const day = date.getDay(); // 0=日
-  const diff = (day === 0 ? -6 : 1) - day; // 月曜始まりに揃える
-  date.setDate(date.getDate() + diff);
+  const day = date.getDay(); // 0=譌･
+  const diff = (day === 0 ? -6 : 1) - day; // 譛域屆蟋九∪繧翫↓謠・∴繧・  date.setDate(date.getDate() + diff);
   return date;
 }
 
@@ -3101,14 +3117,14 @@ function renderHistory(){
   const list = document.getElementById('histList');
   list.innerHTML = '';
   if (all.length === 0){
-    list.innerHTML = '<div class="hint">まだ記録がありません。ルートを歩き終えると自動的に記録されます。</div>';
+    list.innerHTML = '<div class="hint">縺ｾ縺險倬鹸縺後≠繧翫∪縺帙ｓ縲ゅΝ繝ｼ繝医ｒ豁ｩ縺咲ｵゅ∴繧九→閾ｪ蜍慕噪縺ｫ險倬鹸縺輔ｌ縺ｾ縺吶・/div>';
     return;
   }
 
   let currentGroup = null;
   all.forEach(r => {
     const d = new Date(r.date + 'T00:00:00');
-    const groupKey = d.getFullYear() + '年' + (d.getMonth() + 1) + '月';
+    const groupKey = d.getFullYear() + '蟷ｴ' + (d.getMonth() + 1) + '譛・;
     if (groupKey !== currentGroup){
       currentGroup = groupKey;
       const header = document.createElement('div');
@@ -3119,17 +3135,17 @@ function renderHistory(){
     const item = document.createElement('button');
     item.type = 'button';
     item.className = 'hist-row';
-    const wdays = ['日','月','火','水','木','金','土'];
+    const wdays = ['譌･','譛・,'轣ｫ','豌ｴ','譛ｨ','驥・,'蝨・];
     const label = (d.getMonth() + 1) + '/' + d.getDate();
     const wday = '(' + wdays[d.getDay()] + ')';
-    const durText = r.durationMin ? (r.durationMin + '分 · ') : '';
+    const durText = r.durationMin ? (r.durationMin + '蛻・ﾂｷ ') : '';
     item.innerHTML =
       '<div>' +
         '<div class="hist-row-date">' + label + '<span class="wday">' + wday + '</span></div>' +
         '<div class="hist-row-sub">' + durText + Math.round(r.calorie) + ' kcal</div>' +
       '</div>' +
       '<div class="hist-row-km">' +
-        '<span class="num">' + r.distanceKm.toFixed(2) + '</span><span class="u">km</span><span class="chev">›</span>' +
+        '<span class="num">' + r.distanceKm.toFixed(2) + '</span><span class="u">km</span><span class="chev">窶ｺ</span>' +
       '</div>';
     item.addEventListener('click', () => {
       const byDate = getRecordsByDate();
@@ -3150,8 +3166,7 @@ function openHistory(){
       return el && el.classList.contains('active');
     });
     screenBeforeHistory = activeName || 'course';
-    // 全画面を隠す
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // 蜈ｨ逕ｻ髱｢繧帝國縺・    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screenHistory').classList.add('active');
     calYear = new Date().getFullYear();
     calMonth = new Date().getMonth();
@@ -3178,17 +3193,15 @@ function closeHistory(){
 
 on('openHistoryBtn','click',openHistory);
 
-// ボトムナビゲーション
+// 繝懊ヨ繝繝翫ン繧ｲ繝ｼ繧ｷ繝ｧ繝ｳ
 document.getElementById('navTabRoute').addEventListener('click', () => {
   document.getElementById('navTabRoute').classList.add('active');
   document.getElementById('navTabHistory').classList.remove('active');
-  // 記録系の画面を閉じてルート作成に戻る
-  const historyScreens = ['screenHistory','screenDayDetail','screenFavorites'];
+  // 險倬鹸邉ｻ縺ｮ逕ｻ髱｢繧帝哩縺倥※繝ｫ繝ｼ繝井ｽ懈・縺ｫ謌ｻ繧・  const historyScreens = ['screenHistory','screenDayDetail','screenFavorites'];
   const isHistoryVisible = historyScreens.some(id => document.getElementById(id).classList.contains('active'));
   if (isHistoryVisible){
     historyScreens.forEach(id => document.getElementById(id).classList.remove('active'));
-    // 直前にいたルート作成画面を復元
-    const lastRoute = screenBeforeHistory || 'course';
+    // 逶ｴ蜑阪↓縺・◆繝ｫ繝ｼ繝井ｽ懈・逕ｻ髱｢繧貞ｾｩ蜈・    const lastRoute = screenBeforeHistory || 'course';
     document.getElementById(screenIdOf(lastRoute)).classList.add('active');
     window.scrollTo(0,0);
   }
@@ -3201,11 +3214,10 @@ document.getElementById('navTabHistory').addEventListener('click', () => {
 });
 on('closeHistoryBtn','click',closeHistory);
 
-/* ---- カレンダー表示 ---- */
+/* ---- 繧ｫ繝ｬ繝ｳ繝繝ｼ陦ｨ遉ｺ ---- */
 
 let calYear = new Date().getFullYear();
-let calMonth = new Date().getMonth(); // 0始まり
-
+let calMonth = new Date().getMonth(); // 0蟋九∪繧・
 function getRecordsByDate(){
   const all = loadHistory();
   const map = {};
@@ -3223,14 +3235,13 @@ function getRecordsByDate(){
 function renderCalendar(){
   const map = getRecordsByDate();
 
-  document.getElementById('calMonthLabel').textContent = calYear + '年' + (calMonth + 1) + '月';
+  document.getElementById('calMonthLabel').textContent = calYear + '蟷ｴ' + (calMonth + 1) + '譛・;
 
   const grid = document.getElementById('calGrid');
   grid.innerHTML = '';
 
   const firstDay = new Date(calYear, calMonth, 1);
-  const startWeekday = firstDay.getDay(); // 0=日曜
-  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const startWeekday = firstDay.getDay(); // 0=譌･譖・  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
   const todayStr = localDateStr();
 
   for (let i = 0; i < startWeekday; i++){
@@ -3275,7 +3286,7 @@ function showDayRoutes(routes){
     }).addTo(dayDetailMap);
   }
 
-  // 前回表示していたルートの線を消す
+  // 蜑榊屓陦ｨ遉ｺ縺励※縺・◆繝ｫ繝ｼ繝医・邱壹ｒ豸医☆
   dayDetailMap.eachLayer(layer => {
     if (layer instanceof L.Polyline) dayDetailMap.removeLayer(layer);
   });
@@ -3295,26 +3306,26 @@ function showDayRoutes(routes){
 
 function openDayDetail(dateStr, rec){
   const [y, m, d] = dateStr.split('-').map(Number);
-  const wdays = ['日','月','火','水','木','金','土'];
+  const wdays = ['譌･','譛・,'轣ｫ','豌ｴ','譛ｨ','驥・,'蝨・];
   const wday = wdays[new Date(dateStr + 'T00:00:00').getDay()];
   document.getElementById('dayDetailTitle').textContent = m + '/' + d;
   document.getElementById('dayDetailWday').textContent = '(' + wday + ')';
   document.getElementById('dayDetailSub').textContent = rec.count > 0
-    ? (rec.count > 1 ? 'この日は' + rec.count + '回歩きました' : 'この日歩いた記録です')
-    : 'この日の記録はありません';
+    ? (rec.count > 1 ? '縺薙・譌･縺ｯ' + rec.count + '蝗樊ｭｩ縺阪∪縺励◆' : '縺薙・譌･豁ｩ縺・◆險倬鹸縺ｧ縺・)
+    : '縺薙・譌･縺ｮ險倬鹸縺ｯ縺ゅｊ縺ｾ縺帙ｓ';
   document.getElementById('dayDetailDistance').textContent = rec.distanceKm.toFixed(2);
   document.getElementById('dayDetailCalorie').textContent = Math.round(rec.calorie).toLocaleString();
   document.getElementById('dayDetailSteps').textContent = Math.round(rec.steps).toLocaleString();
 
   showDayRoutes(rec.routes);
 
-  // お気に入り登録ボタン: 常に表示。ルートデータがない場合は非活性にする
+  // 縺頑ｰ励↓蜈･繧顔匳骭ｲ繝懊ち繝ｳ: 蟶ｸ縺ｫ陦ｨ遉ｺ縲ゅΝ繝ｼ繝医ョ繝ｼ繧ｿ縺後↑縺・ｴ蜷医・髱樊ｴｻ諤ｧ縺ｫ縺吶ｋ
   currentDayDetailRec = rec;
   const favBtn = document.getElementById('saveFavFromHistoryBtn');
   if (favBtn){
     const hasRoute = rec.routes && rec.routes.length > 0;
     favBtn.disabled = !hasRoute;
-    favBtn.textContent = hasRoute ? 'このルートをお気に入りに登録' : 'ルートデータなし(最新版で歩いた記録のみ登録可)';
+    favBtn.textContent = hasRoute ? '縺薙・繝ｫ繝ｼ繝医ｒ縺頑ｰ励↓蜈･繧翫↓逋ｻ骭ｲ' : '繝ｫ繝ｼ繝医ョ繝ｼ繧ｿ縺ｪ縺・譛譁ｰ迚医〒豁ｩ縺・◆險倬鹸縺ｮ縺ｿ逋ｻ骭ｲ蜿ｯ)';
     favBtn.style.opacity = hasRoute ? '1' : '0.4';
   }
 
@@ -3327,10 +3338,10 @@ let currentDayDetailRec = null;
 
 document.getElementById('saveFavFromHistoryBtn').addEventListener('click', () => {
   if (!currentDayDetailRec || !currentDayDetailRec.routes || !currentDayDetailRec.routes.length){
-    alert('登録できるルートがありません');
+    alert('逋ｻ骭ｲ縺ｧ縺阪ｋ繝ｫ繝ｼ繝医′縺ゅｊ縺ｾ縺帙ｓ');
     return;
   }
-  const name = prompt('このルートの名前を入力してください(例: 大学周辺コース)');
+  const name = prompt('縺薙・繝ｫ繝ｼ繝医・蜷榊燕繧貞・蜉帙＠縺ｦ縺上□縺輔＞(萓・ 螟ｧ蟄ｦ蜻ｨ霎ｺ繧ｳ繝ｼ繧ｹ)');
   if (!name) return;
 
   const coords = currentDayDetailRec.routes[0];
@@ -3354,7 +3365,7 @@ document.getElementById('saveFavFromHistoryBtn').addEventListener('click', () =>
   const list = loadFavorites();
   list.push(favorite);
   saveFavoritesList(list);
-  alert('「' + name + '」として登録しました。お気に入りから呼び出せます。');
+  alert('縲・ + name + '縲阪→縺励※逋ｻ骭ｲ縺励∪縺励◆縲ゅ♀豌励↓蜈･繧翫°繧牙他縺ｳ蜃ｺ縺帙∪縺吶・);
 });
 
 document.getElementById('closeDayDetailBtn').addEventListener('click', () => {
@@ -3375,7 +3386,7 @@ document.getElementById('calNextBtn').addEventListener('click', () => {
   renderCalendar();
 });
 
-/* ================= お気に入りルート(localStorageに保存) ================= */
+/* ================= 縺頑ｰ励↓蜈･繧翫Ν繝ｼ繝・localStorage縺ｫ菫晏ｭ・ ================= */
 
 const FAVORITES_KEY = 'walkRouteFavorites_v1';
 
@@ -3392,10 +3403,10 @@ function saveFavoritesList(list){
 
 document.getElementById('saveFavoriteBtn').addEventListener('click', () => {
   if (!routeCoords || routeCoords.length < 2){
-    setStatus('保存できるルートがありません。先にルートを作成してください。', 'error');
+    setStatus('菫晏ｭ倥〒縺阪ｋ繝ｫ繝ｼ繝医′縺ゅｊ縺ｾ縺帙ｓ縲ょ・縺ｫ繝ｫ繝ｼ繝医ｒ菴懈・縺励※縺上□縺輔＞縲・, 'error');
     return;
   }
-  const name = prompt('このルートの名前を入力してください(例: 大学から〇〇公園コース)');
+  const name = prompt('縺薙・繝ｫ繝ｼ繝医・蜷榊燕繧貞・蜉帙＠縺ｦ縺上□縺輔＞(萓・ 螟ｧ蟄ｦ縺九ｉ縲・・・蝨偵さ繝ｼ繧ｹ)');
   if (!name) return;
 
   const favorite = {
@@ -3412,7 +3423,7 @@ document.getElementById('saveFavoriteBtn').addEventListener('click', () => {
   const list = loadFavorites();
   list.push(favorite);
   saveFavoritesList(list);
-  setStatus('「' + name + '」として保存しました。「お気に入り」から呼び出せます。', 'ok');
+  setStatus('縲・ + name + '縲阪→縺励※菫晏ｭ倥＠縺ｾ縺励◆縲ゅ後♀豌励↓蜈･繧翫阪°繧牙他縺ｳ蜃ｺ縺帙∪縺吶・, 'ok');
 });
 
 function renderFavorites(){
@@ -3420,7 +3431,7 @@ function renderFavorites(){
   const box = document.getElementById('favList');
   box.innerHTML = '';
   if (list.length === 0){
-    box.innerHTML = '<div class="hint">まだお気に入りのルートはありません。結果画面の「お気に入りに登録」から追加できます。</div>';
+    box.innerHTML = '<div class="hint">縺ｾ縺縺頑ｰ励↓蜈･繧翫・繝ｫ繝ｼ繝医・縺ゅｊ縺ｾ縺帙ｓ縲らｵ先棡逕ｻ髱｢縺ｮ縲後♀豌励↓蜈･繧翫↓逋ｻ骭ｲ縲阪°繧芽ｿｽ蜉縺ｧ縺阪∪縺吶・/div>';
     return;
   }
   list.slice().reverse().forEach(fav => {
@@ -3430,21 +3441,21 @@ function renderFavorites(){
     item.innerHTML =
       '<div>' +
         '<div class="hist-row-date">' + fav.name + '</div>' +
-        '<div class="hist-row-sub">' + fav.createdAt + ' 登録 ・ ' + (fav.mode === 'loop' ? '往復' : '2点指定') + '</div>' +
+        '<div class="hist-row-sub">' + fav.createdAt + ' 逋ｻ骭ｲ 繝ｻ ' + (fav.mode === 'loop' ? '蠕蠕ｩ' : '2轤ｹ謖・ｮ・) + '</div>' +
       '</div>' +
       '<div class="hist-row-km">' +
-        '<span class="num">' + (fav.distanceMeters/1000).toFixed(2) + '</span><span class="u">km</span><span class="chev">›</span>' +
+        '<span class="num">' + (fav.distanceMeters/1000).toFixed(2) + '</span><span class="u">km</span><span class="chev">窶ｺ</span>' +
       '</div>';
     item.addEventListener('click', () => loadFavorite(fav));
 
     const delBtn = document.createElement('button');
     delBtn.type = 'button';
     delBtn.className = 'ghost';
-    delBtn.textContent = '削除';
+    delBtn.textContent = '蜑企勁';
     delBtn.style.cssText = 'margin:-6px 0 8px; font-size:11px;';
     delBtn.addEventListener('click', (ev) => {
       ev.stopPropagation();
-      if (confirm('「' + fav.name + '」を削除します。よろしいですか?')){
+      if (confirm('縲・ + fav.name + '縲阪ｒ蜑企勁縺励∪縺吶ゅｈ繧阪＠縺・〒縺吶°?')){
         const newList = loadFavorites().filter(f => f.id !== fav.id);
         saveFavoritesList(newList);
         renderFavorites();
@@ -3470,7 +3481,7 @@ function loadFavorite(fav){
   lastRouteDistanceMeters = fav.distanceMeters;
   routePaceMsPerMeter = fav.totalTimeMs / fav.distanceMeters;
 
-  // ルート全体のデータをセット(drawRouteを使わず直接セット)
+  // 繝ｫ繝ｼ繝亥・菴薙・繝・・繧ｿ繧偵そ繝・ヨ(drawRoute繧剃ｽｿ繧上★逶ｴ謗･繧ｻ繝・ヨ)
   const coords = fav.routeCoords;
   routeCoords = coords;
   routeSegments = buildSegments(coords, 150);
@@ -3479,13 +3490,13 @@ function loadFavorite(fav){
   const banner = document.getElementById('goalBanner');
   if (banner) banner.style.display = 'none';
 
-  // 古いレイヤーを削除
+  // 蜿､縺・Ξ繧､繝､繝ｼ繧貞炎髯､
   if (routeLine) map.removeLayer(routeLine);
   if (futureLine){ map.removeLayer(futureLine); futureLine = null; }
   if (arrowGroup) map.removeLayer(arrowGroup);
   arrowGroup = L.layerGroup().addTo(map);
 
-  // 読み込み直後はルート全体を実線で表示(追跡開始後にセグメント方式に切り替わる)
+  // 隱ｭ縺ｿ霎ｼ縺ｿ逶ｴ蠕後・繝ｫ繝ｼ繝亥・菴薙ｒ螳溽ｷ壹〒陦ｨ遉ｺ(霑ｽ霍｡髢句ｧ句ｾ後↓繧ｻ繧ｰ繝｡繝ｳ繝域婿蠑上↓蛻・ｊ譖ｿ繧上ｋ)
   routeLine = L.polyline(coords, {color:'#1f4631', weight:5}).addTo(map);
   map.fitBounds(L.latLngBounds(coords), {padding:[24,24]});
 
@@ -3493,63 +3504,67 @@ function loadFavorite(fav){
   document.getElementById('resCalorie').textContent = Math.round(calcCalorie(weightKg, fav.totalTimeMs/60000));
   document.getElementById('resSteps').textContent = calcSteps(fav.distanceMeters).toLocaleString();
   document.getElementById('resultCard').style.display = 'block';
-  document.getElementById('timeCompare').textContent = '「' + fav.name + '」を読み込みました(' + fav.createdAt + '登録)';
+  document.getElementById('timeCompare').textContent = '縲・ + fav.name + '縲阪ｒ隱ｭ縺ｿ霎ｼ縺ｿ縺ｾ縺励◆(' + fav.createdAt + '逋ｻ骭ｲ)';
   document.getElementById('weatherInfo').textContent = '';
 
   const finishDate = new Date(Date.now() + fav.totalTimeMs);
   document.getElementById('finishTime').textContent = String(finishDate.getHours()).padStart(2,'0') + ':' + String(finishDate.getMinutes()).padStart(2,'0');
 
-  setStatus('ルートを読み込みました。「追跡を開始」を押すと案内が始まります。', 'ok');
+  setStatus('繝ｫ繝ｼ繝医ｒ隱ｭ縺ｿ霎ｼ縺ｿ縺ｾ縺励◆縲ゅ瑚ｿｽ霍｡繧帝幕蟋九阪ｒ謚ｼ縺吶→譯亥・縺悟ｧ九∪繧翫∪縺吶・, 'ok');
 }
 
 function openFavorites(){
-  // 全画面を非表示にする
+  // 蜈ｨ逕ｻ髱｢繧帝撼陦ｨ遉ｺ縺ｫ縺吶ｋ
   const allScreens = document.querySelectorAll('.screen');
   allScreens.forEach(s => s.classList.remove('active'));
-  // お気に入り画面を表示
+  // 縺頑ｰ励↓蜈･繧顔判髱｢繧定｡ｨ遉ｺ
   document.getElementById('screenFavorites').classList.add('active');
   renderFavorites();
   window.scrollTo(0, 0);
-  // ボトムナビを記録タブにする
+  // 繝懊ヨ繝繝翫ン繧定ｨ倬鹸繧ｿ繝悶↓縺吶ｋ
   const h = document.getElementById('navTabHistory');
   const r = document.getElementById('navTabRoute');
   if(h) h.classList.add('active');
   if(r) r.classList.remove('active');
 }
-// お気に入りボタン(記録画面内)
+// 縺頑ｰ励↓蜈･繧翫・繧ｿ繝ｳ(險倬鹸逕ｻ髱｢蜀・
 document.querySelectorAll('[id^="openFavoritesBtn"]').forEach(btn => {
   btn.addEventListener('click', openFavorites);
 });
 
 document.getElementById('closeFavoritesBtn').addEventListener('click', () => {
   document.getElementById('screenFavorites').classList.remove('active');
-  // 記録画面から開いた場合は記録画面に戻る、それ以外はコース画面に戻る
-  const returnTo = screenBeforeHistory || 'course';
+  // 險倬鹸逕ｻ髱｢縺九ｉ髢九＞縺溷ｴ蜷医・險倬鹸逕ｻ髱｢縺ｫ謌ｻ繧九√◎繧御ｻ･螟悶・繧ｳ繝ｼ繧ｹ逕ｻ髱｢縺ｫ謌ｻ繧・  const returnTo = screenBeforeHistory || 'course';
   const returnEl = document.getElementById('screenHistory');
   if (returnEl && returnEl.classList.contains('active')){
-    // 何もしない
-  } else {
+    // 菴輔ｂ縺励↑縺・  } else {
     document.getElementById(screenIdOf(returnTo)).classList.add('active');
   }
   window.scrollTo(0, 0);
 });
-/* ===== 起動時: 保存ルートの復元確認 ===== */
+/* ===== 襍ｷ蜍墓凾: 菫晏ｭ倥Ν繝ｼ繝医・蠕ｩ蜈・｢ｺ隱・===== */
 (function checkSavedRouteOnLoad(){
   const saved = loadSavedRoute();
   if (!saved || !saved.routeCoords || saved.routeCoords.length < 2) return;
 
-  // 保存から24時間以上経過していたら自動破棄
-  if (Date.now() - saved.savedAt > 24 * 60 * 60 * 1000){
+  // 菫晏ｭ倥°繧・4譎る俣莉･荳顔ｵ碁℃縺励※縺・◆繧芽・蜍慕ｴ譽・  if (Date.now() - saved.savedAt > 24 * 60 * 60 * 1000){
     clearSavedRoute();
     return;
   }
 
   const distKm = (saved.lastRouteDistanceMeters / 1000).toFixed(1);
-  if (confirm('前回のルート(' + distKm + 'km)が残っています。続きから再開しますか？\n\n「OK」→ 現在地から再開\n「キャンセル」→ ルートを破棄')){
+  const overlay = document.getElementById('restoreOverlay');
+  document.getElementById('restoreKm').textContent = distKm;
+  overlay.hidden = false;
+
+  document.getElementById('restoreResume').onclick = () => {
+    overlay.hidden = true;
     restoreRoute(saved);
-  } else {
+  };
+  document.getElementById('restoreDiscard').onclick = () => {
+    overlay.hidden = true;
     clearSavedRoute();
-  }
+  };
 })();
 
 </script>
