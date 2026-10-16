@@ -3637,7 +3637,9 @@ document.getElementById('closeFavoritesBtn').addEventListener('click', () => {
   }
   const distKm = (totalDist / 1000).toFixed(1);
   const overlay = document.getElementById('restoreOverlay');
-  document.getElementById('restoreKm').textContent = distKm;
+  document.getElementById('restoreKm').textContent = distKm
+    + ' [DBG coords:' + (saved.routeCoords ? saved.routeCoords.length : 'null')
+    + ' savedDist:' + (saved.lastRouteDistanceMeters || 0) + 'm]';
   overlay.hidden = false;
 
   document.getElementById('restoreResume').onclick = () => {
