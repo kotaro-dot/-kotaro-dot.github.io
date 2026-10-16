@@ -3637,9 +3637,12 @@ document.getElementById('closeFavoritesBtn').addEventListener('click', () => {
   }
   const distKm = (totalDist / 1000).toFixed(1);
   const overlay = document.getElementById('restoreOverlay');
-  document.getElementById('restoreKm').textContent = distKm
-    + ' [DBG coords:' + (saved.routeCoords ? saved.routeCoords.length : 'null')
-    + ' savedDist:' + (saved.lastRouteDistanceMeters || 0) + 'm]';
+  document.getElementById('restoreKm').textContent = distKm;
+  var dbgEl = document.createElement('div');
+  dbgEl.style.cssText = 'font-size:11px;color:#888;margin-top:8px;word-break:break-all';
+  dbgEl.textContent = 'coords:' + (saved.routeCoords ? saved.routeCoords.length : 'null')
+    + ' / savedDist:' + Math.round(saved.lastRouteDistanceMeters || 0) + 'm';
+  document.getElementById('restoreKm').parentNode.appendChild(dbgEl);
   overlay.hidden = false;
 
   document.getElementById('restoreResume').onclick = () => {
