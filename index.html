@@ -2478,6 +2478,63 @@ let routeSegments = [];    // ルートを約150mごとに分割した区間リ�
 let activeSegIdx = 0;      // 今歩いている区間のインデックス
 let futureLine = null;     // まだ歩いていない区間(薄い点線)
 
+/* ===== ルート永続化 (localStorage) ===== */
+const ROUTE_STORAGE_KEY = 'walkRoute_activeRoute';
+
+function saveActiveRoute(){
+  try {
+    const data = {
+      routeCoords: routeCoords,
+      routeSegments: routeSegments,
+      activeSegIdx: activeSegIdx,
+      routePaceMsPerMeter: routePaceMsPerMeter,
+      lastRouteDurationMin: lastRouteDurationMin,
+      lastRouteDistanceMeters: lastRouteDistanceMeters,
+      lastWeightKg: lastWeightKg,
+      savedAt: Date.now()
+    };
+    localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(data));
+  } catch(e){ /* storage full or unavailable — ignore */ }
+}
+
+function clearSavedRoute(){
+  try { localStorage.removeItem(ROUTE_STORAGE_KEY); } catch(e){}
+}
+
+function loadSavedRoute(){
+  try {
+    const raw = localStorage.getItem(ROUTE_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e){ return null; }
+}
+
+function restoreRoute(data){
+  routeCoords = data.routeCoords;
+  routeSegments = data.routeSegments;
+  activeSegIdx = data.activeSegIdx;
+  routePaceMsPerMeter = data.routePaceMsPerMeter || 0;
+  lastRouteDurationMin = data.lastRouteDurationMin || 0;
+  lastRouteDistanceMeters = data.lastRouteDistanceMeters || 0;
+  lastWeightKg = data.lastWeightKg || 60;
+  goalAlreadyHandled = false;
+
+  // 地図にルートを描画
+  if (routeLine) map.removeLayer(routeLine);
+  if (futureLine){ map.removeLayer(futureLine); futureLine = null; }
+  if (arrowGroup) map.removeLayer(arrowGroup);
+  arrowGroup = L.layerGroup().addTo(map);
+
+  redrawActiveSegment();
+  map.fitBounds(L.latLngBounds(routeCoords), {padding:[24,24]});
+
+  // マップビューに切り替え
+  showView('mapview');
+
+  // 追跡を開始
+  startLiveTracking();
+}
+
 // ルートを約150mごとの区間に分割する
 function buildSegments(coords, segLen){
   const segs = [];
@@ -2542,6 +2599,7 @@ function drawRoute(coordsLatLng){
   routeSegments = buildSegments(coordsLatLng, 150);
   activeSegIdx = 0;
   goalAlreadyHandled = false;
+  saveActiveRoute(); // ルートをlocalStorageに保存
   const banner = document.getElementById('goalBanner');
   if (banner) banner.style.display = 'none';
 
@@ -2565,6 +2623,7 @@ function advanceSegment(lat, lng){
     return;
   }
   activeSegIdx++;
+  saveActiveRoute(); // 進捗を保存
   redrawActiveSegment();
 }
 
@@ -2876,6 +2935,7 @@ function finishWalk(distanceMeters, durationMin){
   if (goalAlreadyHandled) return; // 二重に保存しないようにする
   goalAlreadyHandled = true;
 
+  clearSavedRoute(); // 保存ルートをクリア
   stopLiveTracking();
 
   const distanceKm = distanceMeters / 1000;
@@ -3470,6 +3530,25 @@ document.getElementById('closeFavoritesBtn').addEventListener('click', () => {
   }
   window.scrollTo(0, 0);
 });
+/* ===== 起動時: 保存ルートの復元確認 ===== */
+(function checkSavedRouteOnLoad(){
+  const saved = loadSavedRoute();
+  if (!saved || !saved.routeCoords || saved.routeCoords.length < 2) return;
+
+  // 保存から24時間以上経過していたら自動破棄
+  if (Date.now() - saved.savedAt > 24 * 60 * 60 * 1000){
+    clearSavedRoute();
+    return;
+  }
+
+  const distKm = (saved.lastRouteDistanceMeters / 1000).toFixed(1);
+  if (confirm('前回のルート(' + distKm + 'km)が残っています。続きから再開しますか？\n\n「OK」→ 現在地から再開\n「キャンセル」→ ルートを破棄')){
+    restoreRoute(saved);
+  } else {
+    clearSavedRoute();
+  }
+})();
+
 </script>
 </body>
 </html>
