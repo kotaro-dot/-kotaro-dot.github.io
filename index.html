@@ -1875,7 +1875,7 @@ function applyMapRotation(deg){
   clip.addEventListener('touchmove', (e) => {
     if (e.touches.length === 2 && twoFingerStartAngle !== null){
       const delta = getTouchAngle(e) - twoFingerStartAngle;
-      manualRotationActive = true; applyMapRotation(twoFingerStartRotation - delta);
+      manualRotationActive = true; headingUpMode = false; applyMapRotation(twoFingerStartRotation - delta);
     }
   }, {passive: true});
 
@@ -1884,13 +1884,24 @@ function applyMapRotation(deg){
   }, {passive: true});
 })();
 
-// コンパスボタン: タップで現在地に戻る
+// コンパスボタン: タップでノースアップ⇔ヘディングアップ切り替え + 現在地に戻る
+let headingUpMode = false;
 on('compassBtn', 'click', () => {
   if (lastDisplayedLatLng){
     map.panTo(lastDisplayedLatLng, {animate:true, duration:0.5});
   }
   autoFollowEnabled = true;
   if (autoFollowTimer) clearTimeout(autoFollowTimer);
+
+  if (!headingUpMode && currentHeading !== null){
+    // ヘディングアップ: 進行方向が画面上方向になるよう地図を回転
+    applyMapRotation(currentHeading);
+    headingUpMode = true;
+  } else {
+    // ノースアップ: 北が上に戻す
+    applyMapRotation(0);
+    headingUpMode = false;
+  }
 });
 
 /* ===================== 日陰優先モード ===================== */
