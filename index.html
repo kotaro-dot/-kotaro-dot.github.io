@@ -2974,6 +2974,7 @@ async function generateRoute(){
     lastRouteDurationMin = actualMin;
     lastRouteDistanceMeters = routeDistance;
     routePaceMsPerMeter = routeTime / routeDistance; // 1mあたりの所要時間(終了予定のリアルタイム再計算に使う)
+    saveActiveRoute(); // 距離・時間が確定した後に再保存
 
     document.getElementById('resDistance').textContent = distKm.toFixed(2);
     document.getElementById('resCalorie').textContent = Math.round(cal);
