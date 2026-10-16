@@ -3628,7 +3628,14 @@ document.getElementById('closeFavoritesBtn').addEventListener('click', () => {
     return;
   }
 
-  const distKm = (saved.lastRouteDistanceMeters / 1000).toFixed(1);
+  // routeCoordsから直接距離を計算（lastRouteDistanceMetersが0の場合に備える）
+  let totalDist = saved.lastRouteDistanceMeters || 0;
+  if (!totalDist && saved.routeCoords && saved.routeCoords.length > 1){
+    for (let i = 0; i < saved.routeCoords.length - 1; i++){
+      totalDist += computeDistanceMeters(saved.routeCoords[i][0], saved.routeCoords[i][1], saved.routeCoords[i+1][0], saved.routeCoords[i+1][1]);
+    }
+  }
+  const distKm = (totalDist / 1000).toFixed(1);
   const overlay = document.getElementById('restoreOverlay');
   document.getElementById('restoreKm').textContent = distKm;
   overlay.hidden = false;
