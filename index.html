@@ -2947,6 +2947,12 @@ async function generateRoute(){
 
     let coords = best.points.coordinates.map(c => [c[1], c[0]]);
 
+    // 折り返し除去前の座標間直線距離の合計を計算
+    let preBacktrackDist = 0;
+    for (let i = 0; i < coords.length - 1; i++){
+      preBacktrackDist += computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
+    }
+
     // 折り返し部分を除去
     const originalLen = coords.length;
     coords = removeBacktracking(coords);
@@ -2954,14 +2960,18 @@ async function generateRoute(){
 
     drawRoute(coords);
 
-    // 折り返し除去後は距離・時間を再計算
+    // 折り返し除去後は距離・時間を再計算(比率ベース)
     let routeDistance = best.distance;
     let routeTime = best.time;
-    if (backtrackRemoved){
-      routeDistance = 0;
+    if (backtrackRemoved && preBacktrackDist > 0){
+      // 除去後の座標間直線距離の合計
+      let postBacktrackDist = 0;
       for (let i = 0; i < coords.length - 1; i++){
-        routeDistance += computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
+        postBacktrackDist += computeDistanceMeters(coords[i][0], coords[i][1], coords[i+1][0], coords[i+1][1]);
       }
+      // APIの道路距離に比率を掛けて推定
+      const ratio = postBacktrackDist / preBacktrackDist;
+      routeDistance = best.distance * ratio;
       // 元のペース(1mあたりの時間)を維持して時間を再計算
       const paceMs = best.time / best.distance;
       routeTime = routeDistance * paceMs;
@@ -3638,11 +3648,6 @@ document.getElementById('closeFavoritesBtn').addEventListener('click', () => {
   const distKm = (totalDist / 1000).toFixed(1);
   const overlay = document.getElementById('restoreOverlay');
   document.getElementById('restoreKm').textContent = distKm;
-  var dbgEl = document.createElement('div');
-  dbgEl.style.cssText = 'font-size:11px;color:#888;margin-top:8px;word-break:break-all';
-  dbgEl.textContent = 'coords:' + (saved.routeCoords ? saved.routeCoords.length : 'null')
-    + ' / savedDist:' + Math.round(saved.lastRouteDistanceMeters || 0) + 'm';
-  document.getElementById('restoreKm').parentNode.appendChild(dbgEl);
   overlay.hidden = false;
 
   document.getElementById('restoreResume').onclick = () => {
