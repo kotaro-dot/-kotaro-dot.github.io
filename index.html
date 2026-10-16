@@ -1011,9 +1011,6 @@ map.on("dragend", function(){ manualRotationActive = false; });
 
     const d = getRotatedDelta(screenDx, screenDy);
     map.panBy([-d.dx, -d.dy], {animate: false});
-    // デバッグ: カスタムドラッグが動作していることを表示
-    const dbg = document.getElementById('liveStatus');
-    if (dbg) dbg.textContent = 'v3 ドラッグ中 rot:' + Math.round(mapUserRotation) + '° screen(' + Math.round(screenDx) + ',' + Math.round(screenDy) + ') map(' + Math.round(d.dx) + ',' + Math.round(d.dy) + ')';
   }, {passive: true});
 
   clip.addEventListener('touchend', function(e){
@@ -1602,7 +1599,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   // pos.coords.headingはデバイスによりコンパス方位を返す場合があるため使わない
   if (lastLiveLatLng){
     const moved = computeDistanceMeters(lastLiveLatLng[0], lastLiveLatLng[1], lat, lng);
-    const moveThreshold = Math.max(3, (accuracy || 10) * 0.8);
+    const moveThreshold = Math.max(2, (accuracy || 10) * 0.5);
     if (moved > moveThreshold){
       const rawBearing = computeBearing(lastLiveLatLng[0], lastLiveLatLng[1], lat, lng);
       if (currentHeading === null){
@@ -1626,7 +1623,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
       headingUpdateDue = true;
     } else {
       const diff = Math.abs(((currentHeading - lastDisplayedHeading + 540) % 360) - 180);
-      headingUpdateDue = diff >= 10; // 10度以上変わった時だけアイコンを更新する
+      headingUpdateDue = diff >= 5; // 5度以上変わった時だけアイコンを更新する
     }
   }
 
@@ -1639,10 +1636,23 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
     const movedSinceDisplayed = lastDisplayedLatLng
       ? computeDistanceMeters(lastDisplayedLatLng[0], lastDisplayedLatLng[1], lat, lng)
       : Infinity;
-    if (movedSinceDisplayed > 8){
+    if (movedSinceDisplayed > 2){
       if (!pendingMarkerUpdate){
+        const targetLL = L.latLng(latlng[0], latlng[1]);
         pendingMarkerUpdate = requestAnimationFrame(() => {
-          liveMarker.setLatLng(latlng);
+          // 滑らかにマーカーを移動（線形補間アニメーション）
+          const startLL = liveMarker.getLatLng();
+          const steps = 8;
+          let step = 0;
+          function animateStep(){
+            step++;
+            const t = step / steps;
+            const iLat = startLL.lat + (targetLL.lat - startLL.lat) * t;
+            const iLng = startLL.lng + (targetLL.lng - startLL.lng) * t;
+            liveMarker.setLatLng([iLat, iLng]);
+            if (step < steps) requestAnimationFrame(animateStep);
+          }
+          animateStep();
           pendingMarkerUpdate = null;
         });
       }
@@ -1678,10 +1688,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
   trimRouteToCurrentPosition(lat, lng);
   updateFinishTimeEstimate();
 
-  const compassFresh = (Date.now() - lastCompassUpdate) < 2000;
-  const headingSource = currentHeading === null ? '' : '(GPS移動方向)';
-  const movedInfo = lastLiveLatLng ? ' moved:' + Math.round(computeDistanceMeters(lastLiveLatLng[0], lastLiveLatLng[1], lat, lng)) + 'm' : ' init';
-  document.getElementById('liveStatus').textContent = 'v3 追跡中(精度:' + Math.round(accuracy) + 'm)' + (currentHeading!==null ? ' 方角:' + Math.round(currentHeading) + '°' + headingSource : ' 方角:計算中') + movedInfo;
+  document.getElementById('liveStatus').textContent = '追跡中(精度:' + Math.round(accuracy) + 'm)' + (currentHeading!==null ? ' 方角:' + Math.round(currentHeading) + '°' : ' 方角:計算中');
 }
 
 function getRemainingMeters(){
