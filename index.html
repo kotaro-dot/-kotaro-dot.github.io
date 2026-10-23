@@ -2614,6 +2614,11 @@ function saveActiveRoute(){
       lastRouteDurationMin: lastRouteDurationMin,
       lastRouteDistanceMeters: lastRouteDistanceMeters,
       lastWeightKg: lastWeightKg,
+      // 再開後に結果欄の表示と「再生成」ができるよう、作成条件も保存する
+      mode: mode,
+      startPoint: startPoint,
+      goalPoint: goalPoint,
+      targetMinutes: parseFloat(document.getElementById('timeMin').value) || 0,
       savedAt: Date.now()
     };
     localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(data));
@@ -2649,6 +2654,32 @@ function restoreRoute(data){
   arrowGroup = L.layerGroup().addTo(map);
 
   redrawActiveSegment();
+
+  // 作成条件を戻す(古い保存データにはないので、ルートの最初と最後の点から補う)
+  if (data.startPoint){
+    mode = data.mode || 'loop';
+    startPoint = data.startPoint;
+    goalPoint = data.goalPoint || null;
+  } else if (routeCoords.length >= 2){
+    const first = routeCoords[0], last = routeCoords[routeCoords.length - 1];
+    startPoint = {lat: first[0], lng: first[1]};
+    const closeLoop = computeDistanceMeters(first[0], first[1], last[0], last[1]) < 50;
+    mode = closeLoop ? 'loop' : 'twopoint';
+    goalPoint = closeLoop ? null : {lat: last[0], lng: last[1]};
+  }
+  if (data.targetMinutes) document.getElementById('timeMin').value = data.targetMinutes;
+
+  // 結果欄(距離・カロリー・歩数・終了予定)を表示する
+  const resumeDistance = lastRouteDistanceMeters;
+  document.getElementById('resDistance').textContent = (resumeDistance/1000).toFixed(2);
+  document.getElementById('resCalorie').textContent = Math.round(calcCalorie(lastWeightKg, lastRouteDurationMin));
+  document.getElementById('resSteps').textContent = calcSteps(resumeDistance).toLocaleString();
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('timeCompare').textContent =
+    (data.targetMinutes ? '目標: ' + data.targetMinutes + '分 / ' : '') + '実際のルート: ' + lastRouteDurationMin + '分(途中から再開)';
+  document.getElementById('weatherInfo').textContent = '';
+  updateFinishTimeEstimate();
+  setStatus('ルートを途中から再開しました。', 'ok');
 
   // マップ画面(screenResult)に切り替え
   showScreen('result');
