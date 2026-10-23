@@ -2841,9 +2841,9 @@ async function generateRoute(){
     let best, attempts = [];
     let parks = []; // ループ・2点指定両方で共有(気温による公園優先に使う)
 
-    async function requestRoute(pointsLatLng){
+    async function requestRoute(pointsLatLng, extraParams){
       const pointParams = pointsLatLng.map(p => 'point=' + p.lat.toFixed(6) + ',' + p.lng.toFixed(6)).join('&');
-      const url = 'https://graphhopper.com/api/1/route?' + pointParams + '&profile=foot&locale=ja&points_encoded=false&key=' + encodeURIComponent(apiKey);
+      const url = 'https://graphhopper.com/api/1/route?' + pointParams + '&profile=foot&locale=ja&points_encoded=false' + (extraParams || '') + '&key=' + encodeURIComponent(apiKey);
       let res = await fetch(url);
       // レート制限の場合は2秒待ってリトライ
       if (res.status === 429){
@@ -2897,6 +2897,7 @@ async function generateRoute(){
       let correctionFactor = 1.3;
       let bestPath = null, bestScore = -1;
       const MAX_TRIES = 5;
+      let passThroughOk = true;
 
       // 日陰優先モードが有効な場合、建物データを取得して日陰ポリゴンを計算
       let shadowPolygons = [];
@@ -2919,7 +2920,17 @@ async function generateRoute(){
 
         // 経由点を円形に配置してルートを生成(折り返しのない円形コースを保証)
         const waypoints = buildLoopWaypoints(startPoint, distanceMeters, 1.3, parks, shadowPolygons);
-        let path = await requestRoute([startPoint, ...waypoints, endPoint]);
+        // pass_through=true: 経由点でのUターン(脇道に入って同じ道を戻る「ひげ」)を防ぐ
+        // APIが受け付けなかった場合は、以降この生成中は通常の方法に切り替える
+        let path = null;
+        if (passThroughOk){
+          try {
+            path = await requestRoute([startPoint, ...waypoints, endPoint], '&pass_through=true');
+          } catch(e){
+            passThroughOk = false;
+          }
+        }
+        if (!path) path = await requestRoute([startPoint, ...waypoints, endPoint]);
 
         if (!path) continue;
 
