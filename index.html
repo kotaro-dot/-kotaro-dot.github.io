@@ -2481,6 +2481,21 @@ function offsetLatLng(lat, lng, distanceMeters, bearingDeg){
 }
 
 // ① 前半と後半の近接チェック(閾値50m: 平行する隣接道路も検出)
+// coordsAの点のうち、coordsBのどこかから threshold m 以内にある割合(0〜1)
+function calcOverlapRatio(coordsA, coordsB, threshold){
+  if (!coordsA.length || !coordsB.length) return 0;
+  const stepA = Math.max(1, Math.floor(coordsA.length / 60));
+  const stepB = Math.max(1, Math.floor(coordsB.length / 300));
+  let hit = 0, total = 0;
+  for (let i = 0; i < coordsA.length; i += stepA){
+    total++;
+    for (let j = 0; j < coordsB.length; j += stepB){
+      if (computeDistanceMeters(coordsA[i][0], coordsA[i][1], coordsB[j][0], coordsB[j][1]) < threshold){ hit++; break; }
+    }
+  }
+  return total ? hit / total : 0;
+}
+
 function hasBacktracking(coords){
   if (coords.length < 10) return false;
 
@@ -3024,6 +3039,23 @@ async function generateRoute(){
       return data.paths[0];
     }
 
+    // 2地点間の「別ルート」を最大3本もらう(GraphHopperのalternative_route)。使えなければ空配列
+    async function requestAlternativeRoutes(a, b){
+      const url = 'https://graphhopper.com/api/1/route?point=' + a.lat.toFixed(6) + ',' + a.lng.toFixed(6)
+        + '&point=' + b.lat.toFixed(6) + ',' + b.lng.toFixed(6)
+        + '&profile=foot&locale=ja&points_encoded=false'
+        + '&algorithm=alternative_route&alternative_route.max_paths=3'
+        + '&key=' + encodeURIComponent(apiKey);
+      let res = await fetch(url);
+      if (res.status === 429){
+        await new Promise(r => setTimeout(r, 2000));
+        res = await fetch(url);
+      }
+      if (!res.ok) return [];
+      const data = await res.json();
+      return (data && data.paths) ? data.paths : [];
+    }
+
     // GraphHopperのround_tripアルゴリズム(折り返しを防ぐ専用ループルート生成)
     async function requestRoundTrip(lat, lng, distMeters, seed, headingDeg){
       try {
@@ -3101,8 +3133,37 @@ async function generateRoute(){
           if (!shortestOk || path.time < shortestOk.time) shortestOk = path;
         }
         if (!best){
-          // どの太さでも目標時間を超えた: 往復にならないルートのうち一番短いものを使う
-          best = shortestOk || firstPath;
+          // どの太さでも目標時間を超えた。横の点を通らせると遠回りになることがあるので、
+          // 「行き=経由地までの最短の道」「帰り=行きと道がかぶらない別ルート」でも作ってみて、短い方を使う
+          let candidate = shortestOk;
+          try {
+            setStatus('もっと短いルートを探しています...', 'info');
+            await new Promise(r => setTimeout(r, 1000));
+            const outPath = await requestRoute([startPoint, viaPoint]);
+            await new Promise(r => setTimeout(r, 1000));
+            const backPaths = await requestAlternativeRoutes(viaPoint, endPoint);
+            const outCoords = outPath.points.coordinates.map(c => [c[1], c[0]]);
+            let bestBack = null, bestOverlap = Infinity;
+            for (const bp of backPaths){
+              const backCoords = bp.points.coordinates.map(c => [c[1], c[0]]);
+              const ov = calcOverlapRatio(backCoords, outCoords, 25);
+              if (ov < bestOverlap - 0.02 || (Math.abs(ov - bestOverlap) <= 0.02 && bp.time < bestBack.time)){
+                bestOverlap = ov; bestBack = bp;
+              }
+            }
+            if (bestBack){
+              const combined = {
+                time: outPath.time + bestBack.time,
+                distance: outPath.distance + bestBack.distance,
+                points: { coordinates: outPath.points.coordinates.concat(bestBack.points.coordinates.slice(1)) }
+              };
+              const combinedCoords = combined.points.coordinates.map(c => [c[1], c[0]]);
+              if (!hasBacktracking(combinedCoords) && (!candidate || combined.time < candidate.time)){
+                candidate = combined;
+              }
+            }
+          } catch(e){ /* 別ルート機能が使えないときは、今までの結果を使う */ }
+          best = candidate || firstPath;
           viaOverTime = best.time > limitMs;
         }
       }
