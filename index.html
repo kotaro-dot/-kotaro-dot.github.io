@@ -243,6 +243,18 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .resultitem:last-child{border-bottom:none}
 .resultitem:hover{background:var(--surface-2)}
 .resultitem .name{font-weight:700;display:block;margin-bottom:2px}
+/* 地点入力: 番号付きの手順表示(1 スタート → 2 経由地 → 3 ゴール) */
+.pt-step{position:relative;padding-left:40px;margin-top:20px}
+.pt-step:not(.pt-last)::before{content:"";position:absolute;left:13px;top:34px;bottom:-16px;width:2px;background:var(--line)}
+.pt-head{display:flex;align-items:center;gap:8px;margin-left:-40px}
+.pt-badge{flex:0 0 28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 15px var(--f-num);color:#fff;margin-right:4px}
+.pt-badge.pt-start{background:var(--accent)}
+.pt-badge.pt-via{background:#f08a24}
+.pt-badge.pt-goal{background:#1f4631}
+.pt-label{font-size:16px;font-weight:700;color:var(--ink)}
+.pt-label small{font-size:11px;font-weight:700;color:#f08a24;border:1px solid #f08a24;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+.pt-hint{font-size:12px;color:var(--ink-soft);margin-top:2px}
+#geoLoopResults:empty,#geoStartResults:empty,#geoGoalResults:empty,#geoViaResults:empty{display:none}
 #geoLoopResults,#geoStartResults,#geoGoalResults,#geoViaResults{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:8px}
 /* ポイントチップ */
 .pointchip{display:inline-block;font-size:11px;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);margin:3px}
@@ -584,9 +596,11 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
       <div class="card">
         <h2><span class="dot"></span>地点を決める</h2>
 
-        <div id="geoLoopBlock" class="geoblock">
-          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">スタート/ゴール(同じ場所)</div>
-          <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+        <!-- 往復モード: 1 スタート=ゴール -->
+        <div id="geoLoopBlock" class="geoblock pt-step">
+          <div class="pt-head"><span class="pt-badge pt-start">1</span><span class="pt-label">スタート＝ゴール</span></div>
+          <div class="pt-hint">出発して、最後に戻ってくる場所</div>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
             <input type="text" id="geoLoopInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇大学、〇〇駅">
             <button id="geoLoopBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
           </div>
@@ -594,32 +608,39 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           <div id="geoLoopResults"></div>
         </div>
 
-        <div id="geoTwoBlock" class="geoblock" style="display:none;">
-          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">スタート地点</div>
-          <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+        <!-- 2点指定: 1 スタート -->
+        <div id="geoTwoBlock" class="geoblock pt-step" style="display:none;">
+          <div class="pt-head"><span class="pt-badge pt-start">1</span><span class="pt-label">スタート</span></div>
+          <div class="pt-hint">出発する場所</div>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
             <input type="text" id="geoStartInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇大学">
             <button id="geoStartBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
           </div>
           <button id="useCurrentLocStart" style="width:100%;margin-top:8px;padding:13px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--f-jp)" type="button">現在地を使用</button>
           <div id="geoStartResults"></div>
-
-          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)" style="margin-top:12px;">ゴール地点</div>
-          <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-            <input type="text" id="geoGoalInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇公園">
-            <button id="geoGoalBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
-          </div>
-          <div id="geoGoalResults"></div>
         </div>
 
-        <!-- 経由地(任意・1か所) -->
-        <div id="geoViaBlock" class="geoblock" style="margin-top:18px;">
-          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">経由地(任意・1か所)</div>
-          <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-            <input type="text" id="geoViaInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇神社(入れなくてもOK)">
+        <!-- 2 経由地(任意・1か所) -->
+        <div id="geoViaBlock" class="geoblock pt-step pt-last">
+          <div class="pt-head"><span class="pt-badge pt-via">2</span><span class="pt-label">経由地 <small>任意</small></span></div>
+          <div class="pt-hint">途中で寄りたい場所。入れなくてもOK</div>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <input type="text" id="geoViaInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇神社">
             <button id="geoViaBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
           </div>
           <button id="clearViaBtn" type="button" hidden style="width:100%;margin-top:8px;padding:11px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:13px;cursor:pointer;color:var(--ink-soft);font-family:var(--f-jp)">経由地を消す</button>
           <div id="geoViaResults"></div>
+        </div>
+
+        <!-- 2点指定: 3 ゴール -->
+        <div id="geoGoalBlock" class="geoblock pt-step pt-last" style="display:none;">
+          <div class="pt-head"><span class="pt-badge pt-goal">3</span><span class="pt-label">ゴール</span></div>
+          <div class="pt-hint">最後に着く場所</div>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <input type="text" id="geoGoalInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇公園">
+            <button id="geoGoalBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
+          </div>
+          <div id="geoGoalResults"></div>
         </div>
       </div>
 
@@ -1313,16 +1334,16 @@ function updateChips(){
     c.textContent = (mode==='loop' ? 'スタート/ゴール: ' : 'スタート: ') + startPoint.lat.toFixed(5) + ', ' + startPoint.lng.toFixed(5);
     box.appendChild(c);
   }
-  if (mode==='twopoint' && goalPoint){
-    const c = document.createElement('span');
-    c.className = 'pointchip';
-    c.textContent = 'ゴール: ' + goalPoint.lat.toFixed(5) + ', ' + goalPoint.lng.toFixed(5);
-    box.appendChild(c);
-  }
   if (viaPoint){
     const c = document.createElement('span');
     c.className = 'pointchip';
     c.textContent = '経由地: ' + viaPoint.lat.toFixed(5) + ', ' + viaPoint.lng.toFixed(5);
+    box.appendChild(c);
+  }
+  if (mode==='twopoint' && goalPoint){
+    const c = document.createElement('span');
+    c.className = 'pointchip';
+    c.textContent = 'ゴール: ' + goalPoint.lat.toFixed(5) + ', ' + goalPoint.lng.toFixed(5);
     box.appendChild(c);
   }
   const clearBtn = document.getElementById('clearViaBtn');
@@ -2329,6 +2350,9 @@ function setMode(newMode){
     : 'スタート地点とゴール地点をそれぞれ検索するか、現在地を使ってください。';
   document.getElementById('geoLoopBlock').style.display = (mode==='loop') ? 'block' : 'none';
   document.getElementById('geoTwoBlock').style.display = (mode==='twopoint') ? 'block' : 'none';
+  document.getElementById('geoGoalBlock').style.display = (mode==='twopoint') ? 'block' : 'none';
+  // 往復モードでは経由地が最後の手順なので、下へ伸びる線を消す
+  document.getElementById('geoViaBlock').classList.toggle('pt-last', mode==='loop');
   resetPoints();
 }
 document.getElementById('modeLoop').addEventListener('click', () => setMode('loop'));
