@@ -2690,7 +2690,7 @@ function pickEllipseSidePoints(start, axisAngle, axisLen, halfWidth, parks, shad
 function buildLoopWaypoints(center, targetDistanceMeters, correctionFactor, parks, shadowPolygons){
   const cf = correctionFactor || 1.3;
   const baseAngle = getLeastWalkedAngle(center);
-  const k = 0.25 + Math.random() * 0.1;          // 楕円の太さ(長さに対する片側の幅の比)
+  const k = 0.16 + Math.random() * 0.04;         // 楕円の太さ(長さに対する片側の幅の比)。細めにして遠くまで行く
   // 外周(直線) = 4 * sqrt(0.25 + k^2) * 長さ。実際の道はその約cf倍になるので逆算する
   const axisLen = targetDistanceMeters / (4 * Math.sqrt(0.25 + k * k) * cf);
   const halfWidth = axisLen * k;
