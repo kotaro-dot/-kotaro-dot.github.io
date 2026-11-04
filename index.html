@@ -243,7 +243,7 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .resultitem:last-child{border-bottom:none}
 .resultitem:hover{background:var(--surface-2)}
 .resultitem .name{font-weight:700;display:block;margin-bottom:2px}
-#geoLoopResults,#geoStartResults,#geoGoalResults{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:8px}
+#geoLoopResults,#geoStartResults,#geoGoalResults,#geoViaResults{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:8px}
 /* ポイントチップ */
 .pointchip{display:inline-block;font-size:11px;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);margin:3px}
 /* チップチェック */
@@ -610,6 +610,17 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           </div>
           <div id="geoGoalResults"></div>
         </div>
+
+        <!-- 経由地(任意・1か所) -->
+        <div id="geoViaBlock" class="geoblock" style="margin-top:18px;">
+          <div class="tag" style="font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">経由地(任意・1か所)</div>
+          <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+            <input type="text" id="geoViaInput" style="flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;outline:none;color:var(--ink)" placeholder="例: 〇〇神社(入れなくてもOK)">
+            <button id="geoViaBtn" type="button" style="flex-shrink:0;padding:10px 14px;border:1.5px solid var(--accent);border-radius:var(--r);background:transparent;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">検索</button>
+          </div>
+          <button id="clearViaBtn" type="button" hidden style="width:100%;margin-top:8px;padding:11px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-weight:700;font-size:13px;cursor:pointer;color:var(--ink-soft);font-family:var(--f-jp)">経由地を消す</button>
+          <div id="geoViaResults"></div>
+        </div>
       </div>
 
       <div class="card">
@@ -617,8 +628,13 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           <h2 style="margin:0;"><span class="dot"></span>地図で確認</h2>
           <button class="ghost" id="resetPoints" type="button" style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.08em; padding:0;">RESET ↺</button>
         </div>
+        <div class="hint" style="margin:0 0 6px;">地図をタップして置くもの</div>
+        <div class="mode-selector" style="margin-bottom:8px;">
+          <button type="button" id="tapTargetMain" class="active">スタート/ゴール</button>
+          <button type="button" id="tapTargetVia">経由地</button>
+        </div>
         <div id="mapConfirm"></div>
-        <div class="hint">検索や現在地ボタンで決めた地点がここにピンで表示されます。ズレていれば地図を直接タップして修正できます。</div>
+        <div class="hint">検索や現在地ボタンで決めた地点がここにピンで表示されます。ズレていれば地図を直接タップして修正できます。経由地はオレンジの丸で表示されます。</div>
         <div id="pointChips"></div>
       </div>
 
@@ -1053,6 +1069,9 @@ let startPoint = null;
 let goalPoint = null;
 let startMarker = null;
 let goalMarker = null;
+let viaPoint = null;      // 経由地(任意・1か所)
+let viaMarker = null;
+let tapTarget = 'main';   // 地図タップで置くもの: 'main'(スタート/ゴール) or 'via'(経由地)
 let routeLine = null;
 
 /* ---- 地点確認用マップ(STEP2) ---- */
@@ -1300,6 +1319,38 @@ function updateChips(){
     c.textContent = 'ゴール: ' + goalPoint.lat.toFixed(5) + ', ' + goalPoint.lng.toFixed(5);
     box.appendChild(c);
   }
+  if (viaPoint){
+    const c = document.createElement('span');
+    c.className = 'pointchip';
+    c.textContent = '経由地: ' + viaPoint.lat.toFixed(5) + ', ' + viaPoint.lng.toFixed(5);
+    box.appendChild(c);
+  }
+  const clearBtn = document.getElementById('clearViaBtn');
+  if (clearBtn) clearBtn.hidden = !viaPoint;
+}
+
+// 経由地を地点確認マップに置く(オレンジの丸で、スタート/ゴールのピンと区別する)
+function setViaPoint(latlng){
+  viaPoint = latlng;
+  if (viaMarker){ mapConfirm.removeLayer(viaMarker); viaMarker = null; }
+  if (latlng){
+    viaMarker = L.circleMarker(latlng, {radius:10, color:'#ffffff', weight:3, fillColor:'#f08a24', fillOpacity:1})
+      .bindTooltip('経由地', {permanent:true, direction:'top', offset:[0,-10]})
+      .addTo(mapConfirm);
+  }
+  updateChips();
+}
+
+function clearViaPoint(){
+  setViaPoint(null);
+  document.getElementById('geoViaResults').innerHTML = '';
+  document.getElementById('geoViaInput').value = '';
+}
+
+function setTapTarget(target){
+  tapTarget = target;
+  document.getElementById('tapTargetMain').classList.toggle('active', target === 'main');
+  document.getElementById('tapTargetVia').classList.toggle('active', target === 'via');
 }
 
 function resetPoints(){
@@ -1312,13 +1363,22 @@ function resetPoints(){
   document.getElementById('geoLoopResults').innerHTML = '';
   document.getElementById('geoStartResults').innerHTML = '';
   document.getElementById('geoGoalResults').innerHTML = '';
+  clearViaPoint();
+  setTapTarget('main');
   updateChips();
   setStatusBox('statusBoxCourse', '地点をリセットしました。地図をタップして地点を決めてください。', 'info');
 }
 on('resetPoints','click',resetPoints);
+on('tapTargetMain','click',() => setTapTarget('main'));
+on('tapTargetVia','click',() => setTapTarget('via'));
+on('clearViaBtn','click',clearViaPoint);
 
 mapConfirm.on('click', function(e){
   const latlng = {lat: e.latlng.lat, lng: e.latlng.lng};
+  if (tapTarget === 'via'){
+    setViaPoint(latlng);
+    return;
+  }
   if (mode === 'loop'){
     startPoint = latlng;
     if (startMarker) mapConfirm.removeLayer(startMarker);
@@ -1333,7 +1393,9 @@ mapConfirm.on('click', function(e){
       if (goalMarker) mapConfirm.removeLayer(goalMarker);
       goalMarker = L.marker(latlng, {title:'ゴール'}).addTo(mapConfirm);
     } else {
+      const keepVia = viaPoint; // スタート/ゴールの置き直しでは経由地は残す
       resetPoints();
+      if (keepVia) setViaPoint(keepVia);
       startPoint = latlng;
       startMarker = L.marker(latlng, {title:'スタート'}).addTo(mapConfirm);
     }
@@ -1609,6 +1671,14 @@ document.getElementById('geoGoalBtn').addEventListener('click', () => {
     goalMarker = L.marker(latlng, {title:'ゴール'}).addTo(mapConfirm);
     mapConfirm.setView(latlng, 16);
     updateChips();
+  });
+});
+
+document.getElementById('geoViaBtn').addEventListener('click', () => {
+  runSearch('geoViaInput', 'geoViaBtn', 'geoViaResults', (r) => {
+    const latlng = {lat: parseFloat(r.lat), lng: parseFloat(r.lon)};
+    setViaPoint(latlng);
+    mapConfirm.setView(latlng, 16);
   });
 });
 
@@ -2539,52 +2609,52 @@ function calcRouteOverlapWithHistory(coords){
   } catch(e){ return 0; }
 }
 
+// 楕円の横の2点を、中心線(スタート→遠い点)の左右に置く。
+// 日陰優先のときは少しずらした候補から一番日陰の多い点を選ぶ
+function pickEllipseSidePoints(start, axisAngle, axisLen, halfWidth, parks, shadowPolygons){
+  const sign = Math.random() < 0.5 ? 1 : -1;
+  const pick = (side) => {
+    const candidates = [0.45, 0.5, 0.55].map(r => {
+      const mid = offsetLatLng(start.lat, start.lng, axisLen * r, axisAngle);
+      const raw = offsetLatLng(mid.lat, mid.lng, halfWidth, axisAngle + 90 * side);
+      return snapToNearestPark(raw, parks, halfWidth * 0.3);
+    });
+    return (shadowPolygons && shadowPolygons.length)
+      ? findMostShadedPoint(candidates, shadowPolygons)
+      : candidates[1];
+  };
+  return [pick(sign), pick(-sign)];
+}
+
+// 経由地なしの往復ルート: 歩いたことの少ない方向に細長く延びる楕円
+// 訪問順: Start -> A(横) -> F(一番遠い点) -> B(反対の横) -> Start
 function buildLoopWaypoints(center, targetDistanceMeters, correctionFactor, parks, shadowPolygons){
   const cf = correctionFactor || 1.3;
-  // 三角形の外周(直線)は totalDist の約1.46倍、実際の道はその約cf倍になるため、
-  // 道のりが目標距離に近くなるよう逆算する
-  const totalDist = targetDistanceMeters / (1.46 * cf);
   const baseAngle = getLeastWalkedAngle(center);
-  const sign = Math.random() < 0.5 ? 1 : -1;
-  const spread = 90 + Math.random() * 30;
+  const k = 0.25 + Math.random() * 0.1;          // 楕円の太さ(長さに対する片側の幅の比)
+  // 外周(直線) = 4 * sqrt(0.25 + k^2) * 長さ。実際の道はその約cf倍になるので逆算する
+  const axisLen = targetDistanceMeters / (4 * Math.sqrt(0.25 + k * k) * cf);
+  const halfWidth = axisLen * k;
 
-  // 3点を全てスタート地点(center)から異なる方向に配置し三角形ループを形成
-  // 訪問順: Start -> P1(横) -> P2(前方) -> P3(反対横) -> Start
-
-  // P1: 一方の横方向(スタートから出発してまず横に向かう)
-  const distP1 = totalDist * 0.25;
-  const angleP1 = baseAngle + spread * sign;
-  const p1Candidates = [-15,0,15].map(offset => {
-    const raw = offsetLatLng(center.lat, center.lng, distP1, angleP1 + offset);
-    return snapToNearestPark(raw, parks, distP1 * 0.3);
+  const fCandidates = [-10,-5,0,5,10].map(offset => {
+    const raw = offsetLatLng(center.lat, center.lng, axisLen, baseAngle + offset);
+    return snapToNearestPark(raw, parks, axisLen * 0.2);
   });
-  const p1Point = (shadowPolygons && shadowPolygons.length)
-    ? findMostShadedPoint(p1Candidates, shadowPolygons)
-    : p1Candidates[1];
+  const fPoint = (shadowPolygons && shadowPolygons.length)
+    ? findMostShadedPoint(fCandidates, shadowPolygons)
+    : fCandidates[2];
 
-  // P2: 最も遠い前方の点(ループの頂点)
-  const distP2 = totalDist * 0.35;
-  const angleP2 = baseAngle;
-  const p2Candidates = [-20,-10,0,10,20].map(offset => {
-    const raw = offsetLatLng(center.lat, center.lng, distP2, angleP2 + offset);
-    return snapToNearestPark(raw, parks, distP2 * 0.3);
-  });
-  const p2Point = (shadowPolygons && shadowPolygons.length)
-    ? findMostShadedPoint(p2Candidates, shadowPolygons)
-    : p2Candidates[2];
+  const [aPoint, bPoint] = pickEllipseSidePoints(center, baseAngle, axisLen, halfWidth, parks, shadowPolygons);
+  return [aPoint, fPoint, bPoint];
+}
 
-  // P3: 反対の横方向(P2から帰路に向かう中継点)
-  const distP3 = totalDist * 0.25;
-  const angleP3 = baseAngle - spread * sign;
-  const p3Candidates = [-15,0,15].map(offset => {
-    const raw = offsetLatLng(center.lat, center.lng, distP3, angleP3 + offset);
-    return snapToNearestPark(raw, parks, distP3 * 0.25);
-  });
-  const p3Point = (shadowPolygons && shadowPolygons.length)
-    ? findMostShadedPoint(p3Candidates, shadowPolygons)
-    : p3Candidates[1];
-
-  return [p1Point, p2Point, p3Point];
+// 経由地ありの往復ルート: 経由地を一番遠い端にした楕円
+// 訪問順: Start -> A(横) -> 経由地 -> B(反対の横) -> Start
+function buildViaEllipseWaypoints(start, via, parks, shadowPolygons){
+  const axisLen = computeDistanceMeters(start.lat, start.lng, via.lat, via.lng);
+  const axisAngle = computeBearing(start.lat, start.lng, via.lat, via.lng);
+  const [aPoint, bPoint] = pickEllipseSidePoints(start, axisAngle, axisLen, axisLen * 0.3, parks, shadowPolygons);
+  return [aPoint, via, bPoint];
 }
 
 function metersToKm(m){ return (m/1000); }
@@ -2618,6 +2688,7 @@ function saveActiveRoute(){
       mode: mode,
       startPoint: startPoint,
       goalPoint: goalPoint,
+      viaPoint: viaPoint,
       targetMinutes: parseFloat(document.getElementById('timeMin').value) || 0,
       savedAt: Date.now()
     };
@@ -2660,12 +2731,14 @@ function restoreRoute(data){
     mode = data.mode || 'loop';
     startPoint = data.startPoint;
     goalPoint = data.goalPoint || null;
+    viaPoint = data.viaPoint || null;
   } else if (routeCoords.length >= 2){
     const first = routeCoords[0], last = routeCoords[routeCoords.length - 1];
     startPoint = {lat: first[0], lng: first[1]};
     const closeLoop = computeDistanceMeters(first[0], first[1], last[0], last[1]) < 50;
     mode = closeLoop ? 'loop' : 'twopoint';
     goalPoint = closeLoop ? null : {lat: last[0], lng: last[1]};
+    viaPoint = null;
   }
   if (data.targetMinutes) document.getElementById('timeMin').value = data.targetMinutes;
 
@@ -2923,7 +2996,22 @@ async function generateRoute(){
       computeDistanceMeters(startPoint.lat, startPoint.lng, goalPoint.lat, goalPoint.lng) < targetMetersForCheck * 0.25);
     const endPoint = (mode === 'loop') ? startPoint : goalPoint;
 
-    if (mode === 'loop' || nearGoalLoop){
+    if (viaPoint){
+      // 経由地あり: 目標時間には合わせず、経由地を通るルートを1回で作る
+      // 往復モード、または2点指定でゴールがスタートのすぐ近くのときは、経由地を一番遠い端にした楕円にする
+      // (スタート→経由地→スタートだと同じ道の往復になりやすいため)
+      const viaDist = computeDistanceMeters(startPoint.lat, startPoint.lng, viaPoint.lat, viaPoint.lng);
+      const startGoalDist = (mode === 'twopoint' && goalPoint)
+        ? computeDistanceMeters(startPoint.lat, startPoint.lng, goalPoint.lat, goalPoint.lng) : 0;
+      const useEllipse = (mode === 'loop') || startGoalDist < viaDist * 0.25;
+      const pts = useEllipse
+        ? [startPoint, ...buildViaEllipseWaypoints(startPoint, viaPoint, parks, []), endPoint]
+        : [startPoint, viaPoint, endPoint];
+      setStatus('経由地を通るルートを生成しています...', 'info');
+      // 経由点でのUターンを防ぐ設定を付けて試し、受け付けられなければ通常の方法で作る
+      try { best = await requestRoute(pts, '&pass_through=true'); } catch(e){ best = null; }
+      if (!best) best = await requestRoute(pts);
+    } else if (mode === 'loop' || nearGoalLoop){
       let distanceMeters = Math.round((targetMinutes/60) * walkingSpeedKmh * 1000);
       let correctionFactor = 1.3;
       let bestPath = null, bestScore = -1;
@@ -3046,7 +3134,7 @@ async function generateRoute(){
     // ループモード(round_trip API)ではAPIが折り返しを避けたルートを返すため
     // removeBacktrackingは適用しない。2点間ルートでのみ適用する。
     let backtrackRemoved = false;
-    if (mode !== 'loop' && !nearGoalLoop){
+    if (mode !== 'loop' && !nearGoalLoop && !viaPoint){
       const preCoords = coords.slice();
       const originalLen = coords.length;
 
@@ -3106,7 +3194,9 @@ async function generateRoute(){
     document.getElementById('resSteps').textContent = steps.toLocaleString();
     document.getElementById('resultCard').style.display = 'block';
     document.getElementById('timeCompare').textContent =
-      '目標: ' + targetMinutes + '分 / 実際のルート: ' + actualMin + '分' + (mode==='loop' ? '(' + attempts.length + '回調整して算出)' : '');
+      viaPoint
+        ? '経由地を通るルート: ' + actualMin + '分(経由地ありのときは目標時間' + targetMinutes + '分に合わせていません)'
+        : '目標: ' + targetMinutes + '分 / 実際のルート: ' + actualMin + '分' + (mode==='loop' ? '(' + attempts.length + '回調整して算出)' : '');
 
     const finishDate = new Date(Date.now() + routeTime);
     const hh = String(finishDate.getHours()).padStart(2, '0');
@@ -3257,6 +3347,7 @@ document.getElementById('goalOverlayFav').addEventListener('click', () => {
     mode: mode,
     startPoint: startPoint,
     goalPoint: mode === 'twopoint' ? goalPoint : null,
+    viaPoint: viaPoint,
     routeCoords: routeCoords,
     distanceMeters: distMeters,
     totalTimeMs: lastRouteDurationMin * 60000,
@@ -3623,6 +3714,7 @@ document.getElementById('saveFavoriteBtn').addEventListener('click', () => {
     mode: mode,
     startPoint: startPoint,
     goalPoint: mode === 'twopoint' ? goalPoint : null,
+    viaPoint: viaPoint,
     routeCoords: routeCoords,
     distanceMeters: parseFloat(document.getElementById('resDistance').textContent) * 1000 || 0,
     totalTimeMs: lastRouteDurationMin * 60000,
@@ -3679,6 +3771,7 @@ function loadFavorite(fav){
   mode = fav.mode;
   startPoint = fav.startPoint;
   goalPoint = fav.goalPoint;
+  viaPoint = fav.viaPoint || null;
 
   document.getElementById('screenFavorites').classList.remove('active');
   showScreen('result');
