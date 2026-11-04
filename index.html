@@ -228,6 +228,14 @@ main,#mainContent{flex:1;overflow-y:auto;padding:14px 22px 24px}
 .mapview-clip.fullscreen .map-fullscreen-btn{display:none!important;}
 .mapview-clip.fullscreen #map{width:200%!important;height:200%!important}
 #mapFullscreenOverlay{display:none}
+/* 地点確認マップの全画面表示(歩行画面と同じCSS方式) */
+.confirm-map-box{position:relative}
+.confirm-map-wrap.fullscreen{position:fixed;inset:0;z-index:7000;background:var(--surface-2)}
+.confirm-map-wrap.fullscreen .confirm-map-box{position:absolute;inset:0}
+.confirm-map-wrap.fullscreen #mapConfirm{height:100%!important;margin:0!important;border:none!important;border-radius:0!important}
+.confirm-map-wrap.fullscreen .map-fullscreen-btn{display:none!important}
+/* 全画面中も「タップで置くもの」を切り替えられるよう、下に浮かせて表示する */
+.confirm-map-wrap.fullscreen #tapTargetSelector{position:absolute;left:max(16px, env(safe-area-inset-left,0px));right:max(16px, env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 28px);z-index:600;margin:0!important;background:var(--surface);box-shadow:0 4px 16px rgba(0,0,0,.25)}
 
 /* 結果数字 */
 .result-num{font-family:var(--f-num);font-style:italic;font-weight:800;font-size:44px;line-height:.9;color:var(--accent)}
@@ -650,11 +658,16 @@ button.ghost{border:1.5px solid var(--line);border-radius:999px;background:var(-
           <button class="ghost" id="resetPoints" type="button" style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.08em; padding:0;">RESET ↺</button>
         </div>
         <div class="hint" style="margin:0 0 6px;">地図をタップして置くもの</div>
-        <div class="mode-selector" style="margin-bottom:8px;">
-          <button type="button" id="tapTargetMain" class="active">スタート/ゴール</button>
-          <button type="button" id="tapTargetVia">経由地</button>
+        <div class="confirm-map-wrap" id="confirmMapWrap">
+          <div class="mode-selector" id="tapTargetSelector" style="margin-bottom:8px;">
+            <button type="button" id="tapTargetMain" class="active">スタート/ゴール</button>
+            <button type="button" id="tapTargetVia">経由地</button>
+          </div>
+          <div class="confirm-map-box">
+            <div id="mapConfirm"></div>
+            <button class="map-fullscreen-btn" id="confirmFullscreenBtn" type="button" title="全画面表示">⛶</button>
+          </div>
         </div>
-        <div id="mapConfirm"></div>
         <div class="hint">検索や現在地ボタンで決めた地点がここにピンで表示されます。ズレていれば地図を直接タップして修正できます。経由地はオレンジの丸で表示されます。</div>
         <div id="pointChips"></div>
       </div>
@@ -2020,8 +2033,29 @@ function closeFullscreenMap(){
   setTimeout(() => map.invalidateSize(), 60);
 }
 
+// 地点確認マップ(ルート作成の最初の画面)の全画面表示
+function openConfirmFullscreen(){
+  const wrap = document.getElementById('confirmMapWrap');
+  if (!wrap) return;
+  wrap.classList.add('fullscreen');
+  const exitBtn = document.getElementById('mapExitFullscreenBtn');
+  if (exitBtn) exitBtn.style.display = 'flex';
+  setTimeout(() => mapConfirm.invalidateSize(), 60);
+}
+
+function closeConfirmFullscreen(){
+  const wrap = document.getElementById('confirmMapWrap');
+  if (!wrap || !wrap.classList.contains('fullscreen')) return;
+  wrap.classList.remove('fullscreen');
+  const exitBtn = document.getElementById('mapExitFullscreenBtn');
+  if (exitBtn) exitBtn.style.display = 'none';
+  setTimeout(() => mapConfirm.invalidateSize(), 60);
+}
+
 on('mapFullscreenBtn','click', openFullscreenMap);
+on('confirmFullscreenBtn','click', openConfirmFullscreen);
 // 終了ボタンはcapture:trueで最優先でイベントを受け取る
+// (歩行画面・地点確認のどちらの全画面でも同じボタンで閉じる)
 (function(){
   const btn = document.getElementById('mapExitFullscreenBtn');
   if (!btn) return;
@@ -2030,6 +2064,7 @@ on('mapFullscreenBtn','click', openFullscreenMap);
       e.stopPropagation();
       e.preventDefault();
       closeFullscreenMap();
+      closeConfirmFullscreen();
     }, {capture: true});
   });
 })();
