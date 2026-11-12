@@ -1906,7 +1906,7 @@ function handlePositionUpdate(lat, lng, accuracy, gpsHeading){
     }
   }
 
-  trimRouteToCurrentPosition(lat, lng);
+  trimRouteToCurrentPosition(lat, lng, accuracy);
   updateFinishTimeEstimate();
 
   document.getElementById('liveStatus').textContent = '追跡中(精度:' + Math.round(accuracy) + 'm)' + (currentHeading!==null ? ' 方角:' + Math.round(currentHeading) + '°' : ' 方角:計算中');
@@ -2745,6 +2745,8 @@ let lastRouteDistanceMeters = 0;
 let routeCoords = [];
 let routeSegments = [];    // ルートを約150mごとに分割した区間リスト
 let activeSegIdx = 0;      // 今歩いている区間のインデックス
+let dashSkipCandidate = -1; // 点線スキップ: 連続検知中の候補区間
+let dashSkipHits = 0;       // 点線スキップ: 候補区間の上にいた連続回数
 let futureLine = null;     // まだ歩いていない区間(薄い点線)
 
 /* ===== ルート永続化 (localStorage) ===== */
@@ -2788,6 +2790,7 @@ function restoreRoute(data){
   routeCoords = data.routeCoords;
   routeSegments = data.routeSegments;
   activeSegIdx = data.activeSegIdx;
+  dashSkipCandidate = -1; dashSkipHits = 0;
   routePaceMsPerMeter = data.routePaceMsPerMeter || 0;
   lastRouteDurationMin = data.lastRouteDurationMin || 0;
   lastRouteDistanceMeters = data.lastRouteDistanceMeters || 0;
@@ -2904,6 +2907,7 @@ function drawRoute(coordsLatLng){
   routeCoords = coordsLatLng;
   routeSegments = buildSegments(coordsLatLng, 150);
   activeSegIdx = 0;
+  dashSkipCandidate = -1; dashSkipHits = 0;
   goalAlreadyHandled = false;
   saveActiveRoute(); // ルートをlocalStorageに保存
   const banner = document.getElementById('goalBanner');
@@ -2933,7 +2937,7 @@ function advanceSegment(lat, lng){
   redrawActiveSegment();
 }
 
-function trimRouteToCurrentPosition(lat, lng){
+function trimRouteToCurrentPosition(lat, lng, accuracy){
   if (!routeCoords.length || !routeSegments.length) return;
 
   const seg = routeSegments[activeSegIdx];
@@ -2942,17 +2946,19 @@ function trimRouteToCurrentPosition(lat, lng){
 
   // 現在地が現在区間の終端から15m以内に入ったら、区間完了とみなす
   if (distToEnd <= 15){
+    dashSkipCandidate = -1; dashSkipHits = 0;
     advanceSegment(lat, lng);
     return;
   }
 
   // 終端15m判定を逃した場合のフォールバック:
-  // 3条件すべてを満たす場合のみ未来区間にスキップ:
-  //   (1) 現在地が未来区間の線分から10m以内（その道の上にいる）
-  //   (2) GPS進行方向がその線分の方向と角度差30度以内
-  //   (3) 現在地が実線（現在区間）のどの線分からも30m以上離れている
+  // ルートを途中でカットして先の点線の道を歩き始めたことを検知し、その区間に切り替える。
+  // 誤検知を防ぐため、次の全てを満たすGPS更新が3回連続したときだけ切り替える:
+  //   (1) 現在地が実線(現在区間)のどの線分からも30m以上離れている
+  //   (2) 現在地がどこかの未来区間の線分の近く(GPS精度に応じて15〜30m以内)にいる
+  //   (3) 進行方向がわかっている場合、その道と明らかに逆向き(70度超のずれ)ではない
 
-  // 条件(3): 現在区間の最短線分距離を計算
+  // 条件(1): 現在区間の最短線分距離を計算
   let minDistToActiveSeg = Infinity;
   for (let i = seg.start; i < seg.end; i++){
     const d = distPointToSegment(lat, lng, routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
@@ -2960,33 +2966,46 @@ function trimRouteToCurrentPosition(lat, lng){
   }
 
   if (minDistToActiveSeg >= 30){
-    let skipToSegIdx = -1;
-    for (let si = activeSegIdx + 1; si < routeSegments.length; si++){
+    // 条件(2): 現在地がどの未来区間の上にいるか探す(ルートの最後まで全て調べ、最初に見つかった区間を使う)
+    const nearThreshold = Math.max(15, Math.min(accuracy || 15, 30));
+    let matchIdx = -1;
+    for (let si = activeSegIdx + 1; si < routeSegments.length && matchIdx < 0; si++){
       const fSeg = routeSegments[si];
       for (let i = fSeg.start; i < fSeg.end; i++){
-        // 条件(1): 線分からの距離が10m以内
         const d = distPointToSegment(lat, lng, routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
-        if (d < 10){
-          // 条件(2): 進行方向がその線分の方向と30度以内
+        if (d < nearThreshold){
+          // 条件(3): 明らかに逆向きに歩いているときだけ除外(方角が未計算なら除外しない)
           if (currentHeading !== null){
             const segBearing = computeBearing(routeCoords[i][0], routeCoords[i][1], routeCoords[i+1][0], routeCoords[i+1][1]);
             const angleDiff = Math.abs(((currentHeading - segBearing + 540) % 360) - 180);
-            if (angleDiff <= 30){
-              skipToSegIdx = si;
-              break;
-            }
+            if (angleDiff > 70) continue;
           }
+          matchIdx = si;
+          break;
         }
       }
-      if (skipToSegIdx >= 0) break;
-      if (si >= activeSegIdx + 3) break;
     }
 
-    if (skipToSegIdx >= 0){
-      activeSegIdx = skipToSegIdx;
-      advanceSegment(lat, lng);
-      return;
+    if (matchIdx >= 0){
+      // 歩くにつれて一番近い区間は進んでいくので、前回の候補と1つ違いまでは「連続」とみなす
+      if (dashSkipCandidate >= 0 && Math.abs(matchIdx - dashSkipCandidate) <= 1){
+        dashSkipHits++;
+      } else {
+        dashSkipHits = 1;
+      }
+      dashSkipCandidate = matchIdx;
+      if (dashSkipHits >= 3){
+        dashSkipCandidate = -1; dashSkipHits = 0;
+        activeSegIdx = matchIdx; // その区間を「今歩いている区間」にして実線に切り替える
+        saveActiveRoute();
+        redrawActiveSegment();
+        return;
+      }
+    } else {
+      dashSkipCandidate = -1; dashSkipHits = 0;
     }
+  } else {
+    dashSkipCandidate = -1; dashSkipHits = 0;
   }
 
   // 区間の途中では矢印だけ現在地付近に更新する
