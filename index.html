@@ -1241,13 +1241,12 @@ map.on("dragend", function(){ manualRotationActive = false; });
   }, 200);
 })();
 
-// 古いサービスワーカーを全て削除する(キャッシュ問題を完全解消)
+// オフライン対応: サービスワーカーを登録(本体は電波があれば毎回最新を取得)
 if ('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    registrations.forEach((reg) => reg.unregister());
-  });
-  caches.keys().then((keys) => {
-    keys.forEach((key) => caches.delete(key));
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', {updateViaCache: 'none'})
+      .then((reg) => { try { reg.update(); } catch(e){} })
+      .catch(() => {});
   });
 }
 
